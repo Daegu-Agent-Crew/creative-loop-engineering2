@@ -1,0 +1,39 @@
+# Repository Registry — creative-loop-engineering2
+
+repository:
+  name: creative-loop-engineering2
+  org: Daegu-Agent-Crew
+  url: https://github.com/Daegu-Agent-Crew/creative-loop-engineering2
+  pages_url: https://daegu-agent-crew.github.io/creative-loop-engineering2/
+  default_branch: main
+  visibility: public
+
+  deployment:
+    type: github-pages
+    source: main
+    directory: root
+
+  labels:
+    type:
+      - "type:feature"
+      - "type:bug"
+      - "type:improvement"
+      - "type:idea"
+    priority:
+      - "priority:urgent"
+      - "priority:high"
+      - "priority:normal"
+      - "priority:low"
+    status:
+      - "status:proposed"
+      - "status:reviewing"
+      - "status:approved"
+      - "status:in-progress"
+      - "status:done"
+      - "status:hold"
+      - "status:rejected"
+
+  integrations:
+    - team-memory
+    - discord-webhook (phase-2)
+    - github-issues-api (phase-2)

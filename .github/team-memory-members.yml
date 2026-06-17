@@ -1,0 +1,40 @@
+# Daegu Agent Crew — Team Members
+# creative-loop-engineering2 요구사항 관리 시스템
+
+members:
+  - name: sfex11
+    role: PD / 회장님
+    avatar: "🎬"
+    description: "프로덕션 총괄, 삼체 만화 프로젝트 리드"
+
+  - name: normalkim
+    role: 이미지 생성 / 스타일
+    avatar: "🎨"
+    description: "이미지 스타일 및 비주얼 디렉션"
+
+  - name: eugene
+    role: 대본 / 이미지
+    avatar: "✍️"
+    description: "대본 작성 및 이미지 제작"
+
+  - name: junteken
+    role: 대본 / 이미지
+    avatar: "📝"
+    description: "대본 작성 및 이미지 제작"
+
+  - name: YoonJongHyuk
+    role: 이미지 생성
+    avatar: "🖼️"
+    description: "이미지 생성 담당"
+
+  - name: 대구루
+    role: AI 비서
+    avatar: "📋"
+    description: "자료관리 및 소프트웨어 개발 담당 에이전트"
+    is_agent: true
+
+  - name: 레노버
+    role: AI 에이전트
+    avatar: "💻"
+    description: "기획/분석 자동화 에이전트"
+    is_agent: true

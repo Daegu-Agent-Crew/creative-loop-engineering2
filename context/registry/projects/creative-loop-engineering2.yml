@@ -1,0 +1,37 @@
+# Project Registry — creative-loop-engineering2
+# 요구사항 관리 시스템
+
+project:
+  name: creative-loop-engineering2
+  full_name: "CLE2 — 사용자별 요구사항 관리 시스템"
+  description: |
+    대구 에이전트 크루 팀원들의 요구사항(아이디어, 버그, 기능, 개선)을
+    등록하고 추적하는 웹 애플리케이션.
+  url: https://daegu-agent-crew.github.io/creative-loop-engineering2/
+  type: web-app
+  status: active
+  phase: 1
+
+  tech_stack:
+    - vanilla-js
+    - spa
+    - local-storage
+    - github-pages
+
+  features:
+    - 사용자별 요구사항 등록 및 추적
+    - 카테고리/우선순위/상태 관리
+    - 태그 시스템
+    - 댓글 및 투표
+    - 에이전트 할당 (대구루, 레노버)
+    - Discord 알림 (Phase 2)
+    - GitHub Issues 연동 (Phase 2)
+
+  team:
+    - sfex11
+    - normalkim
+    - eugene
+    - junteken
+    - YoonJongHyuk
+    - 대구루 (agent)
+    - 레노버 (agent)
