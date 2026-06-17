@@ -313,10 +313,11 @@
 
     var html = '';
 
-    // Hero
-    html += '<div class="hero">';
+    // Hero with gradient glow
+    html += '<div class="hero page-enter">';
     html += '<h1>사용자별 요구사항 관리</h1>';
     html += '<p>대구 에이전트 크루 팀원들의 아이디어, 버그, 기능 요청을 한곳에서 관리하세요</p>';
+    html += '<div style="margin-top:24px"><a class="cta-gradient" href="#/new">✨ 새 요구사항 만들기</a></div>';
     html += '</div>';
 
     // Stats
@@ -355,11 +356,11 @@
     MEMBER_LIST.forEach(function (m) {
       var member = MEMBERS[m];
       var count = getMemberRequests(m).length;
-      html += '<a class="card clickable" href="#/users/' + encodeURIComponent(m) + '" style="display:flex;align-items:center;gap:10px;">';
+      html += '<a class="card clickable" href="#/users/' + encodeURIComponent(m) + '" style="display:flex;align-items:center;gap:12px;">';
       html += '<span style="font-size:1.5rem">' + member.avatar + '</span>';
       html += '<div style="flex:1"><div style="font-weight:600;font-size:0.88rem">' + member.name + '</div>';
       html += '<div style="font-size:0.75rem;color:var(--text2)">' + member.role + '</div></div>';
-      html += '<span class="badge badge-status.proposed">' + count + '건</span>';
+      html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">' + count + '건</span>';
       html += '</a>';
     });
     html += '</div>';
@@ -374,46 +375,46 @@
     return '<div class="stat-card"><div class="stat-icon">' + icon + '</div><div class="stat-value">' + value + '</div><div class="stat-label">' + label + '</div></div>';
   }
 
-  /* ====== Request Card ====== */
+  /* ====== Request Card (Enhanced) ====== */
   function requestCardHTML(r) {
     var cat = CATEGORIES[r.category] || CATEGORIES.feature;
     var pri = PRIORITIES[r.priority] || PRIORITIES.normal;
     var st = STATUSES[r.status] || STATUSES.proposed;
     var member = MEMBERS[r.author] || { avatar: '👤' };
     var voteCount = r.votes ? r.votes.length : 0;
+    var commentCount = state.comments[r.id] ? state.comments[r.id].length : 0;
 
     var tagsHTML = (r.tags || []).map(function (t) {
-      return '<span class="tag">#' + esc(t) + '</span>';
+      return '<span class="tag">' + esc(t) + '</span>';
     }).join('');
 
-    var assigneeHTML = '';
-    if (r.assignees && r.assignees.length) {
-      assigneeHTML = r.assignees.map(function (a) {
-        return '<span style="font-size:0.72rem;color:var(--text2)"> assigned to ' + memberAvatar(a) + ' ' + esc(a) + '</span>';
-      }).join('');
-    }
-
-    return '<div class="request-card" onclick="location.hash=\'#/requests/' + r.id + '\'">' +
+    return '<div class="request-card page-enter" data-status="' + r.status + '" onclick="location.hash=\'#/requests/' + r.id + '\'">' +
+      '<div class="rc-badges-top">' +
+      '<span class="badge badge-priority ' + pri.cls + '">' + pri.label + '</span>' +
+      '<span class="badge badge-type ' + cat.cls + '">' + cat.icon + ' ' + cat.label + '</span>' +
+      '</div>' +
       '<div class="rc-header">' +
       '<div class="rc-title">' + esc(r.title) + '</div>' +
       '<span class="badge badge-status ' + st.cls + '">' + st.icon + ' ' + st.label + '</span>' +
       '</div>' +
-      '<div class="rc-meta">' +
-      '<span class="badge badge-type ' + cat.cls + '">' + cat.icon + ' ' + cat.label + '</span> ' +
-      '<span class="badge badge-priority ' + pri.cls + '">' + pri.label + '</span> ' +
-      tagsHTML +
-      '</div>' +
+      (tagsHTML ? '<div class="rc-tags">' + tagsHTML + '</div>' : '') +
       '<div class="rc-footer">' +
+      '<div class="rc-footer-left">' +
       '<span class="user-pill">' + member.avatar + ' ' + esc(r.author) + '</span>' +
-      '<span>' + timeAgo(r.updatedAt) + ' · 👍 ' + voteCount + '</span>' +
+      '<span class="rc-meta-item">' + timeAgo(r.updatedAt) + '</span>' +
+      '</div>' +
+      '<div class="rc-footer-right">' +
+      (commentCount > 0 ? '<span class="rc-meta-item">💬 ' + commentCount + '</span>' : '') +
+      '<span class="rc-meta-item">👍 ' + voteCount + '</span>' +
+      '</div>' +
       '</div>' +
       '</div>';
   }
 
   /* ====== Request List ====== */
   function renderRequestList() {
-    var html = '<div style="padding-top:24px">';
-    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:16px">📋 전체 요구사항</h1>';
+    var html = '<div style="padding-top:24px" class="page-enter">';
+    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:20px">📋 전체 요구사항</h1>';
 
     // Filter Bar
     html += '<div class="filter-bar">';
@@ -438,7 +439,10 @@
 
     // Search + Sort row
     html += '<div class="filter-bar">';
-    html += '<input class="search-input" type="text" placeholder="🔍 검색어 입력..." id="searchInput" value="' + esc(state.filter.search) + '">';
+    html += '<div class="search-wrapper">';
+    html += '<span class="search-icon">🔍</span>';
+    html += '<input class="search-input" type="text" placeholder="검색어 입력..." id="searchInput" value="' + esc(state.filter.search) + '">';
+    html += '</div>';
     html += '<select class="select-input" id="sortSelect">';
     var sortOpts = [
       { v: 'newest', l: '최신순' },
@@ -456,7 +460,7 @@
     var filtered = filterAndSort();
     html += '<div style="margin-top:16px">';
     if (filtered.length === 0) {
-      html += '<div class="empty-state"><div class="es-icon">🔍</div><div class="es-text">조건에 맞는 요구사항이 없습니다</div></div>';
+      html += '<div class="empty-state"><div class="es-icon">📭</div><div class="es-text">조건에 맞는 요구사항이 없습니다</div><div class="es-hint">필터를 변경하거나 새 요구사항을 등록해보세요</div></div>';
     } else {
       html += '<div class="grid">';
       filtered.forEach(function (r) { html += requestCardHTML(r); });
@@ -537,82 +541,61 @@
     var cat = CATEGORIES[r.category] || CATEGORIES.feature;
     var pri = PRIORITIES[r.priority] || PRIORITIES.normal;
     var st = STATUSES[r.status] || STATUSES.proposed;
-    var member = MEMBERS[r.author] || { avatar: '👤', role: '' };
+    var member = MEMBERS[r.author] || { avatar: '\u{1F464}', role: '' };
     var comments = state.comments[r.id] || [];
     var hasVoted = r.votes && r.votes.indexOf(state.currentUser) >= 0;
 
-    var html = '<div style="padding-top:24px">';
+    var html = '<div style="padding-top:24px" class="page-enter">';
 
     // Back
-    html += '<a class="dh-back" href="#/requests">← 목록으로</a>';
+    html += '<a class="detail-back" href="#/requests">\u2190 \uBAA9\uB85D\uC73C\uB85C</a>';
 
-    // Header
-    html += '<div class="detail-header">';
-    html += '<h1>' + esc(r.title) + '</h1>';
+    // Header Card with status color bar
+    html += '<div class="detail-header-card" data-status="' + r.status + '">';
     html += '<div class="detail-badges">';
     html += '<span class="badge badge-type ' + cat.cls + '">' + cat.icon + ' ' + cat.label + '</span>';
-    html += '<span class="badge badge-priority ' + pri.cls + '">우선순위: ' + pri.label + '</span>';
+    html += '<span class="badge badge-priority ' + pri.cls + '">\uC6B0\uC120\uC21C\uC704: ' + pri.label + '</span>';
     html += '<span class="badge badge-status ' + st.cls + '">' + st.icon + ' ' + st.label + '</span>';
     html += '</div>';
-    html += '<div style="font-size:0.8rem;color:var(--text2)">' + member.avatar + ' <span class="user-pill" onclick="location.hash=\'#/users/' + encodeURIComponent(r.author) + '\'">' + esc(r.author) + '</span> · ' + formatDate(r.createdAt) + ' 작성 · ' + timeAgo(r.updatedAt) + ' 업데이트</div>';
+    html += '<h1>' + esc(r.title) + '</h1>';
+    html += '<div class="detail-meta">';
+    html += '<span class="user-pill" onclick="location.hash=\'#/users/' + encodeURIComponent(r.author) + '\'">' + member.avatar + ' ' + esc(r.author) + '</span>';
+    html += '<span>\u00B7</span>';
+    html += '<span>' + formatDate(r.createdAt) + ' \uC791\uC131</span>';
+    html += '<span>\u00B7</span>';
+    html += '<span>' + timeAgo(r.updatedAt) + ' \uC5C5\uB370\uC774\uD2B8</span>';
     html += '</div>';
+    html += '</div>';
+
+    // Two-column layout
+    html += '<div class="detail-layout">';
+
+    // Left column (main)
+    html += '<div class="detail-main">';
 
     // Description
     html += '<div class="detail-section">';
-    html += '<h3>📝 설명</h3>';
+    html += '<h3>\uD83D\uDCDD \uC124\uBA85</h3>';
     html += '<div class="detail-description">' + esc(r.description) + '</div>';
     if (r.tags && r.tags.length) {
-      html += '<div style="margin-top:12px">' + r.tags.map(function (t) { return '<span class="tag">#' + esc(t) + '</span>'; }).join('') + '</div>';
+      html += '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:4px">' + r.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>';
     }
     html += '</div>';
 
-    // Vote & Actions
+    // Vote
     html += '<div class="detail-section" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
-    html += '<button class="vote-btn ' + (hasVoted ? 'voted' : '') + '" onclick="window.__CLE2__.toggleVote(' + r.id + ')">👍 ' + (r.votes || []).length + ' ' + (hasVoted ? '투표함' : '투표') + '</button>';
-    html += '<a class="btn btn-ghost btn-sm" href="#/new">🔗 이슈 복사</a>';
-    html += '</div>';
-
-    // Status Change
-    html += '<div class="detail-section">';
-    html += '<h3>🔄 상태 변경</h3>';
-    html += '<div class="status-pills">';
-    STATUS_FLOW.forEach(function (s) {
-      var sObj = STATUSES[s];
-      html += '<button class="status-pill ' + (r.status === s ? 'active' : '') + '" onclick="window.__CLE2__.changeStatus(' + r.id + ', \'' + s + '\')">' + sObj.icon + ' ' + sObj.label + '</button>';
-    });
-    html += '</div>';
-    html += '</div>';
-
-    // Assignment
-    html += '<div class="detail-section">';
-    html += '<h3>🤖 에이전트 할당</h3>';
-    html += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
-    AGENTS.forEach(function (a) {
-      var isAssigned = r.assignees && r.assignees.indexOf(a) >= 0;
-      html += '<button class="assign-btn ' + (isAssigned ? 'assigned' : '') + '" onclick="window.__CLE2__.toggleAssign(' + r.id + ', \'' + a + '\')">';
-      html += memberAvatar(a) + ' ' + esc(a);
-      if (isAssigned) html += ' ✅';
-      html += '</button>';
-    });
-    html += '</div>';
-    if (r.assignees && r.assignees.length) {
-      html += '<div style="margin-top:10px;font-size:0.82rem;color:var(--text2)">현재 할당됨:</div>';
-      html += '<div class="assignee-list">';
-      r.assignees.forEach(function (a) {
-        html += '<span class="assignee-chip">' + memberAvatar(a) + ' ' + esc(a) + '</span>';
-      });
-      html += '</div>';
-    }
+    html += '<button class="vote-btn ' + (hasVoted ? 'voted' : '') + '" onclick="window.__CLE2__.toggleVote(' + r.id + ')">\uD83D\uDC4D ' + (r.votes || []).length + ' ' + (hasVoted ? '\uD22C\uD45C\uD568' : '\uD22C\uD45C') + '</button>';
+    html += '<a class="btn btn-ghost btn-sm" href="#/new">\uD83D\uDD17 \uC774\uC288 \uBCF5\uC0AC</a>';
     html += '</div>';
 
     // Comments
     html += '<div class="detail-section">';
-    html += '<h3>💬 댓글 (' + comments.length + ')</h3>';
+    html += '<h3>\uD83D\uDCAC \uB313\uAE00 (' + comments.length + ')</h3>';
     if (comments.length === 0) {
-      html += '<div style="color:var(--text2);font-size:0.85rem;padding:8px 0">아직 댓글이 없습니다. 첫 댓글을 남겨보세요!</div>';
+      html += '<div class="empty-state" style="padding:24px"><div class="es-icon">\uD83D\uDCAC</div><div class="es-text">\uC544\uC9C1 \uB313\uAE00\uC774 \uC5C6\uC2B5\uB2C8\uB2E4</div><div class="es-hint">\uCCAB \uB313\uAE00\uC744 \uB0A8\uACBC\uBCF4\uC138\uC694!</div></div>';
     }
     comments.forEach(function (c) {
-      var cMember = MEMBERS[c.author] || { avatar: '👤' };
+      var cMember = MEMBERS[c.author] || { avatar: '\u{1F464}' };
       html += '<div class="comment">';
       html += '<div class="comment-avatar">' + cMember.avatar + '</div>';
       html += '<div class="comment-body">';
@@ -622,11 +605,51 @@
     });
     // Comment Form
     html += '<div class="comment-form">';
-    html += '<input class="text-input" id="commentInput" placeholder="댓글 입력..." style="flex:1">';
-    html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.addComment(' + r.id + ')">등록</button>';
+    html += '<input class="text-input" id="commentInput" placeholder="\uB313\uAE00 \uC785\uB825..." style="flex:1">';
+    html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.addComment(' + r.id + ')">\uB4F1\uB85D</button>';
     html += '</div>';
     html += '</div>';
 
+    html += '</div>'; // end detail-main
+
+    // Right Sidebar
+    html += '<div class="detail-sidebar">';
+
+    // Status Change
+    html += '<div class="sidebar-section">';
+    html += '<h4>\uD83D\uDD04 \uC0C1\uD0DC \uBCC0\uACBD</h4>';
+    html += '<div class="status-pills">';
+    STATUS_FLOW.forEach(function (s) {
+      var sObj = STATUSES[s];
+      html += '<button class="status-pill ' + (r.status === s ? 'active' : '') + '" onclick="window.__CLE2__.changeStatus(' + r.id + ', \'' + s + '\')">' + sObj.icon + ' ' + sObj.label + '</button>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    // Assignment
+    html += '<div class="sidebar-section">';
+    html += '<h4>\uD83E\uDD16 \uC5D0\uC774\uC804\uD2B8 \uD560\uB2F9</h4>';
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    AGENTS.forEach(function (a) {
+      var isAssigned = r.assignees && r.assignees.indexOf(a) >= 0;
+      html += '<button class="assign-btn ' + (isAssigned ? 'assigned' : '') + '" onclick="window.__CLE2__.toggleAssign(' + r.id + ', \'' + a + '\')">';
+      html += memberAvatar(a) + ' ' + esc(a);
+      if (isAssigned) html += ' \u2705';
+      html += '</button>';
+    });
+    html += '</div>';
+    if (r.assignees && r.assignees.length) {
+      html += '<div class="assignee-list">';
+      r.assignees.forEach(function (a) {
+        html += '<span class="assignee-chip">' + memberAvatar(a) + ' ' + esc(a) + '</span>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+
+    html += '</div>'; // end detail-sidebar
+
+    html += '</div>'; // end detail-layout
     html += '</div>'; // end padding-top div
 
     render(pageWrap('requests', html));
@@ -634,47 +657,49 @@
 
   /* ====== New Request ====== */
   function renderNewRequest() {
-    var html = '<div style="padding-top:24px;max-width:680px;margin:0 auto">';
-    html += '<a class="dh-back" href="#/requests">← 목록으로</a>';
-    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:20px">➕ 새 요구사항 등록</h1>';
+    var html = '<div style="padding-top:24px;max-width:680px;margin:0 auto" class="page-enter">';
+    html += '<a class="detail-back" href="#/requests">\u2190 \uBAA9\uB85D\uC73C\uB85C</a>';
+    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:24px">\u2795 \uC0C8 \uC694\uAD6C\uC0AC\uD56D \uB4F1\uB85D</h1>';
 
-    html += '<div class="card">';
+    html += '<div class="card" style="padding:28px">';
     html += '<div class="form-group">';
-    html += '<label>제목 <span class="required">*</span></label>';
-    html += '<input class="text-input" id="reqTitle" placeholder="요구사항 제목을 입력하세요">';
+    html += '<label>\uC81C\uBAA9 <span class="required">*</span></label>';
+    html += '<input class="text-input" id="reqTitle" placeholder="\uC694\uAD6C\uC0AC\uD56D \uC81C\uBAA9\uC744 \uC785\uB825\uD558\uC138\uC694" oninput="window.__CLE2__.updatePreview()">';
     html += '</div>';
 
     html += '<div class="form-group">';
-    html += '<label>설명 <span class="required">*</span></label>';
-    html += '<textarea class="textarea-input" id="reqDesc" placeholder="상세 내용을 입력하세요..."></textarea>';
+    html += '<label>\uC124\uBA85 <span class="required">*</span></label>';
+    html += '<textarea class="textarea-input" id="reqDesc" placeholder="\uC0C1\uC138 \uB0B4\uC6A9\uC744 \uC785\uB825\uD558\uC138\uC694..." oninput="window.__CLE2__.updatePreview()"></textarea>';
     html += '</div>';
 
-    html += '<div class="form-row">';
     html += '<div class="form-group">';
-    html += '<label>카테고리</label>';
-    html += '<select class="select-input" id="reqCategory" style="width:100%">';
-    Object.keys(CATEGORIES).forEach(function (k) {
-      html += '<option value="' + k + '">' + CATEGORIES[k].icon + ' ' + CATEGORIES[k].label + '</option>';
+    html += '<label>\uCE74\uD14C\uACE0\uB9AC</label>';
+    html += '<div class="toggle-group" id="categoryToggle">';
+    Object.keys(CATEGORIES).forEach(function (k, i) {
+      html += '<button class="toggle-btn ' + k + (i === 0 ? ' active' : '') + '" data-cat="' + k + '">' + CATEGORIES[k].icon + ' ' + CATEGORIES[k].label + '</button>';
     });
-    html += '</select>';
     html += '</div>';
+    html += '</div>';
+
     html += '<div class="form-group">';
-    html += '<label>우선순위</label>';
-    html += '<select class="select-input" id="reqPriority" style="width:100%">';
-    Object.keys(PRIORITIES).forEach(function (k) {
-      html += '<option value="' + k + '">' + PRIORITIES[k].label + '</option>';
+    html += '<label>\uC6B0\uC120\uC21C\uC704</label>';
+    html += '<div class="toggle-group" id="priorityToggle">';
+    Object.keys(PRIORITIES).forEach(function (k, i) {
+      html += '<button class="toggle-btn ' + k + (k === 'normal' ? ' active' : '') + '" data-pri="' + k + '">' + PRIORITIES[k].label + '</button>';
     });
-    html += '</select>';
     html += '</div>';
     html += '</div>';
 
     html += '<div class="form-group">';
-    html += '<label>태그 (쉼표로 구분)</label>';
-    html += '<input class="text-input" id="reqTags" placeholder="예: 삼체만화, CLE, 대시보드">';
+    html += '<label>\uD0DC\uADF8</label>';
+    html += '<div class="tag-input-container" id="tagContainer">';
+    html += '<input class="tag-input" id="tagInput" placeholder="\uC5D4\uD130\uB85C \uCD94\uAC00..." onkeydown="window.__CLE2__.handleTagKey(event)">';
+    html += '</div>';
+    html += '<div style="font-size:0.72rem;color:var(--text3);margin-top:6px">\uC5D4\uD130\uD0A4\uB97C \uB20C\uB7EC \uD0DC\uADF8\uB97C \uCD94\uAC00\uD558\uACE0, x\uB97C \uB20C\uB7EC \uC0AD\uC81C\uD558\uC138\uC694</div>';
     html += '</div>';
 
     html += '<div class="form-group">';
-    html += '<label>작성자</label>';
+    html += '<label>\uC791\uC131\uC790</label>';
     html += '<select class="select-input" id="reqAuthor" style="width:100%">';
     MEMBER_LIST.forEach(function (m) {
       html += '<option value="' + m + '"' + (m === state.currentUser ? ' selected' : '') + '>' + memberAvatar(m) + ' ' + m + '</option>';
@@ -685,15 +710,37 @@
     html += '</select>';
     html += '</div>';
 
+    // Preview
+    html += '<div class="form-preview">';
+    html += '<div class="form-preview-label">\uD83D\uDC41 \uB300\uB7C9 \uBBF8\uB9AC\uBCF4\uAE30</div>';
+    html += '<div id="previewBox" style="font-size:0.85rem;color:var(--text2)">\uC81C\uBAA9\uC744 \uC785\uB825\uD558\uBA74 \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uD45C\uC2DC\uB429\uB2C8\uB2E4.</div>';
+    html += '</div>';
+
     html += '<div class="form-actions">';
-    html += '<a class="btn btn-ghost" href="#/requests">취소</a>';
-    html += '<button class="btn btn-primary" onclick="window.__CLE2__.submitRequest()">등록하기</button>';
+    html += '<a class="btn btn-ghost" href="#/requests">\uCDE8\uC18C</a>';
+    html += '<button class="btn btn-primary" onclick="window.__CLE2__.submitRequest()">\uB4F1\uB85D\uD558\uAE30</button>';
     html += '</div>';
 
     html += '</div>';
     html += '</div>';
 
     render(pageWrap('new', html));
+
+    // Bind toggle groups
+    document.querySelectorAll('#categoryToggle .toggle-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#categoryToggle .toggle-btn').forEach(function (b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        window.__CLE2__.updatePreview();
+      });
+    });
+    document.querySelectorAll('#priorityToggle .toggle-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#priorityToggle .toggle-btn').forEach(function (b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        window.__CLE2__.updatePreview();
+      });
+    });
   }
 
   /* ====== User Page ====== */
@@ -705,7 +752,7 @@
 
     var html = '<div style="padding-top:24px">';
 
-    html += '<a class="dh-back" href="#/">← 홈으로</a>';
+    html += '<a class="detail-back" href="#/">← 홈으로</a>';
 
     html += '<div class="user-header">';
     html += '<div class="uh-avatar">' + (member ? member.avatar : '👤') + '</div>';
@@ -746,9 +793,9 @@
 
   /* ====== Agents Page ====== */
   function renderAgents() {
-    var html = '<div style="padding-top:24px">';
-    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:8px">🤖 에이전트 패널</h1>';
-    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">대구루와 레노버의 작업 현황을 확인하세요</p>';
+    var html = '<div style="padding-top:24px" class="page-enter">';
+    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:8px">\uD83E\uDD16 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110</h1>';
+    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:28px">\uB300\uAD6C\uB8E8\uC640 \uB808\uB178\uBC84\uC758 \uC791\uC5C5 \uD604\uD669\uC744 \uD655\uC778\uD558\uC138\uC694</p>';
 
     html += '<div class="agent-grid">';
 
@@ -757,8 +804,10 @@
       var aReqs = state.requests.filter(function (r) { return r.assignees && r.assignees.indexOf(a) >= 0; });
       var aDone = aReqs.filter(function (r) { return r.status === 'done'; }).length;
       var aActive = aReqs.filter(function (r) { return r.status === 'in-progress' || r.status === 'approved'; }).length;
+      var aProposed = aReqs.filter(function (r) { return r.status === 'proposed' || r.status === 'reviewing'; }).length;
 
       var isActive = aActive > 0;
+      var pct = aReqs.length > 0 ? Math.round(aDone / aReqs.length * 100) : 0;
 
       html += '<div class="agent-card">';
       html += '<div class="ac-avatar">' + member.avatar + '</div>';
@@ -766,11 +815,44 @@
       html += '<div class="ac-role">' + member.role + '</div>';
       html += '<div class="ac-desc">' + member.desc + '</div>';
       html += '<div class="ac-stats">';
-      html += '<div class="ac-stat"><div class="ac-val">' + aReqs.length + '</div><div class="ac-label">전체</div></div>';
-      html += '<div class="ac-stat"><div class="ac-val">' + aActive + '</div><div class="ac-label">진행 중</div></div>';
-      html += '<div class="ac-stat"><div class="ac-val">' + aDone + '</div><div class="ac-label">완료</div></div>';
+      html += '<div class="ac-stat"><div class="ac-val">' + aReqs.length + '</div><div class="ac-label">\uC804\uCCB4</div></div>';
+      html += '<div class="ac-stat"><div class="ac-val">' + aActive + '</div><div class="ac-label">\uC9C4\uD589 \uC911</div></div>';
+      html += '<div class="ac-stat"><div class="ac-val">' + aDone + '</div><div class="ac-label">\uC644\uB8CC</div></div>';
       html += '</div>';
-      html += '<span class="agent-status ' + (isActive ? 'active' : 'idle') + '">' + (isActive ? '🔵 작업 중' : '⚪ 대기') + '</span>';
+
+      // Stat bar
+      html += '<div class="stat-bar" style="position:relative;z-index:1">';
+      if (aDone > 0) html += '<div class="stat-bar-segment" style="width:' + (aDone/aReqs.length*100) + '%;background:var(--green)"></div>';
+      if (aActive > 0) html += '<div class="stat-bar-segment" style="width:' + (aActive/aReqs.length*100) + '%;background:var(--purple)"></div>';
+      if (aProposed > 0) html += '<div class="stat-bar-segment" style="width:' + (aProposed/aReqs.length*100) + '%;background:var(--amber)"></div>';
+      html += '</div>';
+      html += '<div style="font-size:0.7rem;color:var(--text3);text-align:center;margin-top:6px;position:relative;z-index:1">\uC644\uB8CC\uC728: ' + pct + '%</div>';
+
+      // Status
+      html += '<div style="margin-top:14px;position:relative;z-index:1">';
+      html += '<span class="agent-status ' + (isActive ? 'active' : 'idle') + '">';
+      html += '<span class="agent-status-dot"></span>';
+      html += (isActive ? '\uC791\uC5C5 \uC911' : '\uB300\uAE30 \uC911');
+      html += '</span>';
+      html += '</div>';
+
+      // Assigned tasks list
+      if (aReqs.length > 0) {
+        html += '<div class="agent-tasks">';
+        html += '<h4>\uD560\uB2F9\uB41C \uC694\uAD6C\uC0AC\uD56D</h4>';
+        aReqs.slice(0, 4).forEach(function (r) {
+          var stObj = STATUSES[r.status] || STATUSES.proposed;
+          html += '<div class="agent-task-item" onclick="location.hash=\'#/requests/' + r.id + '\'">';
+          html += '<span>' + stObj.icon + '</span>';
+          html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(r.title) + '</span>';
+          html += '</div>';
+        });
+        if (aReqs.length > 4) {
+          html += '<div style="text-align:center;font-size:0.75rem;color:var(--text3);padding:6px">+' + (aReqs.length - 4) + '\uAC1C \uB354 \uBCF4\uAE30</div>';
+        }
+        html += '</div>';
+      }
+
       html += '</div>';
     });
 
@@ -778,12 +860,12 @@
 
     // Recent agent work
     html += '<div class="section">';
-    html += '<div class="section-header"><h2>📋 에이전트 할당 요구사항</h2></div>';
+    html += '<div class="section-header"><h2>\uD83D\uDCCB \uC5D0\uC774\uC804\uD2B8 \uD560\uB2F9 \uC694\uAD6C\uC0AC\uD56D</h2></div>';
     var agentReqs = state.requests.filter(function (r) {
       return r.assignees && r.assignees.some(function (a) { return AGENTS.indexOf(a) >= 0; });
     });
     if (agentReqs.length === 0) {
-      html += '<div class="empty-state"><div class="es-icon">🤖</div><div class="es-text">에이전트에 할당된 요구사항이 없습니다</div></div>';
+      html += '<div class="empty-state"><div class="es-icon">\uD83E\uDD16</div><div class="es-text">\uC5D0\uC774\uC804\uD2B8\uC5D0 \uD560\uB2F9\uB41C \uC694\uAD6C\uC0AC\uD56D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4</div></div>';
     } else {
       html += '<div class="grid">';
       agentReqs.forEach(function (r) { html += requestCardHTML(r); });
@@ -961,17 +1043,19 @@
       renderDetail(id);
     },
 
+    _formTags: [],
     submitRequest: function () {
       var title = document.getElementById('reqTitle').value.trim();
       var desc = document.getElementById('reqDesc').value.trim();
-      if (!title) { showToast('⚠️ 제목을 입력하세요', 'error'); return; }
-      if (!desc) { showToast('⚠️ 설명을 입력하세요', 'error'); return; }
+      if (!title) { showToast('\u26A0\uFE0F \uC81C\uBAA9\uC744 \uC785\uB825\uD558\uC138\uC694', 'error'); return; }
+      if (!desc) { showToast('\u26A0\uFE0F \uC124\uBA85\uC744 \uC785\uB825\uD558\uC138\uC694', 'error'); return; }
 
-      var cat = document.getElementById('reqCategory').value;
-      var pri = document.getElementById('reqPriority').value;
-      var tagsRaw = document.getElementById('reqTags').value.trim();
+      var catBtn = document.querySelector('#categoryToggle .toggle-btn.active');
+      var cat = catBtn ? catBtn.getAttribute('data-cat') : 'feature';
+      var priBtn = document.querySelector('#priorityToggle .toggle-btn.active');
+      var pri = priBtn ? priBtn.getAttribute('data-pri') : 'normal';
+      var tags = window.__CLE2__._formTags.slice();
       var author = document.getElementById('reqAuthor').value;
-      var tags = tagsRaw ? tagsRaw.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : [];
 
       var now = new Date().toISOString();
       var newReq = {
@@ -1038,6 +1122,66 @@
       location.hash = '#/';
     },
 
+    handleTagKey: function (e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        var input = e.target;
+        var val = input.value.trim();
+        if (val && window.__CLE2__._formTags.indexOf(val) < 0) {
+          window.__CLE2__._formTags.push(val);
+          window.__CLE2__.renderTagChips();
+          input.value = '';
+          window.__CLE2__.updatePreview();
+        }
+      } else if (e.key === 'Backspace' && !e.target.value && window.__CLE2__._formTags.length) {
+        window.__CLE2__._formTags.pop();
+        window.__CLE2__.renderTagChips();
+        window.__CLE2__.updatePreview();
+      }
+    },
+    removeTag: function (idx) {
+      window.__CLE2__._formTags.splice(idx, 1);
+      window.__CLE2__.renderTagChips();
+      window.__CLE2__.updatePreview();
+    },
+    renderTagChips: function () {
+      var container = document.getElementById('tagContainer');
+      if (!container) return;
+      var input = document.getElementById('tagInput');
+      var chips = window.__CLE2__._formTags.map(function (t, i) {
+        return '<span class="tag-chip">' + t.replace(/</g, '&lt;') + '<span class="tag-remove" onclick="window.__CLE2__.removeTag(' + i + ')">\u00D7</span></span>';
+      }).join('');
+      container.innerHTML = chips + '<input class="tag-input" id="tagInput" placeholder="\uC5D4\uD130\uB85C \uCD94\uAC00..." onkeydown="window.__CLE2__.handleTagKey(event)">';
+      var newInput = document.getElementById('tagInput');
+      if (newInput) newInput.focus();
+    },
+    updatePreview: function () {
+      var title = document.getElementById('reqTitle');
+      var desc = document.getElementById('reqDesc');
+      var preview = document.getElementById('previewBox');
+      if (!preview) return;
+      var t = title ? title.value.trim() : '';
+      var d = desc ? desc.value.trim() : '';
+      var catBtn = document.querySelector('#categoryToggle .toggle-btn.active');
+      var catKey = catBtn ? catBtn.getAttribute('data-cat') : 'feature';
+      var priBtn = document.querySelector('#priorityToggle .toggle-btn.active');
+      var priKey = priBtn ? priBtn.getAttribute('data-pri') : 'normal';
+      var cat = CATEGORIES[catKey] || CATEGORIES.feature;
+      var pri = PRIORITIES[priKey] || PRIORITIES.normal;
+      if (!t && !d) {
+        preview.innerHTML = '\uC81C\uBAA9\uC744 \uC785\uB825\uD558\uBA74 \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uD45C\uC2DC\uB429\uB2C8\uB2E4.';
+        preview.style.color = 'var(--text2)';
+        return;
+      }
+      preview.style.color = 'var(--text)';
+      var html = '<div style="font-weight:600;margin-bottom:6px">' + esc(t || '(\uC81C\uBAA9 \uC5C6\uC74C)') + '</div>';
+      html += '<div style="margin-bottom:8px"><span class="badge badge-type ' + cat.cls + '">' + cat.icon + ' ' + cat.label + '</span> <span class="badge badge-priority ' + pri.cls + '">' + pri.label + '</span></div>';
+      if (d) html += '<div style="color:var(--text2);white-space:pre-wrap;font-size:0.82rem">' + esc(d.slice(0, 200)) + (d.length > 200 ? '...' : '') + '</div>';
+      if (window.__CLE2__._formTags.length) {
+        html += '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">' + window.__CLE2__._formTags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>';
+      }
+      preview.innerHTML = html;
+    },
     _userReqs: {}
   };
 
