@@ -12,6 +12,8 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
+  var DATA_VERSION = 'v3';
+  var VERSION_KEY = 'cle2_data_version';
 
   var CATEGORIES = {
     feature: { label: '기능', icon: '✨', cls: 'feature' },
@@ -186,12 +188,27 @@
       saveRequests();
     }
 
+    // Check data version — force reload if version changed
+    var storedVersion = localStorage.getItem(VERSION_KEY);
+    var needsReload = storedVersion !== DATA_VERSION;
+
+    if (needsReload) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(COMMENT_KEY);
+      localStorage.setItem(VERSION_KEY, DATA_VERSION);
+    }
+
     var rawC = localStorage.getItem(COMMENT_KEY);
-    if (rawC) {
+    if (rawC && !needsReload) {
       try { state.comments = JSON.parse(rawC); } catch (e) { state.comments = {}; }
     } else {
       state.comments = JSON.parse(JSON.stringify(DUMMY_COMMENTS));
       saveComments();
+    }
+
+    if (needsReload) {
+      state.requests = JSON.parse(JSON.stringify(DUMMY_REQUESTS));
+      saveRequests();
     }
 
     var rawS = localStorage.getItem(SETTINGS_KEY);
