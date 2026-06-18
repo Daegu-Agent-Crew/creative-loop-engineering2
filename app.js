@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v5';
+  var DATA_VERSION = 'v6';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
 
@@ -526,6 +526,136 @@
     acts.sort(function (a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
     return limit ? acts.slice(0, limit) : acts;
   }
+
+
+  /* ====== GitHub Issues API Layer ====== */
+  var GH_REPO = 'Daegu-Agent-Crew/creative-loop-engineering2';
+  var GH_API = 'https://api.github.com/repos/' + GH_REPO + '';
+
+  function ghHeaders() {
+    var token = state.settings.githubToken;
+    if (!token) return null;
+    return {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+  }
+
+  function ghEnabled() {
+    return !!(state.settings.githubToken && state.settings.githubToken.length > 10);
+  }
+
+  function ghLabelFor(type, key) {
+    if (type === 'category') return 'cle:' + key;
+    if (type === 'priority') return 'p:' + key;
+    if (type === 'status') return 's:' + key;
+    return key;
+  }
+
+  function ghBuildLabels(r) {
+    var labels = ['cle:' + r.category, 'p:' + r.priority, 's:' + r.status];
+    if (r.tags) r.tags.forEach(function(t) { labels.push('tag:' + t); });
+    return labels;
+  }
+
+  function ghBuildBody(r) {
+    var body = r.description + '\\n';
+    body += '\\n---\\n';
+    body += '**작성자:** ' + r.author + '\\n';
+    body += '**우선순위:** ' + (PRIORITIES[r.priority] || {}).label + '\\n';
+    body += '**카테고리:** ' + (CATEGORIES[r.category] || {}).label + '\\n';
+    body += '**태그:** ' + (r.tags || []).join(', ') + '\\n';
+    body += '**CLE2-ID:** ' + r.id + '\\n';
+    return body;
+  }
+
+  function ghCreateIssue(r, cb) {
+    var headers = ghHeaders();
+    if (!headers) { if (cb) cb(null); return; }
+    fetch(GH_API + '/issues', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        title: '[CLE2-' + r.id + '] ' + r.title,
+        body: ghBuildBody(r),
+        labels: ghBuildLabels(r)
+      })
+    }).then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data.number) {
+          r.githubIssue = data.number;
+          saveRequests();
+        }
+        if (cb) cb(data);
+      })
+      .catch(function(err) { console.error('GH create error:', err); if (cb) cb(null); });
+  }
+
+  function ghUpdateIssue(r, cb) {
+    var headers = ghHeaders();
+    if (!headers || !r.githubIssue) { if (cb) cb(null); return; }
+    fetch(GH_API + '/issues/' + r.githubIssue, {
+      method: 'PATCH',
+      headers: headers,
+      body: JSON.stringify({
+        title: '[CLE2-' + r.id + '] ' + r.title,
+        body: ghBuildBody(r),
+        labels: ghBuildLabels(r),
+        state: r.status === 'done' ? 'closed' : 'open'
+      })
+    }).then(function(res) { return res.json(); })
+      .then(function(data) { if (cb) cb(data); })
+      .catch(function(err) { console.error('GH update error:', err); if (cb) cb(null); });
+  }
+
+  function ghAddComment(r, text, cb) {
+    var headers = ghHeaders();
+    if (!headers || !r.githubIssue) { if (cb) cb(null); return; }
+    fetch(GH_API + '/issues/' + r.githubIssue + '/comments', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ body: text })
+    }).then(function(res) { return res.json(); })
+      .then(function(data) { if (cb) cb(data); })
+      .catch(function(err) { console.error('GH comment error:', err); if (cb) cb(null); });
+  }
+
+  function ghSyncFromIssues(cb) {
+    var headers = ghHeaders();
+    if (!headers) { if (cb) cb(null); return; }
+    fetch(GH_API + '/issues?state=all&labels=cle:feature,cle:bug,cle:improvement,cle:idea&per_page=100', {
+      headers: headers
+    }).then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!Array.isArray(data)) { if (cb) cb(null); return; }
+        var synced = 0;
+        data.forEach(function(issue) {
+          // Parse CLE2-ID from title
+          var match = issue.title.match(/\[CLE2-(\d+)\]/);
+          if (!match) return;
+          var reqId = parseInt(match[1]);
+          var req = getRequest(reqId);
+          if (req) {
+            req.githubIssue = issue.number;
+            // Update status from labels
+            var statusLabel = issue.labels.find(function(l) { return l.name.indexOf('s:') === 0; });
+            if (statusLabel) {
+              req.status = statusLabel.name.slice(2);
+            }
+            // Update assignees
+            if (issue.assignees && issue.assignees.length) {
+              req.assignees = issue.assignees.map(function(a) { return a.login; });
+            }
+            synced++;
+          }
+        });
+        saveRequests();
+        if (cb) cb(synced);
+      })
+      .catch(function(err) { console.error('GH sync error:', err); if (cb) cb(null); });
+  }
+
 
   /* ====== Router ====== */
   function route() {
@@ -1408,10 +1538,18 @@
     html += '<div class="settings-card">';
     html += '<h3>🔐 GitHub 연동</h3>';
     html += '<p class="sc-desc">GitHub Issues와 동기화하여 백엔드로 사용합니다.</p>';
-    html += '<div class="sc-status">Phase 2 예정</div>';
+    html += '<div class="sc-status sc-active">활성화됨</div>';
     html += '<div style="margin-top:14px">';
     html += '<label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:6px;color:var(--text2)">GitHub Personal Access Token</label>';
-    html += '<input class="text-input" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" value="' + esc(state.settings.githubToken || '') + '" disabled style="opacity:0.5">';
+    html += '<input class="text-input" id="githubToken" type="password" placeholder="ghp_xxxxxxxxxxxx" value="' + esc(state.settings.githubToken || '') + '">';
+    html += '<div style="margin-top:8px"><button class="btn btn-primary btn-sm" onclick="window.__CLE2__.saveSettings()">저장</button>';
+    html += ' <button class="btn btn-secondary btn-sm" onclick="window.__CLE2__.syncFromGitHub()">GitHub에서 동기화</button></div>';
+    html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">저장소: Daegu-Agent-Crew/creative-loop-engineering2</div>';
+    if (ghEnabled()) {
+      html += '<div style="margin-top:6px;font-size:0.75rem;color:var(--green)">✅ GitHub 연결됨 — 새 요구사항/댓글이 Issue로 저장됩니다</div>';
+    } else {
+      html += '<div style="margin-top:6px;font-size:0.75rem;color:var(--text3)">토큰 입력 후 저장을 누르면 연결됩니다</div>';
+    }
     html += '</div>';
     html += '</div>';
 
@@ -1442,7 +1580,7 @@
     html += '</div>';
 
     html += '<div style="margin-top:20px;font-size:0.78rem;color:var(--text3);text-align:center">';
-    html += 'CLE2 v1.1.0 · Phase 1 · localStorage 모드<br>';
+    html += 'CLE2 v1.2.0 · GitHub Issues 연동 지원<br>';
     html += 'Daegu Agent Crew © 2026';
     html += '</div>';
 
@@ -1619,6 +1757,12 @@
           }
         });
       }
+      // Sync to GitHub
+      if (ghEnabled() && r.githubIssue) {
+        ghUpdateIssue(r, function(data) {
+          if (data) showToast('🔄 GitHub Issue #' + r.githubIssue + ' 업데이트됨', 'success');
+        });
+      }
       renderDetail(id);
     },
 
@@ -1643,6 +1787,12 @@
       }
       r.updatedAt = new Date().toISOString();
       saveRequests();
+      // Sync to GitHub
+      if (ghEnabled() && r.githubIssue) {
+        ghUpdateIssue(r, function(data) {
+          if (data) showToast('🔄 GitHub Issue #' + r.githubIssue + ' 업데이트됨', 'success');
+        });
+      }
       renderDetail(id);
     },
 
@@ -1668,6 +1818,10 @@
             var msg = queueMessage(a, state.currentUser, id, '#' + id + ' "' + r.title + '"에 ' + state.currentUser + '님이 댓글을 남겼습니다.');
           }
         });
+      }
+      // Sync comment to GitHub
+      if (ghEnabled() && r && r.githubIssue) {
+        ghAddComment(r, '**' + state.currentUser + ':** ' + input.value.trim());
       }
       renderDetail(id);
     },
@@ -1707,7 +1861,17 @@
       state.requests.unshift(newReq);
       saveRequests();
       showToast('✅ 요구사항이 등록되었습니다!', 'success');
-      showToast('💬 Discord에 알림 전송됨 (시뮬레이션)', 'success');
+      // Sync to GitHub Issues
+      if (ghEnabled()) {
+        showToast('🔄 GitHub Issue 생성 중...', 'success');
+        ghCreateIssue(newReq, function(data) {
+          if (data && data.number) {
+            showToast('✅ GitHub Issue #' + data.number + ' 생성됨', 'success');
+          } else {
+            showToast('⚠️ GitHub 동기화 실패 (토큰 확인)', 'error');
+          }
+        });
+      }
       location.hash = '#/requests/' + newReq.id;
     },
 
@@ -1737,6 +1901,33 @@
     setWikiCategory: function (cat) {
       state.wiki.category = cat;
       renderWiki();
+    },
+
+    saveSettings: function () {
+      var tokenEl = document.getElementById('githubToken');
+      var webhookEl = document.getElementById('discordWebhook');
+      if (tokenEl) state.settings.githubToken = tokenEl.value.trim();
+      if (webhookEl) state.settings.discordWebhook = webhookEl.value.trim();
+      saveSettings();
+      if (ghEnabled()) {
+        showToast('✅ GitHub 연결 성공! Issue 동기화 활성화', 'success');
+      } else {
+        showToast('설정이 저장되었습니다', 'success');
+      }
+      renderSettings();
+    },
+
+    syncFromGitHub: function () {
+      if (!ghEnabled()) { showToast('⚠️ GitHub 토큰을 먼저 입력하세요', 'error'); return; }
+      showToast('🔄 GitHub에서 데이터 동기화 중...', 'success');
+      ghSyncFromIssues(function(count) {
+        if (count !== null) {
+          showToast('✅ ' + count + '개 요구사항 동기화됨', 'success');
+          renderRequestList();
+        } else {
+          showToast('⚠️ 동기화 실패 — 토큰 권한 확인 필요', 'error');
+        }
+      });
     },
 
     filterMessages: function(filter) {
