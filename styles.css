@@ -1526,3 +1526,191 @@ a:hover { color: var(--accent3); }
   .request-card { padding: 16px 16px 16px 20px; }
   .form-preview { display: none; }
 }
+/* ========================================
+   Activity Timeline
+   ======================================== */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before {
+  content: ''; position: absolute; left: 7px; top: 4px; bottom: 4px;
+  width: 2px; background: var(--border); border-radius: 1px;
+}
+.timeline-item { position: relative; padding: 6px 0 6px 16px; }
+.timeline-item::before {
+  content: ''; position: absolute; left: -20px; top: 10px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--border2);
+}
+.timeline-item.act-created::before { border-color: var(--green); background: var(--green-dim); }
+.timeline-item.act-status::before { border-color: var(--blue); background: var(--blue-dim); }
+.timeline-item.act-assigned::before { border-color: var(--purple); background: var(--purple-dim); }
+.timeline-item.act-comment::before { border-color: var(--text3); }
+.timeline-item.act-vote::before { border-color: var(--amber); background: var(--amber-dim); }
+.timeline-item .ti-inner {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  font-size: 0.82rem; color: var(--text2); line-height: 1.5;
+}
+.timeline-item .ti-icon { font-size: 0.9rem; flex-shrink: 0; }
+.timeline-item .ti-actor { font-weight: 600; color: var(--text); }
+.timeline-item .ti-action { color: var(--text2); }
+.timeline-item .ti-target { color: var(--accent2); font-weight: 500; }
+.timeline-item .ti-time { color: var(--text3); font-size: 0.72rem; margin-left: auto; }
+.timeline-item.is-agent .ti-actor { color: var(--purple); }
+
+/* ========================================
+   Wiki Page
+   ======================================== */
+.wiki-layout { display: flex; gap: 24px; padding-top: 24px; }
+.wiki-sidebar {
+  width: 200px; flex-shrink: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; position: sticky; top: 72px;
+  max-height: calc(100vh - 90px); overflow-y: auto;
+}
+.wiki-cat-title {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text3); margin: 12px 0 4px; padding-left: 8px;
+}
+.wiki-cat-item {
+  display: block; padding: 6px 10px; border-radius: var(--radius-sm);
+  font-size: 0.83rem; color: var(--text2); cursor: pointer;
+  transition: all var(--transition);
+}
+.wiki-cat-item:hover { background: var(--surface2); color: var(--text); }
+.wiki-cat-item.active { background: var(--accent-dim); color: var(--accent2); font-weight: 600; }
+.wiki-main { flex: 1; min-width: 0; }
+.wiki-page-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 16px;
+}
+.wiki-page-card h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+.wiki-page-card .wiki-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.wiki-page-card .wiki-content { font-size: 0.9rem; color: var(--text); line-height: 1.8; }
+.wiki-page-card .wiki-gh-link {
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.wiki-search-bar {
+  width: 100%; padding: 10px 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 0.85rem; margin-bottom: 16px;
+}
+.wiki-search-bar:focus { outline: none; border-color: var(--accent); }
+.wiki-records { margin-top: 24px; }
+.wiki-repo-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); margin-bottom: 8px; transition: all var(--transition);
+}
+.wiki-repo-card:hover { border-color: var(--accent); }
+.wiki-repo-card .repo-icon { font-size: 1.2rem; }
+.wiki-repo-card .repo-info { flex: 1; }
+.wiki-repo-card .repo-name { font-weight: 600; font-size: 0.85rem; }
+.wiki-repo-card .repo-desc { font-size: 0.78rem; color: var(--text2); }
+.wiki-repo-card .repo-members { font-size: 0.72rem; color: var(--text3); }
+
+@media (max-width: 768px) {
+  .wiki-layout { flex-direction: column; }
+  .wiki-sidebar { width: 100%; position: relative; top: 0; max-height: none; }
+}
+
+/* ========================================
+   Discord Messages Table
+   ======================================== */
+.msg-stats { display: flex; gap: 12px; margin-bottom: 20px; }
+.msg-stat-card {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; text-align: center;
+}
+.msg-stat-card.pending { border-color: var(--amber); }
+.msg-stat-card.read { border-color: var(--green); }
+.ms-num { font-size: 1.8rem; font-weight: 800; }
+.ms-label { font-size: 0.78rem; color: var(--text2); }
+
+.msg-filter-bar { display: flex; gap: 6px; margin-bottom: 12px; }
+.msg-filter-btn {
+  padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); font-size: 0.78rem;
+  cursor: pointer; transition: all var(--transition);
+}
+.msg-filter-btn:hover { border-color: var(--accent); }
+.msg-filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent2); }
+
+.msg-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; font-size: 0.82rem;
+}
+.msg-table th {
+  text-align: left; padding: 10px 12px; background: var(--surface2);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text3); font-weight: 600; border-bottom: 1px solid var(--border);
+}
+.msg-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.msg-table tr:last-child td { border-bottom: none; }
+.msg-row.pending { background: rgba(245, 158, 11, 0.04); }
+.msg-row.pending .msg-id { color: var(--amber); font-weight: 700; }
+.msg-row.read .msg-id { color: var(--text3); }
+.msg-id { font-weight: 700; font-size: 0.85rem; }
+.msg-to { font-weight: 600; white-space: nowrap; }
+.msg-from { color: var(--text2); white-space: nowrap; }
+.msg-body .msg-text { color: var(--text); line-height: 1.5; margin-bottom: 3px; }
+.msg-body .msg-req-link { font-size: 0.72rem; color: var(--accent2); }
+.msg-time { color: var(--text3); font-size: 0.72rem; white-space: nowrap; }
+.msg-status.pending { color: var(--amber); font-size: 0.72rem; }
+.msg-status.read { color: var(--green); font-size: 0.72rem; }
+
+.msg-info-box {
+  display: flex; gap: 14px; margin-top: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 16px;
+}
+.msg-info-box .info-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+@media (max-width: 768px) {
+  .msg-table { font-size: 0.75rem; }
+  .msg-table th:nth-child(4), .msg-table td:nth-child(4) { display: none; }
+  .msg-stats { flex-direction: column; }
+}
+
+/* ========================================
+   Agent Panel Enhanced
+   ======================================== */
+.agent-profile-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.agent-profile-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+}
+.agent-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.agent-avatar-lg {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; background: var(--surface2); border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.agent-name { font-size: 1.2rem; font-weight: 700; }
+.agent-role { font-size: 0.8rem; color: var(--text2); }
+.agent-desc { font-size: 0.85rem; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+.agent-stats-bar { display: flex; gap: 16px; margin-bottom: 16px; }
+.agent-stat { text-align: center; }
+.agent-stat .as-num { font-size: 1.4rem; font-weight: 700; }
+.agent-stat .as-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; }
+.agent-activity-feed { margin-top: 12px; }
+.agent-activity-feed h4 { font-size: 0.82rem; color: var(--text2); margin-bottom: 8px; }
+
+/* ========================================
+   Detail Page Timeline Section
+   ======================================== */
+.detail-timeline-section {
+  margin-top: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.detail-timeline-section h3 {
+  font-size: 0.9rem; font-weight: 600; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
