@@ -353,13 +353,13 @@
   }
 
   function ghBuildBody(r) {
-    var body = r.description + '\\n';
-    body += '\\n---\\n';
-    body += '**작성자:** ' + r.author + '\\n';
-    body += '**우선순위:** ' + (PRIORITIES[r.priority] || {}).label + '\\n';
-    body += '**카테고리:** ' + (CATEGORIES[r.category] || {}).label + '\\n';
-    body += '**태그:** ' + (r.tags || []).join(', ') + '\\n';
-    body += '**CLE2-ID:** ' + r.id + '\\n';
+    var body = r.description + '\n';
+    body += '\n---\n';
+    body += '**작성자:** ' + r.author + '\n';
+    body += '**우선순위:** ' + (PRIORITIES[r.priority] || {}).label + '\n';
+    body += '**카테고리:** ' + (CATEGORIES[r.category] || {}).label + '\n';
+    body += '**태그:** ' + (r.tags || []).join(', ') + '\n';
+    body += '**CLE2-ID:** ' + r.id + '\n';
     return body;
   }
 
