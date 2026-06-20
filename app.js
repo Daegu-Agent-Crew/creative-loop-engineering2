@@ -111,6 +111,144 @@
     { id: 'rec-005', title: '주간 작업 회고 (6월 둘째 주)', date: '2026-06-16', author: '레노버', summary: '주간 진행률 78%. 완료 2건, 진행 중 4건. 다음 주 목표: OAuth 연동 마무리.' }
   ];
 
+  var TASKS_DATA = [
+    {
+      id: 'CLE2-1',
+      cle2Id: 'CLE2-1',
+      slug: 'team-memory',
+      title: 'team-memory 활성화',
+      issue: 1,
+      goal: {
+        objective: 'team-memory를 실제 팀 작업 흐름에 연결하고 기록, 위키, 자동화 파이프라인이 일관되게 동작하도록 활성화한다.',
+        successCriteria: [
+          '디렉토리 구조와 운영 가이드가 확정되어 있다.',
+          'YouTube→wiki 흐름이 실제로 동작한다.',
+          'Discord 알림과 GitHub Actions 자동화가 연결된다.'
+        ],
+        scope: {
+          in: ['context 디렉토리 구조 정비', '자동 연동 파이프라인 설계', 'Discord 알림 자동화', 'GitHub Actions 워크플로우'],
+          out: ['새 메모리 시스템 재설계', '위키 외부 서비스 마이그레이션', '팀 외부 조직용 범용 배포']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 구조 정비', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 자동 연동 설계', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 3 · 운영 활성화', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 3 },
+        completedTasks: ['디렉토리 구조 확정', '가이드라인 작성', 'youtube-to-wiki 성공'],
+        currentTasks: ['Discord 알림 자동화', '자동 연동 파이프라인 설계 정리'],
+        nextTasks: ['GitHub Actions 워크플로우', '팀원 온보딩'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '디렉토리 구조 검토', method: '수동 점검', expected: 'records/registry/wiki 구조가 확정된다', passed: true },
+          { name: '가이드라인 문서 확인', method: '문서 리뷰', expected: '팀원이 동일 규칙으로 사용할 수 있다', passed: true },
+          { name: 'youtube-to-wiki 연결', method: '엔드투엔드 실행', expected: '입력 영상이 위키 문서로 생성된다', passed: true },
+          { name: 'Discord 알림 자동화', method: '통합 테스트', expected: '작업 이벤트가 Discord로 전송된다', passed: false },
+          { name: 'GitHub Actions 워크플로우', method: 'CI 시뮬레이션', expected: '저장소 이벤트에 맞춰 자동 파이프라인이 실행된다', passed: false }
+        ]
+      }
+    },
+    {
+      id: 'CLE2-2',
+      cle2Id: 'CLE2-2',
+      slug: 'youtube-to-wiki-skill',
+      title: '유튜브→wiki 스킬',
+      issue: 3,
+      goal: {
+        objective: '유튜브 영상을 team-memory 위키 문서로 변환하는 스킬을 구축하고 반복 가능한 자동 처리 흐름을 만든다.',
+        successCriteria: [
+          '자막 추출부터 구조화 요약까지 자동 처리된다.',
+          '결과가 GitHub에 등록되고 스킬로 재사용 가능하다.',
+          '이슈 댓글 자동화까지 마무리된다.'
+        ],
+        scope: {
+          in: ['자막 추출', '정제', '구조화 요약', 'GitHub 등록', '스킬화', '이슈 댓글 자동화'],
+          out: ['영상 편집 기능', '비유튜브 플랫폼 범용 수집기', '대규모 배치 인프라']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 자막 추출', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 텍스트 정제', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · 구조화 요약', owner: '대구루', status: 'done' },
+          { name: 'Phase 4 · GitHub 등록 및 스킬화', owner: '대구루', status: 'done' },
+          { name: 'Phase 5 · 자동화 마무리', owner: '대구루', status: 'in-progress' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 4, total: 5 },
+        completedTasks: ['자막추출', '정제', '구조화요약', 'GitHub등록', '스킬화'],
+        currentTasks: ['이슈 댓글 자동화'],
+        nextTasks: ['잔여 테스트 1건 통과', '자동화 안정화'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '자막 추출', method: '샘플 영상 실행', expected: '자막 원문이 생성된다', passed: true },
+          { name: '자막 정제', method: '텍스트 처리 검증', expected: '노이즈가 제거된 텍스트가 생성된다', passed: true },
+          { name: '구조화 요약', method: '요약 출력 비교', expected: '위키 구조에 맞는 요약이 생성된다', passed: true },
+          { name: 'GitHub 등록', method: '원격 저장소 반영 확인', expected: '문서가 저장소에 등록된다', passed: true },
+          { name: '스킬화', method: '재호출 테스트', expected: '동일 흐름을 스킬로 재사용할 수 있다', passed: true },
+          { name: '에러 처리', method: '실패 시나리오 검증', expected: '오류 상황에서 안전하게 종료된다', passed: true },
+          { name: '문서 포맷 일관성', method: '출력 포맷 검수', expected: '위키 문서 형식이 일관된다', passed: true },
+          { name: '이슈 댓글 자동화', method: 'GitHub 통합 테스트', expected: '처리 결과가 이슈 댓글로 자동 남는다', passed: false }
+        ]
+      }
+    },
+    {
+      id: 'CLE2-3',
+      cle2Id: 'CLE2-3',
+      slug: 'cle2-improvements',
+      title: 'CLE2 개선',
+      issue: 4,
+      goal: {
+        objective: 'CLE2 웹앱의 작업 관리 경험을 개선하고 기존 이슈 문서화와 템플릿 체계를 정비해 운영 품질을 높인다.',
+        successCriteria: [
+          '디렉토리 구조와 템플릿이 정리되어 있다.',
+          '기존 이슈가 문서화되어 추적 가능하다.',
+          '웹앱에 태스크 대시보드가 추가되고 테스트 후 배포된다.'
+        ],
+        scope: {
+          in: ['디렉토리구조', '템플릿', '기존이슈 문서화', '웹앱 태스크 대시보드', '테스트 및 배포'],
+          out: ['SPA 프레임워크 전환', '백엔드 서비스 신규 구축', '모바일 앱 개발']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 기초 정비', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 문서화', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · 웹앱 대시보드', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 4 · 테스트 및 배포', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 2, total: 4 },
+        completedTasks: ['디렉토리구조', '템플릿', '기존이슈 문서화'],
+        currentTasks: ['웹앱 태스크 대시보드'],
+        nextTasks: ['테스트 및 배포'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '디렉토리 구조 검증', method: '수동 점검', expected: '프로젝트 구조가 일관된다', passed: true },
+          { name: '템플릿 검수', method: '문서 리뷰', expected: '반복 작업용 템플릿이 사용 가능하다', passed: true },
+          { name: '기존 이슈 문서화 확인', method: '링크 및 내용 검토', expected: '주요 이슈가 문서로 추적된다', passed: true },
+          { name: '태스크 대시보드 동작', method: '브라우저 수동 테스트', expected: '목록/상세/탭 이동이 정상 동작한다', passed: false },
+          { name: '배포 검증', method: '릴리스 체크', expected: '배포 후 화면과 라우팅이 정상 동작한다', passed: false }
+        ]
+      }
+    }
+  ];
+
   /* ====== State ====== */
   var state = {
     currentUser: localStorage.getItem(USER_KEY) || 'sfex11',
@@ -120,7 +258,8 @@
     messages: [],
     settings: { discordWebhook: '', githubToken: '' },
     filter: { type: 'all', status: 'all', sort: 'newest', search: '' },
-    wiki: { category: 'all', search: '' }
+    wiki: { category: 'all', search: '' },
+    tasks: { activeTab: 'goal', currentId: '' }
   };
 
   /* ====== Storage ====== */
@@ -265,8 +404,34 @@
     return state.requests.find(function (r) { return r.id === id; });
   }
 
+  function getTask(id) {
+    return TASKS_DATA.find(function (task) { return task.id === id; });
+  }
+
   function memberAvatar(name) {
     return MEMBERS[name] ? MEMBERS[name].avatar : '👤';
+  }
+
+  function taskStateMeta(stateKey) {
+    if (stateKey === 'done') return { label: '완료', cls: 'done', icon: '✅' };
+    if (stateKey === 'hold') return { label: '보류', cls: 'hold', icon: '⏸️' };
+    if (stateKey === 'reviewing') return { label: '검토 중', cls: 'reviewing', icon: '🔍' };
+    return { label: '진행 중', cls: 'in-progress', icon: '🔧' };
+  }
+
+  function taskProgressPercent(task) {
+    if (!task || !task.status || !task.status.progress || !task.status.progress.total) return 0;
+    return Math.round((task.status.progress.current / task.status.progress.total) * 100);
+  }
+
+  function taskOwner(task) {
+    if (!task || !task.plan || !task.plan.phases || task.plan.phases.length === 0) return '';
+    return task.plan.phases[0].owner;
+  }
+
+  function taskCurrentSummary(task) {
+    if (!task || !task.status || !task.status.currentTasks || task.status.currentTasks.length === 0) return '현재 진행 중인 작업 없음';
+    return task.status.currentTasks[0];
   }
 
   function getMemberRequests(name) {
@@ -507,6 +672,8 @@
     closeToast();
 
     if (parts.length === 0) return renderLanding();
+    if (parts[0] === 'tasks' && parts.length === 1) return renderTasks();
+    if (parts[0] === 'tasks' && parts.length === 2) return renderTaskDetail(parts[1]);
     if (parts[0] === 'requests' && parts.length === 1) return renderRequestList();
     if (parts[0] === 'requests' && parts.length === 2) return renderDetail(parts[1]);
     if (parts[0] === 'new') return renderNewRequest();
@@ -526,6 +693,7 @@
       { href: '#/requests', icon: '📋', label: '요구사항', key: 'requests' },
       { href: '#/new', icon: '➕', label: '등록', key: 'new' },
       { href: '#/agents', icon: '🤖', label: '에이전트', key: 'agents' },
+      { href: '#/tasks', icon: '📋', label: '작업', key: 'tasks' },
       { href: '#/wiki', icon: '📚', label: '위키', key: 'wiki' },
       { href: '#/messages', icon: '📬', label: '메시지', key: 'messages' },
       { href: '#/settings', icon: '⚙️', label: '설정', key: 'settings' }
@@ -585,6 +753,7 @@
     html += '<a class="quick-action" href="#/new"><span class="qa-icon">➕</span><div><div class="qa-title">새 요구사항 등록</div><div class="qa-desc">아이디어, 버그, 기능 요청</div></div></a>';
     html += '<a class="quick-action" href="#/requests"><span class="qa-icon">📋</span><div><div class="qa-title">전체 요구사항</div><div class="qa-desc">필터 및 검색</div></div></a>';
     html += '<a class="quick-action" href="#/agents"><span class="qa-icon">🤖</span><div><div class="qa-title">에이전트 패널</div><div class="qa-desc">대구루, 레노버 현황</div></div></a>';
+    html += '<a class="quick-action" href="#/tasks"><span class="qa-icon">🗂️</span><div><div class="qa-title">Tasks 대시보드</div><div class="qa-desc">GOAL / PLAN / STATUS / TESTS</div></div></a>';
     html += '<a class="quick-action" href="#/wiki"><span class="qa-icon">📚</span><div><div class="qa-title">팀 위키</div><div class="qa-desc">개념, 프로젝트, 용어 사전</div></div></a>';
     html += '<a class="quick-action" href="#/settings"><span class="qa-icon">⚙️</span><div><div class="qa-title">설정</div><div class="qa-desc">GitHub 연동, 사용자 변경</div></div></a>';
     html += '</div>';
@@ -1211,6 +1380,209 @@
     render(pageWrap('agents', html));
   }
 
+  /* ====== Tasks Dashboard ====== */
+  function renderTasks() {
+    var totalTasks = TASKS_DATA.length;
+    var avgProgress = totalTasks ? Math.round(TASKS_DATA.reduce(function (sum, task) {
+      return sum + taskProgressPercent(task);
+    }, 0) / totalTasks) : 0;
+    var activeTasks = TASKS_DATA.filter(function (task) {
+      return task.status.state === 'in-progress';
+    }).length;
+
+    var html = '<div style="padding-top:24px" class="page-enter">';
+    html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:8px">📋 Tasks 대시보드</h1>';
+    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">tasks/ 디렉토리의 GOAL, PLAN, STATUS, TESTS 문서를 한눈에 확인하세요</p>';
+
+    html += '<div class="stats-grid">';
+    html += statCard('🗂️', totalTasks, '전체 태스크');
+    html += statCard('📈', avgProgress + '%', '평균 진행률');
+    html += statCard('🔧', activeTasks, '진행 중');
+    html += statCard('✅', TASKS_DATA.filter(function (task) { return task.status.state === 'done'; }).length, '완료');
+    html += '</div>';
+
+    html += '<div class="grid">';
+    TASKS_DATA.forEach(function (task) {
+      var stateMeta = taskStateMeta(task.status.state);
+      var owner = taskOwner(task);
+      var ownerMeta = MEMBERS[owner] || { avatar: '👤' };
+      var progressPct = taskProgressPercent(task);
+      html += '<div class="task-card page-enter" onclick="location.hash=\'#/tasks/' + task.id + '\'">';
+      html += '<div class="task-card-head">';
+      html += '<div>';
+      html += '<div class="task-card-title">' + esc(task.id) + ' · ' + esc(task.title) + '</div>';
+      html += '<div class="task-card-sub">Issue #' + task.issue + ' · ' + esc(task.slug) + '</div>';
+      html += '</div>';
+      html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
+      html += '</div>';
+      html += '<div class="task-progress-meta">';
+      html += '<span>Phase ' + task.status.progress.current + '/' + task.status.progress.total + '</span>';
+      html += '<span>' + progressPct + '%</span>';
+      html += '</div>';
+      html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
+      html += '<div class="task-card-owner">';
+      html += '<span class="user-pill">' + ownerMeta.avatar + ' ' + esc(owner) + '</span>';
+      html += '<span class="task-current-line">' + esc(taskCurrentSummary(task)) + '</span>';
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += footerHTML();
+    html += '</div>';
+
+    render(pageWrap('tasks', html));
+  }
+
+  function renderTaskDetail(id, preserveTab) {
+    var task = getTask(id);
+    var activeTab;
+    var owner = taskOwner(task);
+    var ownerMeta = MEMBERS[owner] || { avatar: '👤', role: '' };
+    var stateMeta;
+    var progressPct;
+    var html = '';
+
+    if (!task) return renderNotFound();
+
+    if (state.tasks.currentId !== id && !preserveTab) {
+      state.tasks.activeTab = 'goal';
+    }
+    state.tasks.currentId = id;
+    activeTab = state.tasks.activeTab || 'goal';
+
+    stateMeta = taskStateMeta(task.status.state);
+    progressPct = taskProgressPercent(task);
+
+    html += '<div style="padding-top:24px" class="page-enter">';
+    html += '<a class="detail-back" href="#/tasks">← Tasks 목록으로</a>';
+    html += '<div class="detail-header-card">';
+    html += '<div class="detail-badges">';
+    html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">' + esc(task.id) + '</span>';
+    html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">Issue #' + task.issue + '</span>';
+    html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
+    html += '</div>';
+    html += '<h1>' + esc(task.title) + '</h1>';
+    html += '<div class="detail-meta">';
+    html += '<span class="user-pill">' + ownerMeta.avatar + ' ' + esc(owner) + '</span>';
+    html += '<span>·</span>';
+    html += '<span>Phase ' + task.status.progress.current + '/' + task.status.progress.total + '</span>';
+    html += '<span>·</span>';
+    html += '<span>진행률 ' + progressPct + '%</span>';
+    html += '</div>';
+    html += '<div style="margin-top:16px">';
+    html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="task-detail-tabs">';
+    html += '<button class="' + (activeTab === 'goal' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'goal\')">GOAL</button>';
+    html += '<button class="' + (activeTab === 'plan' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'plan\')">PLAN</button>';
+    html += '<button class="' + (activeTab === 'status' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'status\')">STATUS</button>';
+    html += '<button class="' + (activeTab === 'tests' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'tests\')">TESTS</button>';
+    html += '</div>';
+
+    html += '<div class="task-tab-content">';
+    if (activeTab === 'goal') {
+      html += '<div class="detail-section">';
+      html += '<h3>🎯 목표</h3>';
+      html += '<div class="detail-description">' + esc(task.goal.objective) + '</div>';
+      html += '</div>';
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section">';
+      html += '<h3>✅ 성공 기준</h3>';
+      html += '<ul class="task-check-list">';
+      task.goal.successCriteria.forEach(function (item) {
+        html += '<li>☑️ ' + esc(item) + '</li>';
+      });
+      html += '</ul>';
+      html += '</div>';
+      html += '<div class="detail-section">';
+      html += '<h3>📦 범위</h3>';
+      html += '<div class="task-scope-columns">';
+      html += '<div><div class="task-scope-title">포함</div><ul class="task-scope-list">';
+      task.goal.scope.in.forEach(function (item) {
+        html += '<li>' + esc(item) + '</li>';
+      });
+      html += '</ul></div>';
+      html += '<div><div class="task-scope-title">제외</div><ul class="task-scope-list">';
+      task.goal.scope.out.forEach(function (item) {
+        html += '<li>' + esc(item) + '</li>';
+      });
+      html += '</ul></div>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+    } else if (activeTab === 'plan') {
+      html += '<div class="detail-section">';
+      html += '<h3>🗺️ Phase 계획</h3>';
+      task.plan.phases.forEach(function (phase) {
+        var phaseState = taskStateMeta(phase.status);
+        var phaseOwner = MEMBERS[phase.owner] || { avatar: '👤' };
+        html += '<div class="task-phase-item">';
+        html += '<div class="task-phase-title-row">';
+        html += '<div class="task-phase-title">' + esc(phase.name) + '</div>';
+        html += '<span class="task-state-badge ' + phaseState.cls + '">' + phaseState.icon + ' ' + phaseState.label + '</span>';
+        html += '</div>';
+        html += '<div class="task-phase-meta">' + phaseOwner.avatar + ' ' + esc(phase.owner) + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    } else if (activeTab === 'status') {
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section"><h3>✅ 완료</h3><ul class="task-status-list">';
+      task.status.completedTasks.forEach(function (item) {
+        html += '<li>' + esc(item) + '</li>';
+      });
+      html += '</ul></div>';
+      html += '<div class="detail-section"><h3>🔧 진행 중</h3><ul class="task-status-list">';
+      task.status.currentTasks.forEach(function (item) {
+        html += '<li>' + esc(item) + '</li>';
+      });
+      html += '</ul></div>';
+      html += '</div>';
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section"><h3>⏭️ 다음 작업</h3><ul class="task-status-list">';
+      task.status.nextTasks.forEach(function (item) {
+        html += '<li>' + esc(item) + '</li>';
+      });
+      html += '</ul></div>';
+      html += '<div class="detail-section"><h3>🚧 블로커</h3>';
+      if (task.status.blockers && task.status.blockers.length) {
+        html += '<ul class="task-status-list">';
+        task.status.blockers.forEach(function (item) {
+          html += '<li>' + esc(item) + '</li>';
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="empty-state" style="padding:24px"><div class="es-icon">🟢</div><div class="es-text">현재 보고된 블로커가 없습니다</div></div>';
+      }
+      html += '</div>';
+      html += '</div>';
+    } else if (activeTab === 'tests') {
+      html += '<div class="detail-section">';
+      html += '<h3>🧪 테스트 현황</h3>';
+      html += '<div class="task-test-table-wrap">';
+      html += '<table class="task-test-table">';
+      html += '<thead><tr><th>항목</th><th>방법</th><th>기대 결과</th><th>상태</th></tr></thead><tbody>';
+      task.tests.items.forEach(function (item) {
+        html += '<tr class="task-test-row">';
+        html += '<td>' + esc(item.name) + '</td>';
+        html += '<td>' + esc(item.method) + '</td>';
+        html += '<td>' + esc(item.expected) + '</td>';
+        html += '<td><span class="task-test-badge ' + (item.passed ? 'passed' : 'pending') + '">' + (item.passed ? '통과' : '대기') + '</span></td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    render(pageWrap('tasks', html));
+  }
+
   /* ====== Wiki Page ====== */
   function renderWiki() {
     var html = '<div style="padding-top:24px" class="page-enter">';
@@ -1738,6 +2110,12 @@
     setWikiCategory: function (cat) {
       state.wiki.category = cat;
       renderWiki();
+    },
+
+    setTaskTab: function (taskId, tab) {
+      state.tasks.activeTab = tab;
+      state.tasks.currentId = taskId;
+      renderTaskDetail(taskId, true);
     },
 
     saveSettings: function () {
