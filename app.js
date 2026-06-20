@@ -225,16 +225,16 @@
         phases: [
           { name: 'Phase 1 · 기초 정비', owner: '대구루', status: 'done' },
           { name: 'Phase 2 · 문서화', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · 웹앱 대시보드', owner: '대구루', status: 'in-progress' },
-          { name: 'Phase 4 · 테스트 및 배포', owner: '대구루', status: 'pending' }
+          { name: 'Phase 3 · 웹앱 대시보드', owner: '대구루', status: 'done' },
+          { name: 'Phase 4 · 테스트 및 배포', owner: '대구루', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
-        progress: { current: 2, total: 4 },
-        completedTasks: ['디렉토리구조', '템플릿', '기존이슈 문서화'],
-        currentTasks: ['웹앱 태스크 대시보드'],
-        nextTasks: ['테스트 및 배포'],
+        state: 'done',
+        progress: { current: 4, total: 4 },
+        completedTasks: ['디렉토리구조', '템플릿', '기존이슈 문서화', '웹앱 태스크 대시보드', '테스트 및 배포'],
+        currentTasks: [],
+        nextTasks: [],
         blockers: []
       },
       tests: {
@@ -242,8 +242,8 @@
           { name: '디렉토리 구조 검증', method: '수동 점검', expected: '프로젝트 구조가 일관된다', passed: true },
           { name: '템플릿 검수', method: '문서 리뷰', expected: '반복 작업용 템플릿이 사용 가능하다', passed: true },
           { name: '기존 이슈 문서화 확인', method: '링크 및 내용 검토', expected: '주요 이슈가 문서로 추적된다', passed: true },
-          { name: '태스크 대시보드 동작', method: '브라우저 수동 테스트', expected: '목록/상세/탭 이동이 정상 동작한다', passed: false },
-          { name: '배포 검증', method: '릴리스 체크', expected: '배포 후 화면과 라우팅이 정상 동작한다', passed: false }
+          { name: '태스크 대시보드 동작', method: '브라우저 수동 테스트', expected: '목록/상세/탭 이동이 정상 동작한다', passed: true },
+          { name: '배포 검증', method: '릴리스 체크', expected: '배포 후 화면과 라우팅이 정상 동작한다', passed: true }
         ]
       }
     }
