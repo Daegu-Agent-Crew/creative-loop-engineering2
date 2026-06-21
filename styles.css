@@ -549,6 +549,10 @@ a:hover { color: var(--accent3); }
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
+.task-card-stub {
+  border-style: dashed;
+  opacity: 0.85;
+}
 .task-card-head {
   display: flex;
   align-items: flex-start;

@@ -246,6 +246,47 @@
           { name: '배포 검증', method: '릴리스 체크', expected: '배포 후 화면과 라우팅이 정상 동작한다', passed: true }
         ]
       }
+    },
+    {
+      id: 'CLE2-4',
+      cle2Id: 'CLE2-4',
+      slug: 'task-integration',
+      title: '요구사항↔tasks 통합',
+      issue: 5,
+      goal: {
+        objective: 'TASKS_DATA를 동적 생성으로 변경하고, 요구사항과 tasks를 통합하여 새 이슈가 task 대시보드에 자동 반영되도록 한다.',
+        successCriteria: [
+          'getTasks()가 TASKS_DATA와 state.requests를 머지하여 동적 task 리스트를 반환한다.',
+          '요구사항 상세 페이지에 task 요약 정보가 표시된다.',
+          'Tasks 대시보드에 task가 없는 요구사항도 표시된다.'
+        ],
+        scope: {
+          in: ['getTasks()/getTask() 동적 조회', 'renderDetail task 요약', 'renderTasks 미생성 표시', 'CLE2-4 task 데이터'],
+          out: ['task 자동 생성 자동화', '외부 API 연동', '실시간 웹소켓 동기화']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · getTasks() 구현', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 2 · renderDetail 통합', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · renderTasks 통합', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 3 },
+        completedTasks: ['CLE2-4 task 데이터 추가'],
+        currentTasks: ['getTasks() 동적 머지 구현'],
+        nextTasks: ['renderDetail task 요약', 'renderTasks 미생성 표시'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'getTasks() 머지 검증', method: '수동 확인', expected: '기존 task + 신규 request stub이 반환된다', passed: false },
+          { name: '요구사항 상세 task 요약', method: '브라우저 확인', expected: 'task 정보가 요약 표시된다', passed: false },
+          { name: 'Tasks 대시보드 미생성 표시', method: '브라우저 확인', expected: 'task 없는 요구사항이 미생성 상태로 표시된다', passed: false }
+        ]
+      }
     }
   ];
 
@@ -405,7 +446,66 @@
   }
 
   function getTask(id) {
-    return TASKS_DATA.find(function (task) { return task.id === id; });
+    var tasks = getTasks();
+    return tasks.find(function (task) { return task.id === id; });
+  }
+
+  /* ====== Dynamic Tasks (requirement ↔ task integration) ====== */
+  function getTasks() {
+    var result = [];
+    var seen = {};
+
+    // 1. Start with hardcoded TASKS_DATA
+    TASKS_DATA.forEach(function (task) {
+      result.push(task);
+      seen[task.id] = true;
+    });
+
+    // 2. Merge in requests that have no matching task
+    state.requests.forEach(function (req) {
+      var taskId = 'CLE2-' + req.id;
+      if (!seen[taskId]) {
+        seen[taskId] = true;
+        // Create a stub task from request data
+        var statusMap = {
+          'proposed': 'reviewing',
+          'reviewing': 'reviewing',
+          'approved': 'in-progress',
+          'in-progress': 'in-progress',
+          'done': 'done',
+          'hold': 'hold',
+          'rejected': 'hold'
+        };
+        var taskState = statusMap[req.status] || 'reviewing';
+        result.push({
+          id: taskId,
+          cle2Id: taskId,
+          slug: 'req-' + req.id,
+          title: req.title,
+          issue: req.githubIssue || req.id,
+          _fromRequest: true,
+          goal: {
+            objective: req.description || req.title,
+            successCriteria: [],
+            scope: { in: [], out: [] }
+          },
+          plan: {
+            phases: [{ name: 'Phase 1 · 요구사항 검토', owner: req.author || '미정', status: taskState === 'done' ? 'done' : 'in-progress' }]
+          },
+          status: {
+            state: taskState,
+            progress: { current: taskState === 'done' ? 1 : 0, total: 1 },
+            completedTasks: taskState === 'done' ? [req.title] : [],
+            currentTasks: taskState !== 'done' ? [req.title] : [],
+            nextTasks: [],
+            blockers: []
+          },
+          tests: { items: [] }
+        });
+      }
+    });
+
+    return result;
   }
 
   function memberAvatar(name) {
@@ -1036,6 +1136,47 @@
     }
     html += '</div>';
 
+    // Task Summary (requirement ↔ task integration)
+    var taskForReq = getTask('CLE2-' + r.id);
+    if (taskForReq) {
+      var tStateMeta = taskStateMeta(taskForReq.status.state);
+      var tProgressPct = taskProgressPercent(taskForReq);
+      var tOwner = taskOwner(taskForReq);
+      var tOwnerMeta = MEMBERS[tOwner] || { avatar: '👤' };
+      html += '<div class="detail-section">';
+      html += '<h3>🔧 Task 정보</h3>';
+      if (taskForReq._fromRequest) {
+        html += '<div style="padding:16px;border:1px dashed var(--border);border-radius:12px;background:var(--surface2)">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+        html += '<span style="font-weight:600">' + esc(taskForReq.id) + '</span>';
+        html += '<span class="task-state-badge reviewing">📋 Task 미생성</span>';
+        html += '</div>';
+        html += '<div style="color:var(--text3);font-size:0.8rem">이 요구사항에 대한 task 폴더가 아직 생성되지 않았습니다. tasks/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md를 작성하면 자동으로 반영됩니다.</div>';
+        html += '<div style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/tasks/' + taskForReq.id + '">→ Task 상세 보기</a></div>';
+        html += '</div>';
+      } else {
+        html += '<div class="task-card" style="cursor:pointer;margin-bottom:0" onclick="location.hash=\'#/tasks/' + taskForReq.id + '\'">';
+        html += '<div class="task-card-head">';
+        html += '<div>';
+        html += '<div class="task-card-title">' + esc(taskForReq.id) + ' · ' + esc(taskForReq.title) + '</div>';
+        html += '<div class="task-card-sub">Issue #' + taskForReq.issue + ' · ' + esc(taskForReq.slug) + '</div>';
+        html += '</div>';
+        html += '<span class="task-state-badge ' + tStateMeta.cls + '">' + tStateMeta.icon + ' ' + tStateMeta.label + '</span>';
+        html += '</div>';
+        html += '<div class="task-progress-meta">';
+        html += '<span>Phase ' + taskForReq.status.progress.current + '/' + taskForReq.status.progress.total + '</span>';
+        html += '<span>' + tProgressPct + '%</span>';
+        html += '</div>';
+        html += '<div class="task-progress-bar"><span style="width:' + tProgressPct + '%"></span></div>';
+        html += '<div class="task-card-owner">';
+        html += '<span class="user-pill">' + tOwnerMeta.avatar + ' ' + esc(tOwner) + '</span>';
+        html += '<span class="task-current-line">' + esc(taskCurrentSummary(taskForReq)) + '</span>';
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+
     // Vote
     html += '<div class="detail-section" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
     html += '<button class="vote-btn ' + (hasVoted ? 'voted' : '') + '" onclick="window.__CLE2__.toggleVote(' + r.id + ')">👍 ' + (r.votes || []).length + ' ' + (hasVoted ? '투표함' : '투표') + '</button>';
@@ -1382,11 +1523,12 @@
 
   /* ====== Tasks Dashboard ====== */
   function renderTasks() {
-    var totalTasks = TASKS_DATA.length;
-    var avgProgress = totalTasks ? Math.round(TASKS_DATA.reduce(function (sum, task) {
+    var allTasks = getTasks();
+    var totalTasks = allTasks.length;
+    var avgProgress = totalTasks ? Math.round(allTasks.reduce(function (sum, task) {
       return sum + taskProgressPercent(task);
     }, 0) / totalTasks) : 0;
-    var activeTasks = TASKS_DATA.filter(function (task) {
+    var activeTasks = allTasks.filter(function (task) {
       return task.status.state === 'in-progress';
     }).length;
 
@@ -1398,31 +1540,45 @@
     html += statCard('🗂️', totalTasks, '전체 태스크');
     html += statCard('📈', avgProgress + '%', '평균 진행률');
     html += statCard('🔧', activeTasks, '진행 중');
-    html += statCard('✅', TASKS_DATA.filter(function (task) { return task.status.state === 'done'; }).length, '완료');
+    html += statCard('✅', allTasks.filter(function (task) { return task.status.state === 'done'; }).length, '완료');
     html += '</div>';
 
     html += '<div class="grid">';
-    TASKS_DATA.forEach(function (task) {
+    allTasks.forEach(function (task) {
       var stateMeta = taskStateMeta(task.status.state);
       var owner = taskOwner(task);
       var ownerMeta = MEMBERS[owner] || { avatar: '👤' };
       var progressPct = taskProgressPercent(task);
-      html += '<div class="task-card page-enter" onclick="location.hash=\'#/tasks/' + task.id + '\'">';
+      var isStub = task._fromRequest;
+      html += '<div class="task-card page-enter' + (isStub ? ' task-card-stub' : '') + '" onclick="location.hash=\'#/tasks/' + task.id + '\'">';
       html += '<div class="task-card-head">';
       html += '<div>';
       html += '<div class="task-card-title">' + esc(task.id) + ' · ' + esc(task.title) + '</div>';
       html += '<div class="task-card-sub">Issue #' + task.issue + ' · ' + esc(task.slug) + '</div>';
       html += '</div>';
-      html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
+      if (isStub) {
+        html += '<span class="task-state-badge reviewing">📋 미생성</span>';
+      } else {
+        html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
+      }
       html += '</div>';
-      html += '<div class="task-progress-meta">';
-      html += '<span>Phase ' + task.status.progress.current + '/' + task.status.progress.total + '</span>';
-      html += '<span>' + progressPct + '%</span>';
-      html += '</div>';
-      html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
+      if (!isStub) {
+        html += '<div class="task-progress-meta">';
+        html += '<span>Phase ' + task.status.progress.current + '/' + task.status.progress.total + '</span>';
+        html += '<span>' + progressPct + '%</span>';
+        html += '</div>';
+        html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
+      } else {
+        html += '<div class="task-progress-meta"><span>task 폴더 미생성</span><span>—</span></div>';
+        html += '<div class="task-progress-bar"><span style="width:0%"></span></div>';
+      }
       html += '<div class="task-card-owner">';
       html += '<span class="user-pill">' + ownerMeta.avatar + ' ' + esc(owner) + '</span>';
-      html += '<span class="task-current-line">' + esc(taskCurrentSummary(task)) + '</span>';
+      if (isStub) {
+        html += '<span class="task-current-line" style="color:var(--text3)">요구사항에서 자동 생성됨</span>';
+      } else {
+        html += '<span class="task-current-line">' + esc(taskCurrentSummary(task)) + '</span>';
+      }
       html += '</div>';
       html += '</div>';
     });

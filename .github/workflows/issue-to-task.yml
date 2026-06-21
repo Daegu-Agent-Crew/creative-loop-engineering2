@@ -1,0 +1,58 @@
+name: Issue to Task Message
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  generate-agent-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate agent request comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title;
+            
+            // Parse CLE2-ID from title (e.g., "[CLE2-4] ..." -> "4")
+            const match = title.match(/\[CLE2-(\d+)\]/);
+            const cle2Id = match ? match[1] : null;
+            
+            if (!cle2Id) {
+              core.info('Not a CLE2 issue, skipping.');
+              return;
+            }
+            
+            // Extract description (before the --- line)
+            const body = issue.body || '';
+            const descMatch = body.split('\n---\n')[0] || body;
+            const description = descMatch.trim();
+            
+            // Build agent request message
+            const message = [
+              '📋 **대구루에게 요청:**',
+              '',
+              `CLE2-${cle2Id} 태스크 생성해줘.`,
+              '',
+              `**요구사항:** ${issue.title.replace(/^\[CLE2-\d+\]\s*/, '')}`,
+              `**설명:** ${description}`,
+              `**이슈:** ${issue.html_url}`,
+              '',
+              '---',
+              '☝️ 이 메시지를 복사해서 Discord에 붙여넣으세요.'
+            ].join('\n');
+            
+            // Create comment on the issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: message
+            });
+            
+            core.info(`Agent request comment added to issue #${issue.number}`);
