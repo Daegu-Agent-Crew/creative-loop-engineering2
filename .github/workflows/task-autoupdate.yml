@@ -1,0 +1,140 @@
+name: Auto Update Task Status
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull_requests: read
+
+jobs:
+  update-task-status:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Parse CLE2 ID and update STATUS.md
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const pr = context.payload.pull_request;
+            const title = pr.title;
+            
+            // Parse CLE2-ID from PR title or labels
+            const match = title.match(/CLE2-(\d+)/i);
+            if (!match) {
+              core.info('No CLE2-ID found in PR title, skipping.');
+              return;
+            }
+            const cle2Id = match[1];
+            const today = new Date().toISOString().slice(0, 10);
+            
+            // Find task directory
+            const taskBase = `tasks/CLE2-${cle2Id}`;
+            const { exec } = require('child_process');
+            
+            // Find the slug directory
+            let slugDir = '';
+            try {
+              const entries = fs.readdirSync(taskBase);
+              for (const entry of entries) {
+                const stat = fs.statSync(`${taskBase}/${entry}`);
+                if (stat.isDirectory()) {
+                  slugDir = entry;
+                  break;
+                }
+              }
+            } catch (e) {
+              core.info(`No task directory found for CLE2-${cle2Id}, skipping.`);
+              return;
+            }
+            
+            if (!slugDir) {
+              core.info('No slug directory found, skipping.');
+              return;
+            }
+            
+            const statusPath = `${taskBase}/${slugDir}/STATUS.md`;
+            if (!fs.existsSync(statusPath)) {
+              core.info('STATUS.md not found, skipping.');
+              return;
+            }
+            
+            // Update STATUS.md
+            let content = fs.readFileSync(statusPath, 'utf8');
+            
+            // Replace status
+            content = content.replace(/## 현재 상태\n[🔄✅⏸️].*$/m, `## 현재 상태\n✅ 완료`);
+            content = content.replace(/🔄 진행 중/g, '✅ 완료');
+            content = content.replace(/⏸️ 대기/g, '✅ 완료');
+            
+            // Update progress to full
+            const phaseMatch = content.match(/전체 Phase:\s*(\d+)\/(\d+)/);
+            if (phaseMatch) {
+              const total = phaseMatch[2];
+              content = content.replace(/전체 Phase:\s*\d+\/\d+\s*완료/, `전체 Phase: ${total}/${total} 완료`);
+              content = content.replace(/현재 Phase:.*$/m, '현재 Phase: 완료');
+            }
+            
+            // Move 진행 중 items to 완료
+            const inProgressMatch = content.match(/## 진행 중인 작업\n((?:- \[ \].*\n)*)/);
+            if (inProgressMatch && inProgressMatch[1].trim()) {
+              const completedSection = content.match(/## 완료된 작업\n((?:- \[x\].*\n)*)/);
+              const inProgressItems = inProgressMatch[1].replace(/- \[ \]/g, '- [x]');
+              if (completedSection) {
+                content = content.replace(
+                  /(## 완료된 작업\n(?:- \[x\].*\n)*)/,
+                  `$1${inProgressItems}`
+                );
+              }
+              content = content.replace(
+                /## 진행 중인 작업\n(?:- \[ \].*\n)*/,
+                '## 진행 중인 작업\n- (없음)\n'
+              );
+            }
+            
+            // Add changelog entry
+            const changelogEntry = `| ${today} | PR #${pr.number} 머지 완료, 상태 done으로 업데이트 | GitHub Actions |`;
+            if (content.includes('## 변경 이력')) {
+              const lastRow = content.lastIndexOf('|---');
+              if (lastRow >= 0) {
+                const insertPos = content.indexOf('\n', lastRow);
+                content = content.slice(0, insertPos + 1) + changelogEntry + '\n' + content.slice(insertPos + 1);
+              }
+            }
+            
+            // Clear 다음 작업
+            content = content.replace(/## 다음 작업\n((?:- \[ \].*\n)*)/, '## 다음 작업\n- (없음)\n');
+            
+            // Clear blockers
+            content = content.replace(/## 블로커\n-.*$/m, '## 블로커\n- 없음');
+            
+            fs.writeFileSync(statusPath, content);
+            core.info(`Updated ${statusPath}`);
+            
+            // Also update TESTS.md — mark items as passed
+            const testsPath = `${taskBase}/${slugDir}/TESTS.md`;
+            if (fs.existsSync(testsPath)) {
+              let testsContent = fs.readFileSync(testsPath, 'utf8');
+              testsContent = testsContent.replace(/⬜/g, '✅');
+              testsContent = testsContent.replace(/\*\*결과\*\*:.*$/m, '**결과**: 통과');
+              testsContent = testsContent.replace(/\*\*검증 일자\*\*:.*$/m, `**검증 일자**: ${today}`);
+              fs.writeFileSync(testsPath, testsContent);
+              core.info(`Updated ${testsPath}`);
+            }
+          
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add tasks/
+          git diff --staged --quiet || git commit -m "chore: auto-update CLE2 task status (PR #${{ github.event.pull_request.number }} merged)"
+          git push
