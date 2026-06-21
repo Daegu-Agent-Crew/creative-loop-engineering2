@@ -267,24 +267,24 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · getTasks() 구현', owner: '대구루', status: 'in-progress' },
-          { name: 'Phase 2 · renderDetail 통합', owner: '대구루', status: 'pending' },
-          { name: 'Phase 3 · renderTasks 통합', owner: '대구루', status: 'pending' }
+          { name: 'Phase 1 · getTasks() 구현', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · renderDetail 통합', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · renderTasks 통합', owner: '대구루', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
-        progress: { current: 1, total: 3 },
-        completedTasks: ['CLE2-4 task 데이터 추가'],
-        currentTasks: ['getTasks() 동적 머지 구현'],
-        nextTasks: ['renderDetail task 요약', 'renderTasks 미생성 표시'],
+        state: 'done',
+        progress: { current: 3, total: 3 },
+        completedTasks: ['CLE2-4 task 데이터 추가', 'getTasks() 동적 머지 구현', 'renderDetail task 요약', 'renderTasks 미생성 표시', 'PR #9 머지'],
+        currentTasks: [],
+        nextTasks: [],
         blockers: []
       },
       tests: {
         items: [
-          { name: 'getTasks() 머지 검증', method: '수동 확인', expected: '기존 task + 신규 request stub이 반환된다', passed: false },
-          { name: '요구사항 상세 task 요약', method: '브라우저 확인', expected: 'task 정보가 요약 표시된다', passed: false },
-          { name: 'Tasks 대시보드 미생성 표시', method: '브라우저 확인', expected: 'task 없는 요구사항이 미생성 상태로 표시된다', passed: false }
+          { name: 'getTasks() 머지 검증', method: '수동 확인', expected: '기존 task + 신규 request stub이 반환된다', passed: true },
+          { name: '요구사항 상세 task 요약', method: '브라우저 확인', expected: 'task 정보가 요약 표시된다', passed: true },
+          { name: 'Tasks 대시보드 미생성 표시', method: '브라우저 확인', expected: 'task 없는 요구사항이 미생성 상태로 표시된다', passed: true }
         ]
       }
     }
