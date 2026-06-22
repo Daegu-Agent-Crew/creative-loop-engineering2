@@ -12,9 +12,10 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v8';
+  var DATA_VERSION = 'v9';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
+  var DELIVERABLE_KEY = 'cle2_deliverables';
 
   var CATEGORIES = {
     feature: { label: '기능', icon: '✨', cls: 'feature' },
@@ -287,6 +288,49 @@
           { name: 'Tasks 대시보드 미생성 표시', method: '브라우저 확인', expected: 'task 없는 요구사항이 미생성 상태로 표시된다', passed: true }
         ]
       }
+    },
+    {
+      id: 'CLE2-5',
+      cle2Id: 'CLE2-5',
+      slug: 'deliverables-feedback',
+      title: '결과물 쇼케이스 & 피드백',
+      issue: 13,
+      goal: {
+        objective: '요구사항 상세 페이지에 결과물(Deliverable)을 버전별로 등록하고, 피드백을 받아 재작업할 수 있는 흐름을 구축한다.',
+        successCriteria: [
+          '결과물 버전 등록이 가능하고 최신/이전 버전이 구분되어 표시된다.',
+          '각 버전에 피드백(댓글)을 등록할 수 있다.',
+          '공유 링크 복사로 외부에서 결과물을 확인할 수 있다.'
+        ],
+        scope: {
+          in: ['결과물 버전 관리', '피드백 등록', '공유 링크 복사', '인라인 등록 폼', 'CLE2-5 task 데이터'],
+          out: ['실시간 협업 편집', '외부 API 연동', '파일 업로드']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 데이터 모델', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 결과물 섹션 UI', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · 피드백 & 공유', owner: '대구루', status: 'done' }
+        ]
+      },
+      status: {
+        state: 'done',
+        progress: { current: 3, total: 3 },
+        completedTasks: ['데이터 모델 추가', '결과물 섹션 UI', '피드백 기능', '공유 링크 복사', '인라인 폼'],
+        currentTasks: [],
+        nextTasks: [],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '결과물 등록', method: '브라우저 확인', expected: '새 결과물이 최신 버전으로 표시된다', passed: true },
+          { name: '버전 접기/펼치기', method: '브라우저 확인', expected: '이전 버전은 접혀 있고 클릭하면 펼쳐진다', passed: true },
+          { name: '피드백 등록', method: '브라우저 확인', expected: '피드백이 해당 결과물 하단에 표시된다', passed: true },
+          { name: '공유 링크 복사', method: '브라우저 확인', expected: '클립보드에 URL이 복사된다', passed: true },
+          { name: 'node --check 통과', method: '문법 검증', expected: '구문 오류 없음', passed: true }
+        ]
+      }
     }
   ];
 
@@ -297,6 +341,7 @@
     comments: {},
     votes: {},
     messages: [],
+    deliverables: {},
     settings: { discordWebhook: '', githubToken: '' },
     filter: { type: 'all', status: 'all', sort: 'newest', search: '' },
     wiki: { category: 'all', search: '' },
@@ -348,6 +393,15 @@
       state.messages = [];
       saveMessages();
     }
+
+    // Load deliverables
+    var rawD = localStorage.getItem(DELIVERABLE_KEY);
+    if (rawD && !needsReload) {
+      try { state.deliverables = JSON.parse(rawD); } catch (e) { state.deliverables = {}; }
+    } else {
+      state.deliverables = {};
+      saveDeliverables();
+    }
   }
 
   function saveRequests() {
@@ -361,6 +415,9 @@
   }
   function saveMessages() {
     localStorage.setItem(MESSAGE_KEY, JSON.stringify(state.messages));
+  }
+  function saveDeliverables() {
+    localStorage.setItem(DELIVERABLE_KEY, JSON.stringify(state.deliverables));
   }
 
   /* ====== Discord Message Queue ====== */
@@ -1176,6 +1233,83 @@
       }
       html += '</div>';
     }
+
+    // Deliverables (결과물 쇼케이스 & 피드백)
+    var delivs = state.deliverables[r.id] || [];
+    html += '<div class="detail-section deliverable-section">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">';
+    html += '<h3>📦 결과물</h3>';
+    html += '<div style="display:flex;gap:6px">';
+    html += '<button class="btn btn-ghost btn-sm" onclick="window.__CLE2__.copyShareLink(' + r.id + ')">🔗 공유 링크 복사</button>';
+    html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.toggleDeliverableForm(' + r.id + ')">➕ 결과물 등록</button>';
+    html += '</div>';
+    html += '</div>';
+
+    // Deliverable form (hidden by default)
+    html += '<div class="deliverable-form" id="deliverableForm" style="display:none">';
+    html += '<div class="form-group"><label>제목</label><input class="text-input" id="delivTitle" placeholder="결과물 제목"></div>';
+    html += '<div class="form-group"><label>내용</label><textarea class="textarea-input" id="delivContent" placeholder="결과물 설명을 입력하세요..." rows="4"></textarea></div>';
+    html += '<div class="form-group"><label>링크 (최대 5개)</label><div id="delivLinksContainer"><div class="deliv-link-row"><input class="text-input deliv-link-input" placeholder="https://..."></div></div><button class="btn btn-ghost btn-sm" onclick="window.__CLE2__.addLinkInput()">➕ 링크 추가</button></div>';
+    html += '<div class="form-actions"><button class="btn btn-ghost" onclick="window.__CLE2__.toggleDeliverableForm(' + r.id + ')">취소</button><button class="btn btn-primary" onclick="window.__CLE2__.addDeliverable(' + r.id + ')">등록</button></div>';
+    html += '</div>';
+
+    if (delivs.length === 0) {
+      html += '<div class="empty-state" style="padding:24px"><div class="es-icon">📦</div><div class="es-text">아직 결과물이 없습니다</div><div class="es-hint">첫 결과물을 등록해보세요!</div></div>';
+    } else {
+      // Show deliverables — latest first (reverse order)
+      delivs.slice().reverse().forEach(function(d, revIdx) {
+        var actualIdx = delivs.length - 1 - revIdx;
+        var isLatest = revIdx === 0;
+        var expanded = isLatest;
+        html += '<div class="deliverable-card" data-did="' + d.id + '" id="delivCard_' + d.id + '">';
+        html += '<div class="deliverable-card-head" onclick="window.__CLE2__.toggleDeliverableVersion(\'' + d.id + '\')">';
+        html += '<div style="display:flex;align-items:center;gap:8px">';
+        html += '<span class="deliverable-version-badge">V' + d.version + '</span>';
+        html += '<span class="deliverable-card-title">' + esc(d.title) + '</span>';
+        if (isLatest) { html += '<span class="badge badge-status done" style="font-size:0.7rem">최신</span>'; }
+        html += '</div>';
+        html += '<span class="deliverable-toggle" id="delivToggle_' + d.id + '">' + (expanded ? '▼' : '▶') + '</span>';
+        html += '</div>';
+        html += '<div class="deliverable-card-body" id="delivBody_' + d.id + '" style="' + (expanded ? '' : 'display:none') + '">';
+        html += '<div class="deliverable-content">' + esc(d.content) + '</div>';
+        if (d.links && d.links.length) {
+          html += '<div class="deliverable-links">';
+          d.links.forEach(function(lnk) {
+            if (lnk) {
+              html += '<a href="' + esc(lnk) + '" target="_blank" rel="noopener" class="deliverable-link">🔗 ' + esc(lnk.length > 50 ? lnk.substring(0, 47) + '...' : lnk) + '</a>';
+            }
+          });
+          html += '</div>';
+        }
+        var dMember = MEMBERS[d.author] || { avatar: '👤' };
+        html += '<div class="deliverable-meta">';
+        html += '<span class="user-pill">' + dMember.avatar + ' ' + esc(d.author) + '</span>';
+        html += '<span>·</span>';
+        html += '<span>' + timeAgo(d.createdAt) + '</span>';
+        html += '</div>';
+        // Feedback section
+        var feedbacks = d.feedback || [];
+        html += '<div class="deliverable-feedback">';
+        html += '<div style="font-size:0.8rem;font-weight:600;margin-bottom:6px;color:var(--text2)">💬 피드백 (' + feedbacks.length + ')</div>';
+        feedbacks.forEach(function(fb) {
+          var fbMember = MEMBERS[fb.author] || { avatar: '👤' };
+          html += '<div class="feedback-item">';
+          html += '<span class="feedback-avatar">' + fbMember.avatar + '</span>';
+          html += '<div class="feedback-body">';
+          html += '<div class="fb-header"><span class="fb-author">' + esc(fb.author) + '</span><span class="fb-time">' + timeAgo(fb.createdAt) + '</span></div>';
+          html += '<div class="fb-text">' + esc(fb.text) + '</div>';
+          html += '</div></div>';
+        });
+        html += '<div class="feedback-form">';
+        html += '<input class="text-input" id="feedbackInput_' + d.id + '" placeholder="피드백 입력..." style="flex:1">';
+        html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.addDeliverableFeedback(' + r.id + ', \'' + d.id + '\')">등록</button>';
+        html += '</div>';
+        html += '</div>'; // end feedback
+        html += '</div>'; // end body
+        html += '</div>'; // end card
+      });
+    }
+    html += '</div>';
 
     // Vote
     html += '<div class="detail-section" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
@@ -2059,6 +2193,18 @@
     if (toastTimer) return; // will be picked up
     processToastQueue();
   }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('🔗 공유 링크가 복사되었습니다', 'success'); }
+    catch (e) { showToast('⚠️ 복사 실패. 링크: ' + text, 'error'); }
+    document.body.removeChild(ta);
+  }
   function processToastQueue() {
     if (toastQueue.length === 0) { toastTimer = null; return; }
     var item = toastQueue.shift();
@@ -2396,7 +2542,106 @@
       }
       preview.innerHTML = html;
     },
-    _userReqs: {}
+    _userReqs: {},
+
+    /* ====== Deliverable Actions ====== */
+    toggleDeliverableForm: function(reqId) {
+      var form = document.getElementById('deliverableForm');
+      if (!form) return;
+      if (form.style.display === 'none') {
+        form.style.display = 'block';
+        var titleInput = document.getElementById('delivTitle');
+        if (titleInput) titleInput.focus();
+      } else {
+        form.style.display = 'none';
+      }
+    },
+
+    addLinkInput: function() {
+      var container = document.getElementById('delivLinksContainer');
+      if (!container) return;
+      var rows = container.querySelectorAll('.deliv-link-row');
+      if (rows.length >= 5) { showToast('최대 5개까지 링크를 추가할 수 있습니다', 'error'); return; }
+      var div = document.createElement('div');
+      div.className = 'deliv-link-row';
+      div.innerHTML = '<input class="text-input deliv-link-input" placeholder="https://...">';
+      container.appendChild(div);
+    },
+
+    addDeliverable: function(reqId) {
+      var titleEl = document.getElementById('delivTitle');
+      var contentEl = document.getElementById('delivContent');
+      if (!titleEl || !titleEl.value.trim()) { showToast('⚠️ 제목을 입력하세요', 'error'); return; }
+      if (!contentEl || !contentEl.value.trim()) { showToast('⚠️ 내용을 입력하세요', 'error'); return; }
+      var linkInputs = document.querySelectorAll('.deliv-link-input');
+      var links = [];
+      linkInputs.forEach(function(inp) {
+        var v = inp.value.trim();
+        if (v) links.push(v);
+      });
+      if (!state.deliverables[reqId]) state.deliverables[reqId] = [];
+      var existing = state.deliverables[reqId];
+      var newVersion = existing.length ? Math.max.apply(null, existing.map(function(d) { return d.version; })) + 1 : 1;
+      var deliverable = {
+        id: 'deliv_' + Date.now(),
+        version: newVersion,
+        title: titleEl.value.trim(),
+        content: contentEl.value.trim(),
+        links: links,
+        author: state.currentUser,
+        createdAt: new Date().toISOString(),
+        status: 'submitted',
+        feedback: []
+      };
+      existing.push(deliverable);
+      saveDeliverables();
+      showToast('📦 결과물 V' + newVersion + '이(가) 등록되었습니다!', 'success');
+      renderDetail(reqId);
+    },
+
+    addDeliverableFeedback: function(reqId, deliverableId) {
+      var input = document.getElementById('feedbackInput_' + deliverableId);
+      if (!input || !input.value.trim()) return;
+      var delivs = state.deliverables[reqId];
+      if (!delivs) return;
+      var d = delivs.find(function(d) { return d.id === deliverableId; });
+      if (!d) return;
+      if (!d.feedback) d.feedback = [];
+      d.feedback.push({
+        author: state.currentUser,
+        text: input.value.trim(),
+        createdAt: new Date().toISOString()
+      });
+      saveDeliverables();
+      showToast('💬 피드백이 등록되었습니다', 'success');
+      renderDetail(reqId);
+    },
+
+    toggleDeliverableVersion: function(deliverableId) {
+      var body = document.getElementById('delivBody_' + deliverableId);
+      var toggle = document.getElementById('delivToggle_' + deliverableId);
+      if (!body) return;
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        if (toggle) toggle.textContent = '▼';
+      } else {
+        body.style.display = 'none';
+        if (toggle) toggle.textContent = '▶';
+      }
+    },
+
+    copyShareLink: function(reqId) {
+      var url = 'https://daegu-agent-crew.github.io/creative-loop-engineering2/#/requests/' + reqId;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() {
+          showToast('🔗 공유 링크가 복사되었습니다: ' + url, 'success');
+        }).catch(function() {
+          fallbackCopy(url);
+        });
+      } else {
+        fallbackCopy(url);
+      }
+    }
   };
 
   /* ====== Render Helper ====== */
