@@ -331,6 +331,53 @@
           { name: 'node --check 통과', method: '문법 검증', expected: '구문 오류 없음', passed: true }
         ]
       }
+    },
+    {
+      id: 'CLE2-6',
+      cle2Id: 'CLE2-6',
+      slug: 'ai-agent-news',
+      title: 'AI 에이전트 뉴스 수집 시스템',
+      issue: 15,
+      goal: {
+        objective: '최신 AI 에이전트 뉴스를 에이전트가 수집하고 번역·심층 분석하여 GitHub 리포에 체계적으로 정리하며, 관리 웹앱으로 조회·관리할 수 있는 시스템을 구축한다.',
+        successCriteria: [
+          '새 리포(ai-agent-news)가 생성되어 LLM Wiki 구조로 정리된다',
+          '대구루/레노버 모두 수집 요청을 처리할 수 있다',
+          '수집된 뉴스에 번역 및 심층 분석이 포함된다',
+          'GitHub Pages 관리 웹앱에서 뉴스 조회 및 관리가 가능하다'
+        ],
+        scope: {
+          in: ['새 리포 생성', 'LLM Wiki 구조 설계', '수집→번역→분석 파이프라인', '관리 웹앱', '스킬화', 'team-memory 연동'],
+          out: ['자동 주기 수집', '댓글/소셜 기능', '뉴스레터 자동 발송']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 리포 구조 & LLM Wiki 설계', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 2 · 수집→번역→분석 파이프라인', owner: '대구루+레노버', status: 'pending' },
+          { name: 'Phase 3 · LLM Wiki 컴파일', owner: '대구루', status: 'pending' },
+          { name: 'Phase 4 · 관리 웹앱 구현', owner: '대구루', status: 'pending' },
+          { name: 'Phase 5 · 통합 & 배포', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 0, total: 5 },
+        completedTasks: ['인터뷰 완료', 'tasks 문서 작성'],
+        currentTasks: ['리포 구조 설계'],
+        nextTasks: ['수집 파이프라인', '웹앱 구현'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '리포 구조', method: 'GitHub 확인', expected: 'context/records, wiki, registry 구조 확인', passed: false },
+          { name: '수집 파이프라인', method: '스킬 실행', expected: '뉴스가 record로 저장됨', passed: false },
+          { name: '번역 품질', method: '수집 뉴스 확인', expected: '한국어 번역 포함', passed: false },
+          { name: '심층 분석', method: '수집 뉴스 확인', expected: '기술 의미, 업계 영향 분석 포함', passed: false },
+          { name: '웹앱 리스트', method: 'Pages 접속', expected: '뉴스 리스트, 필터 동작', passed: false },
+          { name: '웹앱 상세', method: '뉴스 클릭', expected: '원문/번역/분석 표시', passed: false }
+        ]
+      }
     }
   ];
 
