@@ -1,41 +1,38 @@
 # STATUS — AI 에이전트 뉴스 수집 시스템
 
 ## 현재 상태
-🔄 Phase 5 통합 & 배포 마무리
+✅ Phase 5 완료 — 자동화 cron 등록 완료
 
 ## 진행률
-- 전체 Phase: 5/5 사실상 완료
+- 전체 Phase: 5/5 완료
+- 자동화: cron 4건 등록 (Ingest/Update/Query/Lint)
 - 데이터: 뉴스 6건 / 위키 5편 / 소스 6개
 
 ## 완료된 작업
-- [x] 인터뷰 완료 — 요구사항 확정 (2026-06-23)
-- [x] tasks 문서 작성 (2026-06-23)
-- [x] Phase 1: 리포 구조 & 설계 (2026-06-23)
-- [x] Phase 2: ai-news-collector 스킬 등록 (2026-06-23)
-- [x] Phase 3: LLM Wiki 컴파일 — 5개 위키 문서 (2026-06-23)
-  - frameworks-overview, industry-trends, models-overview, tools-overview, research-overview
-- [x] Phase 4: 관리 웹앱 구현 & GitHub Pages 배포 (2026-06-23)
-- [x] Phase 5: team-memory registry 등록 (2026-06-23)
-- [x] 웹앱 파서 버그 수정 및 캐시 무효화 (2026-06-23)
-- [x] 전체 파이프라인 검증 완료 (2026-06-23)
+- [x] Phase 1-5 전체 완료
+- [x] 뉴스 6건 수집 (전 카테고리 커버)
+- [x] 위키 5편 컴파일
+- [x] 웹앱 배포 + 파서 수정 + 검증
+- [x] 템플릿 고도화 (품질 체크리스트, 신선도 필드)
+- [x] 교차 링크 보강 (전 레코드 상호 참조)
+- [x] team-memory registry 등록
 
-## 뉴스 수집 현황 (6건)
-| 날짜 | 제목 | 카테고리 | 소스 |
-|------|------|----------|------|
-| 06-13 | Huawei HarmonyOS 7 | industry | Pandaily |
-| 06-18 | Gemini 3.1 Pro & Flash-Lite | model | Google Cloud Docs |
-| 06-18 | Agentic AI Benchmarks 2026 | research | BenchLM |
-| 06-20 | Cisco FAPO Prompt Optimization | framework | MarkTechPost |
-| 06-20 | Humanoid Robotics Scaled Deployment | industry | Humanoid Press |
-| 06-20 | Vercel agent-browser | tool | GitHub/Vercel Labs |
+## Wiki 자동화 워크플로우 (cron)
+| 단계 | Cron | 일정 | 기능 |
+|------|------|------|------|
+| Ingest | ai-news-ingest | 매일 09:00 KST | 뉴스 수집 → 핵심 내용 추출 → records 저장 |
+| Update | ai-news-wiki-update | 매일 10:00 KST | 위키 갱신, 교차 참조 연결 |
+| Query | ai-news-wiki-query | 매일 11:00 KST | 위키 기반 데일리 브리핑 (왜 중요한가) |
+| Lint | ai-news-wiki-lint | 매주 일 23:00 KST | 모순/누락/오래된 정보/고립 페이지 점검 |
 
-## 카테고리 커버리지
-- framework: 1건 ✅
-- industry: 2건 ✅
-- model: 1건 ✅
-- tool: 1건 ✅
-- research: 1건 ✅
-- 전 카테고리 커버 완료
+## 데이터 현황
+| 구분 | 수량 | 비고 |
+|------|------|------|
+| Records | 6건 | framework(1), industry(2), model(1), tool(1), research(1) |
+| Wiki | 5편 | 전 카테고리 커버 |
+| Registry 소스 | 6개 | |
+| 교차 링크 | 전 records 연결 | 고립 페이지 0 |
+| Cron | 4건 | Ingest/Update/Query/Lint |
 
 ## 대기 중인 PR
 - team-memory: chore/cle2-registry (ai-agent-news registry 등록)
@@ -44,7 +41,7 @@
 ## 남은 작업
 - [ ] ai-news-collector 스킬 apply 승인
 - [ ] 위 PR 머지
-- [ ] 정기 수집 cron 설정 (선택)
+- [ ] cron 첫 실행 모니터링 (내일 09:00)
 
 ## 블로커
 - 없음
@@ -52,9 +49,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
-| 2026-06-23 | 초기 생성, 인터뷰 완료 | 대구루 |
-| 2026-06-23 | Phase 1, 4, 배포 완료 | 대구루 |
-| 2026-06-23 | Phase 2 스킬화, 샘플 수집 (4건) | 대구루 |
-| 2026-06-23 | Phase 3 위키 컴파일 완료 (3편) | 대구루 |
-| 2026-06-23 | 파서 버그 수정, 전체 검증 완료 | 대구루 |
-| 2026-06-23 | tool/research 카테고리 추가 수집 (6건, 5위키, 전 카테고리 커버) | 대구루 |
+| 2026-06-23 | Phase 1-5 완료, 6 records, 5 wiki | 대구루 |
+| 2026-06-23 | 파서 수정, 전체 검증, 품질 개선 | 대구루 |
+| 2026-06-23 | Wiki 자동화 cron 4건 등록 (Ingest/Update/Query/Lint) | 대구루 |
+| 2026-06-23 | 교차 링크 보강, 신선도 필드, 템플릿 체크리스트 추가 | 대구루 |
