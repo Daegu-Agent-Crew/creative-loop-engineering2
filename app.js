@@ -898,6 +898,12 @@
     return (state.settings.githubToken || '').trim();
   }
 
+  function isValidGitHubToken(token) {
+    return ['ghp_', 'github_pat_', 'gho_', 'ghs_', 'ghu_'].some(function(prefix) {
+      return token.indexOf(prefix) === 0;
+    });
+  }
+
   function ghHeaders(requireAuth) {
     var token = ghToken();
     if (requireAuth && !token) return null;
@@ -2389,14 +2395,19 @@
     // GitHub
     html += '<div class="settings-card">';
     html += '<h3>🔐 GitHub 연동</h3>';
-    html += '<p class="sc-desc">읽기 동기화는 공개 API로 수행하고, 쓰기 동기화는 이 브라우저에 저장한 개인 토큰이 있을 때만 활성화됩니다.</p>';
+    html += '<p class="sc-desc">읽기 동기화는 공개 API로 수행하고, 쓰기 동기화는 이 브라우저 localStorage에 저장한 개인 토큰이 있을 때만 활성화됩니다.</p>';
     html += '<div class="sc-status ' + (ghEnabled() ? 'sc-active' : '') + '">' + (ghEnabled() ? '쓰기 동기화 활성' : '읽기 전용 모드') + '</div>';
     html += '<div style="margin-top:14px">';
     html += '<label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:6px;color:var(--text2)">GitHub Personal Access Token</label>';
     html += '<input class="text-input" id="githubToken" type="password" placeholder="github_pat_..." value="' + esc(state.settings.githubToken || '') + '">';
-    html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">토큰은 브라우저 localStorage에만 저장되며, public Pages 번들에는 포함되지 않습니다.</div>';
-    html += '<div style="margin-top:10px"><button class="btn btn-primary btn-sm" onclick="window.__CLE2__.saveSettings()">💾 GitHub 설정 저장</button></div>';
-    html += '<div style="margin-top:8px"><button class="btn btn-primary btn-sm" onclick="window.__CLE2__.syncFromGitHub()">🔄 GitHub에서 동기화</button></div>';
+    html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">토큰은 이 브라우저의 localStorage에만 저장되며, GitHub Pages 정적 배포에서는 `.env` 파일을 사용하지 않습니다.</div>';
+    html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">';
+    html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.saveGitHubToken()">💾 저장</button>';
+    html += '<button class="btn btn-secondary btn-sm" onclick="window.__CLE2__.testGitHubToken()">🧪 테스트</button>';
+    if (state.settings.githubToken) html += '<button class="btn btn-ghost btn-sm" onclick="window.__CLE2__.removeGitHubToken()">🗑️ 제거</button>';
+    html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.syncFromGitHub()">🔄 GitHub에서 동기화</button>';
+    html += '</div>';
+    html += '<div id="githubTokenStatus" style="margin-top:8px;font-size:0.75rem;color:var(--text3)"></div>';
     html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">저장소: Daegu-Agent-Crew/creative-loop-engineering2</div>';
     html += '<div style="margin-top:6px;font-size:0.75rem;color:' + (ghEnabled() ? 'var(--green)' : 'var(--amber)') + '">' + (ghEnabled() ? '✅ 새 요구사항/댓글/상태 변경이 Issue로 동기화됩니다' : 'ℹ️ 토큰 없이도 Issue 읽기 동기화는 가능하지만, 생성/수정/댓글은 비활성화됩니다') + '</div>';
     html += '</div>';
@@ -2843,6 +2854,70 @@
       saveSettings();
       showToast('✅ 설정이 저장되었습니다', 'success');
       renderSettings();
+    },
+
+    saveGitHubToken: function () {
+      var githubTokenEl = document.getElementById('githubToken');
+      if (!githubTokenEl) return;
+      var token = githubTokenEl.value.trim();
+      if (!token) {
+        showToast('⚠️ GitHub PAT를 입력하세요', 'error');
+        return;
+      }
+      if (!isValidGitHubToken(token)) {
+        showToast('⚠️ 올바른 GitHub PAT 형식이 아닙니다', 'error');
+        return;
+      }
+      state.settings.githubToken = token;
+      saveSettings();
+      showToast('✅ GitHub PAT가 이 브라우저 localStorage에 저장되었습니다', 'success');
+      renderSettings();
+    },
+
+    removeGitHubToken: function () {
+      delete state.settings.githubToken;
+      saveSettings();
+      showToast('🗑️ GitHub PAT가 이 브라우저 localStorage에서 제거되었습니다', 'success');
+      renderSettings();
+    },
+
+    testGitHubToken: function () {
+      var githubTokenEl = document.getElementById('githubToken');
+      var statusEl = document.getElementById('githubTokenStatus');
+      if (!githubTokenEl || !statusEl) return;
+      var token = githubTokenEl.value.trim();
+      if (!token) {
+        statusEl.style.color = 'var(--amber)';
+        statusEl.textContent = 'PAT를 먼저 입력하세요.';
+        return;
+      }
+      if (!isValidGitHubToken(token)) {
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = '올바른 GitHub PAT 형식이 아닙니다.';
+        return;
+      }
+      statusEl.style.color = 'var(--text3)';
+      statusEl.textContent = 'GitHub 연결 테스트 중...';
+      fetch('https://api.github.com/user', {
+        headers: {
+          Authorization: 'token ' + token,
+          Accept: 'application/vnd.github.v3+json'
+        }
+      })
+      .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+      .then(function(result) {
+        if (result.ok) {
+          statusEl.style.color = 'var(--green)';
+          statusEl.textContent = '✅ ' + (result.data.login || '인증 성공');
+        } else {
+          statusEl.style.color = 'var(--red)';
+          statusEl.textContent = '❌ ' + ((result.data && result.data.message) || '인증 실패');
+        }
+      })
+      .catch(function() {
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = '❌ 네트워크 오류';
+      });
     },
 
     syncFromGitHub: function () {
