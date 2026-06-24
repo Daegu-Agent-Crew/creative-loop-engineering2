@@ -120,6 +120,7 @@
       slug: 'team-memory',
       title: 'team-memory 활성화',
       issue: 1,
+      prs: [],
       goal: {
         objective: 'team-memory를 실제 팀 작업 흐름에 연결하고 기록, 위키, 자동화 파이프라인이 일관되게 동작하도록 활성화한다.',
         successCriteria: [
@@ -163,6 +164,7 @@
       slug: 'youtube-to-wiki-skill',
       title: '유튜브→wiki 스킬',
       issue: 3,
+      prs: [],
       goal: {
         objective: '유튜브 영상을 team-memory 위키 문서로 변환하는 스킬을 구축하고 반복 가능한 자동 처리 흐름을 만든다.',
         successCriteria: [
@@ -211,6 +213,7 @@
       slug: 'cle2-improvements',
       title: 'CLE2 개선',
       issue: 4,
+      prs: [5, 6, 7],
       goal: {
         objective: 'CLE2 웹앱의 작업 관리 경험을 개선하고 기존 이슈 문서화와 템플릿 체계를 정비해 운영 품질을 높인다.',
         successCriteria: [
@@ -254,7 +257,8 @@
       cle2Id: 'CLE2-4',
       slug: 'task-integration',
       title: '요구사항↔tasks 통합',
-      issue: 5,
+      issue: 8,
+      prs: [9, 10, 11, 12],
       goal: {
         objective: 'TASKS_DATA를 동적 생성으로 변경하고, 요구사항과 tasks를 통합하여 새 이슈가 task 대시보드에 자동 반영되도록 한다.',
         successCriteria: [
@@ -700,6 +704,44 @@
     return task;
   }
 
+  /* ====== GitHub Link Helpers ====== */
+  var GH_REPO_URL = 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2';
+
+  function ghIssueURL(num) {
+    return GH_REPO_URL + '/issues/' + num;
+  }
+
+  function ghPrURL(num) {
+    return GH_REPO_URL + '/pull/' + num;
+  }
+
+  function ghLinksHTMLforRequest(req) {
+    var parts = [];
+    if (req.githubIssue) {
+      parts.push('<a class="gh-link gh-issue" href="' + ghIssueURL(req.githubIssue) + '" target="_blank" rel="noopener">📋 #' + req.githubIssue + '</a>');
+    }
+    var task = getTask('CLE2-' + req.id);
+    if (task && task.prs && task.prs.length) {
+      task.prs.forEach(function(prNum) {
+        parts.push('<a class="gh-link gh-pr" href="' + ghPrURL(prNum) + '" target="_blank" rel="noopener">🔀 #' + prNum + '</a>');
+      });
+    }
+    return parts.length ? '<div class="gh-links">' + parts.join('') + '</div>' : '';
+  }
+
+  function ghLinksHTMLforTask(task) {
+    var parts = [];
+    if (task.issue) {
+      parts.push('<a class="gh-link gh-issue" href="' + ghIssueURL(task.issue) + '" target="_blank" rel="noopener">📋 Issue #' + task.issue + '</a>');
+    }
+    if (task.prs && task.prs.length) {
+      task.prs.forEach(function(prNum) {
+        parts.push('<a class="gh-link gh-pr" href="' + ghPrURL(prNum) + '" target="_blank" rel="noopener">🔀 PR #' + prNum + '</a>');
+      });
+    }
+    return parts.length ? '<div class="gh-links">' + parts.join('') + '</div>' : '';
+  }
+
   /* ====== Dynamic Tasks (requirement ↔ task integration) ====== */
   function getTasks() {
     var result = [];
@@ -733,6 +775,7 @@
           slug: 'req-' + req.id,
           title: req.title,
           issue: req.githubIssue || req.id,
+          prs: [],
           _fromRequest: true,
           goal: {
             objective: req.description || req.title,
@@ -1242,6 +1285,7 @@
       '<span class="rc-meta-item">' + timeAgo(r.updatedAt) + '</span>' +
       '</div>' +
       '<div class="rc-footer-right">' +
+      (r.githubIssue ? '<span class="rc-meta-item gh-badge">📋 #' + r.githubIssue + '</span>' : '') +
       (commentCount > 0 ? '<span class="rc-meta-item">💬 ' + commentCount + '</span>' : '') +
       '<span class="rc-meta-item">👍 ' + voteCount + '</span>' +
       '</div>' +
@@ -1434,6 +1478,9 @@
     html += '<span>·</span>';
     html += '<span>' + timeAgo(r.updatedAt) + ' 업데이트</span>';
     html += '</div>';
+    // GitHub links
+    var ghLinks = ghLinksHTMLforRequest(r);
+    if (ghLinks) html += ghLinks;
     html += '</div>';
 
     // Two-column layout
@@ -1478,6 +1525,9 @@
         html += '</div>';
         html += '<span class="task-state-badge ' + tStateMeta.cls + '">' + tStateMeta.icon + ' ' + tStateMeta.label + '</span>';
         html += '</div>';
+        // GitHub links for task
+        var taskGhLinks = ghLinksHTMLforTask(taskForReq);
+        if (taskGhLinks) html += taskGhLinks;
         html += '<div class="task-progress-meta">';
         html += '<span>Phase ' + taskForReq.status.progress.current + '/' + taskForReq.status.progress.total + '</span>';
         html += '<span>' + tProgressPct + '%</span>';
@@ -1954,6 +2004,11 @@
         html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
       }
       html += '</div>';
+      // GitHub links in task card
+      if (!isStub) {
+        var taskLinks = ghLinksHTMLforTask(task);
+        if (taskLinks) html += taskLinks;
+      }
       if (!isStub) {
         html += '<div class="task-progress-meta">';
         html += '<span>Phase ' + task.status.progress.current + '/' + task.status.progress.total + '</span>';
@@ -2018,6 +2073,9 @@
     html += '<span>·</span>';
     html += '<span>진행률 ' + progressPct + '%</span>';
     html += '</div>';
+    // GitHub links
+    var taskDetailGhLinks = ghLinksHTMLforTask(task);
+    if (taskDetailGhLinks) html += taskDetailGhLinks;
     html += '<div style="margin-top:16px">';
     html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
     html += '</div>';

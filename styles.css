@@ -2117,8 +2117,9 @@ a:hover { color: var(--accent3); }
   display: flex; align-items: center; gap: 6px;
 }
 
-/* ========================================
-   Deliverable Section (CLE2-5)
+/* =================================
+
+Deliverable Section (CLE2-5)
    ======================================== */
 .deliverable-section {
   margin-top: 4px;
@@ -2309,4 +2310,49 @@ a:hover { color: var(--accent3); }
 
 .deliv-link-row {
   margin-bottom: 6px;
+}
+
+/* ====== GitHub Link Badges ====== */
+.gh-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+.gh-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.gh-link.gh-issue {
+  background: rgba(56, 139, 253, 0.12);
+  color: #58a6ff;
+  border-color: rgba(56, 139, 253, 0.3);
+}
+.gh-link.gh-issue:hover {
+  background: rgba(56, 139, 253, 0.2);
+}
+.gh-link.gh-pr {
+  background: rgba(63, 185, 80, 0.12);
+  color: #3fb950;
+  border-color: rgba(63, 185, 80, 0.3);
+}
+.gh-link.gh-pr:hover {
+  background: rgba(63, 185, 80, 0.2);
+}
+.rc-footer-right .gh-badge {
+  font-weight: 600;
+  color: #58a6ff;
+  font-size: 0.72rem;
 }
