@@ -770,6 +770,15 @@ a:hover { color: var(--accent3); }
   font-weight: 700;
   white-space: nowrap;
 }
+.studio-button {
+  border: none;
+  cursor: pointer;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast);
+}
+.studio-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
 .studio-state-badge.studio-script,
 .studio-state-badge.pending,
 .studio-panel-chip.not-started {
@@ -857,6 +866,12 @@ a:hover { color: var(--accent3); }
   margin-top: 10px;
   font-size: 0.74rem;
   color: var(--text3);
+}
+.studio-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 .task-test-table-wrap {
   overflow-x: auto;

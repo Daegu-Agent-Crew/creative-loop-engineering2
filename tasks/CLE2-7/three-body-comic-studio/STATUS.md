@@ -13,6 +13,7 @@
 - [x] CLE2-7 tasks 문서 생성
 - [x] CLE2-7 전용 설계 문서 5종 생성
 - [x] CLE2 task 상세에 STUDIO 탭 추가
+- [x] STUDIO 상태 변경 로직과 localStorage 저장 추가
 - [x] 공개 프런트엔드의 하드코딩 GitHub PAT 제거
 - [x] task 상세 화면에서 관련 문서 링크 검증
 - [x] 삼체 전용 데이터 모델을 후속 구현 이슈로 분해
@@ -31,6 +32,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
+| 2026-06-24 | STUDIO 상태 변경, deliverable 연결, localStorage 저장 추가 | 대구루 |
 | 2026-06-24 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-24 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-24 | CLE2-7 STUDIO 탭 추가, 에피소드/패널/가설/큐 보드 구현 | 대구루 |

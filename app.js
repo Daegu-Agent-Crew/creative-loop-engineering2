@@ -16,6 +16,7 @@
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
+  var STUDIO_KEY = 'cle2_studio';
 
   var CATEGORIES = {
     feature: { label: '기능', icon: '✨', cls: 'feature' },
@@ -517,6 +518,7 @@
     votes: {},
     messages: [],
     deliverables: {},
+    studioData: {},
     settings: { discordWebhook: '', githubToken: '' },
     filter: { type: 'all', status: 'all', sort: 'newest', search: '' },
     wiki: { category: 'all', search: '' },
@@ -533,6 +535,7 @@
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(COMMENT_KEY);
       localStorage.removeItem(MESSAGE_KEY);
+      localStorage.removeItem(STUDIO_KEY);
       localStorage.setItem(VERSION_KEY, DATA_VERSION);
     }
 
@@ -577,6 +580,14 @@
       state.deliverables = {};
       saveDeliverables();
     }
+
+    var rawStudio = localStorage.getItem(STUDIO_KEY);
+    if (rawStudio && !needsReload) {
+      try { state.studioData = JSON.parse(rawStudio); } catch (e) { state.studioData = {}; }
+    } else {
+      state.studioData = {};
+      saveStudioData();
+    }
   }
 
   function saveRequests() {
@@ -593,6 +604,9 @@
   }
   function saveDeliverables() {
     localStorage.setItem(DELIVERABLE_KEY, JSON.stringify(state.deliverables));
+  }
+  function saveStudioData() {
+    localStorage.setItem(STUDIO_KEY, JSON.stringify(state.studioData));
   }
 
   /* ====== Discord Message Queue ====== */
@@ -679,7 +693,11 @@
 
   function getTask(id) {
     var tasks = getTasks();
-    return tasks.find(function (task) { return task.id === id; });
+    var task = tasks.find(function (task) { return task.id === id; });
+    if (task && task.studio) {
+      task.studio = getTaskStudio(task);
+    }
+    return task;
   }
 
   /* ====== Dynamic Tasks (requirement ↔ task integration) ====== */
@@ -768,6 +786,24 @@
 
   function taskDocHref(path) {
     return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/main/' + path;
+  }
+
+  function cloneJSON(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function getTaskStudio(task) {
+    if (!task || !task.studio) return null;
+    if (!state.studioData[task.id]) {
+      state.studioData[task.id] = cloneJSON(task.studio);
+      saveStudioData();
+    }
+    return state.studioData[task.id];
+  }
+
+  function taskRequestId(task) {
+    var match = task && task.id ? task.id.match(/^CLE2-(\d+)$/) : null;
+    return match ? parseInt(match[1], 10) : null;
   }
 
   function studioEpisodeStateMeta(stateKey) {
@@ -2097,6 +2133,8 @@
       html += '</div>';
       html += '</div>';
     } else if (activeTab === 'studio' && task.studio) {
+      var linkedReqId = taskRequestId(task);
+      var linkedDeliverables = linkedReqId ? (state.deliverables[linkedReqId] || []) : [];
       html += '<div class="detail-section">';
       html += '<h3>🎬 Episode Board</h3>';
       html += '<div class="studio-episode-grid">';
@@ -2107,16 +2145,16 @@
         html += '<div class="studio-card">';
         html += '<div class="studio-card-head">';
         html += '<div><div class="studio-card-title">' + esc(episode.id) + ' · ' + esc(episode.title) + '</div><div class="studio-card-sub">' + esc(episode.summary) + '</div></div>';
-        html += '<span class="studio-state-badge ' + episodeState.cls + '">' + esc(episodeState.label) + '</span>';
+        html += '<button class="studio-state-badge ' + episodeState.cls + ' studio-button" onclick="window.__CLE2__.cycleStudioEpisodeStatus(\'' + task.id + '\', \'' + episode.id + '\')">' + esc(episodeState.label) + '</button>';
         html += '</div>';
         html += '<div class="studio-progress-row"><span>' + episodeOwner.avatar + ' ' + esc(episode.owner) + '</span><span>Phase ' + episode.phaseProgress.current + '/' + episode.phaseProgress.total + '</span></div>';
         html += '<div class="task-progress-bar"><span style="width:' + pct + '%"></span></div>';
         html += '<div class="studio-panel-list">';
         episode.panels.forEach(function (panel) {
           var panelState = studioPanelStateMeta(panel.status);
-          html += '<div class="studio-panel-chip ' + panelState.cls + '">';
+          html += '<button class="studio-panel-chip ' + panelState.cls + ' studio-button" onclick="window.__CLE2__.cycleStudioPanelStatus(\'' + task.id + '\', \'' + episode.id + '\', \'' + panel.id + '\')">';
           html += '<span>' + esc(panel.id) + '</span><span>' + esc(panelState.label) + '</span>';
-          html += '</div>';
+          html += '</button>';
         });
         html += '</div>';
         html += '</div>';
@@ -2132,7 +2170,7 @@
         var hypothesisState = studioHypothesisStateMeta(hypothesis.status);
         html += '<div class="studio-line-item">';
         html += '<div class="studio-line-main"><strong>' + esc(hypothesis.id) + '</strong> · ' + esc(hypothesis.title) + '</div>';
-        html += '<div class="studio-line-meta"><span class="studio-state-badge ' + hypothesisState.cls + '">' + esc(hypothesisState.label) + '</span><span>' + esc(hypothesis.metric) + '</span><span>' + esc(hypothesis.owner) + '</span></div>';
+        html += '<div class="studio-line-meta"><button class="studio-state-badge ' + hypothesisState.cls + ' studio-button" onclick="window.__CLE2__.cycleStudioHypothesisStatus(\'' + task.id + '\', \'' + hypothesis.id + '\')">' + esc(hypothesisState.label) + '</button><span>' + esc(hypothesis.metric) + '</span><span>' + esc(hypothesis.owner) + '</span></div>';
         html += '</div>';
       });
       html += '</div>';
@@ -2149,6 +2187,30 @@
         html += '</div>';
       });
       html += '</div>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section">';
+      html += '<h3>📦 Deliverables 연결</h3>';
+      if (linkedReqId) {
+        html += '<div class="studio-line-item">';
+        html += '<div class="studio-line-main"><strong>CLE2-' + linkedReqId + '</strong> 요구사항 결과물 ' + linkedDeliverables.length + '건</div>';
+        html += '<div class="studio-line-sub">STUDIO 보드와 실제 결과물 등록 흐름은 같은 요구사항 상세 페이지를 공유합니다.</div>';
+        html += '<div class="studio-inline-actions">';
+        html += '<button class="btn btn-primary btn-sm" onclick="window.__CLE2__.openTaskRequest(\'' + task.id + '\')">결과물 페이지 열기</button>';
+        html += '<button class="btn btn-ghost btn-sm" onclick="window.__CLE2__.openTaskRequest(\'' + task.id + '\', true)">결과물 등록으로 이동</button>';
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '<div class="detail-section">';
+      html += '<h3>📝 조작 가이드</h3>';
+      html += '<ul class="task-status-list">';
+      html += '<li>에피소드 상태 배지를 누르면 `대본 → 콘티 → 패널 생성 → 리뷰 → 배포 → 관측` 순서로 순환합니다.</li>';
+      html += '<li>패널 칩을 누르면 `미시작 → 생성중 → 리뷰대기 → 수정중 → 확정 → 실패 → 제외` 순서로 순환합니다.</li>';
+      html += '<li>가설 상태 배지를 누르면 `대기 → 수집중 → 검증완료` 순서로 바뀌며 새로고침 후에도 유지됩니다.</li>';
+      html += '</ul>';
       html += '</div>';
       html += '</div>';
     }
@@ -2705,6 +2767,71 @@
     setTaskTab: function (taskId, tab) {
       state.tasks.activeTab = tab;
       state.tasks.currentId = taskId;
+      renderTaskDetail(taskId, true);
+    },
+
+    openTaskRequest: function(taskId, openDeliverable) {
+      var task = getTask(taskId);
+      var reqId = taskRequestId(task);
+      if (!reqId) return;
+      location.hash = '#/requests/' + reqId;
+      if (openDeliverable) {
+        setTimeout(function() {
+          var form = document.getElementById('deliverableForm');
+          if (form && form.style.display === 'none') {
+            window.__CLE2__.toggleDeliverableForm(reqId);
+          }
+          var titleInput = document.getElementById('delivTitle');
+          if (titleInput) titleInput.focus();
+        }, 80);
+      }
+    },
+
+    cycleStudioEpisodeStatus: function(taskId, episodeId) {
+      var flow = ['script', 'storyboard', 'render', 'review', 'publish', 'observe'];
+      var task = getTask(taskId);
+      var studio = task && task.studio ? task.studio : null;
+      if (!studio) return;
+      var episode = studio.episodes.find(function(item) { return item.id === episodeId; });
+      if (!episode) return;
+      var idx = flow.indexOf(episode.status);
+      var next = flow[(idx + 1) % flow.length];
+      episode.status = next;
+      episode.phaseProgress.current = Math.min(flow.indexOf(next) + 1, episode.phaseProgress.total);
+      saveStudioData();
+      showToast('🎬 ' + episode.id + ' 상태가 ' + studioEpisodeStateMeta(next).label + '(으)로 변경되었습니다', 'success');
+      renderTaskDetail(taskId, true);
+    },
+
+    cycleStudioPanelStatus: function(taskId, episodeId, panelId) {
+      var flow = ['not-started', 'generating', 'review-queue', 'revision', 'approved', 'failed', 'abandoned'];
+      var task = getTask(taskId);
+      var studio = task && task.studio ? task.studio : null;
+      if (!studio) return;
+      var episode = studio.episodes.find(function(item) { return item.id === episodeId; });
+      if (!episode) return;
+      var panel = episode.panels.find(function(item) { return item.id === panelId; });
+      if (!panel) return;
+      var idx = flow.indexOf(panel.status);
+      var next = flow[(idx + 1) % flow.length];
+      panel.status = next;
+      saveStudioData();
+      showToast('🖼️ ' + episode.id + ' ' + panel.id + ' 상태가 ' + studioPanelStateMeta(next).label + '(으)로 변경되었습니다', 'success');
+      renderTaskDetail(taskId, true);
+    },
+
+    cycleStudioHypothesisStatus: function(taskId, hypothesisId) {
+      var flow = ['pending', 'collecting', 'validated'];
+      var task = getTask(taskId);
+      var studio = task && task.studio ? task.studio : null;
+      if (!studio) return;
+      var hypothesis = studio.hypotheses.find(function(item) { return item.id === hypothesisId; });
+      if (!hypothesis) return;
+      var idx = flow.indexOf(hypothesis.status);
+      var next = flow[(idx + 1) % flow.length];
+      hypothesis.status = next;
+      saveStudioData();
+      showToast('🧪 ' + hypothesis.id + ' 상태가 ' + studioHypothesisStateMeta(next).label + '(으)로 변경되었습니다', 'success');
       renderTaskDetail(taskId, true);
     },
 
