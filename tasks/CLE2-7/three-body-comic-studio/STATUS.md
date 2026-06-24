@@ -21,8 +21,10 @@
 ## 진행 중인 작업
 - (없음)
 - (없음)
+- (없음)
 
 ## 다음 작업
+- (없음)
 - (없음)
 - (없음)
 
@@ -32,6 +34,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
+| 2026-06-24 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-24 | STUDIO 상태 변경, deliverable 연결, localStorage 저장 추가 | 대구루 |
 | 2026-06-24 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-24 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
