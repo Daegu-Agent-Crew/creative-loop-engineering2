@@ -2356,3 +2356,64 @@ Deliverable Section (CLE2-5)
   color: #58a6ff;
   font-size: 0.72rem;
 }
+
+/* ====== Preset Deliverables (from TASKS_DATA) ====== */
+.preset-deliverables {
+  margin-bottom: 16px;
+}
+.preset-deliv-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.preset-deliv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.preset-deliv-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.preset-deliv-card:hover {
+  border-color: rgba(56, 139, 253, 0.4);
+  background: rgba(56, 139, 253, 0.06);
+  transform: translateY(-1px);
+}
+.preset-deliv-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+.preset-deliv-info {
+  flex: 1;
+  min-width: 0;
+}
+.preset-deliv-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text1);
+}
+.preset-deliv-desc {
+  font-size: 0.75rem;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.preset-deliv-url {
+  font-size: 0.72rem;
+  color: #58a6ff;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

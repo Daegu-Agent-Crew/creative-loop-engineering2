@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v9';
+  var DATA_VERSION = 'v10';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -121,6 +121,7 @@
       title: 'team-memory 활성화',
       issue: 1,
       prs: [],
+      deliverables: [],
       goal: {
         objective: 'team-memory를 실제 팀 작업 흐름에 연결하고 기록, 위키, 자동화 파이프라인이 일관되게 동작하도록 활성화한다.',
         successCriteria: [
@@ -165,6 +166,9 @@
       title: '유튜브→wiki 스킬',
       issue: 3,
       prs: [],
+      deliverables: [
+        { title: 'youtube-to-wiki 스킬', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/team-memory-kit', description: 'OpenClaw 스킬로 등록됨' }
+      ],
       goal: {
         objective: '유튜브 영상을 team-memory 위키 문서로 변환하는 스킬을 구축하고 반복 가능한 자동 처리 흐름을 만든다.',
         successCriteria: [
@@ -214,6 +218,7 @@
       title: 'CLE2 개선',
       issue: 4,
       prs: [5, 6, 7],
+      deliverables: [],
       goal: {
         objective: 'CLE2 웹앱의 작업 관리 경험을 개선하고 기존 이슈 문서화와 템플릿 체계를 정비해 운영 품질을 높인다.',
         successCriteria: [
@@ -259,6 +264,7 @@
       title: '요구사항↔tasks 통합',
       issue: 8,
       prs: [9, 10, 11, 12],
+      deliverables: [],
       goal: {
         objective: 'TASKS_DATA를 동적 생성으로 변경하고, 요구사항과 tasks를 통합하여 새 이슈가 task 대시보드에 자동 반영되도록 한다.',
         successCriteria: [
@@ -300,6 +306,8 @@
       slug: 'deliverables-feedback',
       title: '결과물 쇼케이스 & 피드백',
       issue: 13,
+      prs: [14],
+      deliverables: [],
       goal: {
         objective: '요구사항 상세 페이지에 결과물(Deliverable)을 버전별로 등록하고, 피드백을 받아 재작업할 수 있는 흐름을 구축한다.',
         successCriteria: [
@@ -343,6 +351,11 @@
       slug: 'ai-agent-news',
       title: 'AI 에이전트 뉴스 수집 시스템',
       issue: 15,
+      prs: [16],
+      deliverables: [
+        { title: 'AI 에이전트 뉴스 웹앱', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-agent-news/', description: 'GitHub Pages 관리 웹앱' },
+        { title: 'ai-agent-news 리포', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/ai-agent-news', description: '뉴스 수집·번역·분석 리포' }
+      ],
       goal: {
         objective: '최신 AI 에이전트 뉴스를 에이전트가 수집하고 번역·심층 분석하여 GitHub 리포에 체계적으로 정리하며, 관리 웹앱으로 조회·관리할 수 있는 시스템을 구축한다.',
         successCriteria: [
@@ -390,6 +403,8 @@
       slug: 'three-body-comic-studio',
       title: '삼체 연재 만화 프로젝트 전용 관리 시스템',
       issue: 17,
+      prs: [],
+      deliverables: [],
       goal: {
         objective: 'CLE1의 제작 루프와 CLE2의 태스크 관리 구조를 결합해 삼체 연재 만화 프로젝트 전용 운영 시스템을 구축하고, 에피소드 제작 파이프라인과 이미지 생성 품질 관리, 가설 검증 루프를 한 흐름으로 연결한다.',
         successCriteria: [
@@ -776,6 +791,7 @@
           title: req.title,
           issue: req.githubIssue || req.id,
           prs: [],
+          deliverables: [],
           _fromRequest: true,
           goal: {
             objective: req.description || req.title,
@@ -1544,6 +1560,9 @@
 
     // Deliverables (결과물 쇼케이스 & 피드백)
     var delivs = state.deliverables[r.id] || [];
+    // Merge preset deliverables from TASKS_DATA
+    var taskForDeliv = getTask('CLE2-' + r.id);
+    var presetDelivs = (taskForDeliv && taskForDeliv.deliverables) ? taskForDeliv.deliverables : [];
     html += '<div class="detail-section deliverable-section">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">';
     html += '<h3>📦 결과물</h3>';
@@ -1560,6 +1579,25 @@
     html += '<div class="form-group"><label>링크 (최대 5개)</label><div id="delivLinksContainer"><div class="deliv-link-row"><input class="text-input deliv-link-input" placeholder="https://..."></div></div><button class="btn btn-ghost btn-sm" onclick="window.__CLE2__.addLinkInput()">➕ 링크 추가</button></div>';
     html += '<div class="form-actions"><button class="btn btn-ghost" onclick="window.__CLE2__.toggleDeliverableForm(' + r.id + ')">취소</button><button class="btn btn-primary" onclick="window.__CLE2__.addDeliverable(' + r.id + ')">등록</button></div>';
     html += '</div>';
+
+    // Preset deliverables (from TASKS_DATA)
+    if (presetDelivs.length > 0) {
+      html += '<div class="preset-deliverables">';
+      html += '<div class="preset-deliv-label">📎 프로젝트 결과물</div>';
+      html += '<div class="preset-deliv-list">';
+      presetDelivs.forEach(function(pd) {
+        html += '<a class="preset-deliv-card" href="' + esc(pd.url) + '" target="_blank" rel="noopener">';
+        html += '<div class="preset-deliv-icon">🔗</div>';
+        html += '<div class="preset-deliv-info">';
+        html += '<div class="preset-deliv-title">' + esc(pd.title) + '</div>';
+        if (pd.description) html += '<div class="preset-deliv-desc">' + esc(pd.description) + '</div>';
+        html += '<div class="preset-deliv-url">' + esc(pd.url.replace(/^https?:\/\//, '')) + '</div>';
+        html += '</div>';
+        html += '</a>';
+      });
+      html += '</div>';
+      html += '</div>';
+    }
 
     if (delivs.length === 0) {
       html += '<div class="empty-state" style="padding:24px"><div class="es-icon">📦</div><div class="es-text">아직 결과물이 없습니다</div><div class="es-hint">첫 결과물을 등록해보세요!</div></div>';
