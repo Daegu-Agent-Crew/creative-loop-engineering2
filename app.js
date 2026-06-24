@@ -452,7 +452,60 @@
           path: 'tasks/CLE2-7/three-body-comic-studio/docs/TEAM-OPERATING-LOOP.md',
           description: '팀원, 에이전트, PR 리뷰, Discord 알림 기준'
         }
-      ]
+      ],
+      studio: {
+        episodes: [
+          {
+            id: 'EP001',
+            title: '파일럿 1화',
+            status: 'review',
+            owner: 'sfex11',
+            summary: '표면층과 가설층 연결 확인이 필요한 첫 공개 후보',
+            phaseProgress: { current: 4, total: 6 },
+            panels: [
+              { id: 'P01', status: 'approved', owner: 'normalkim' },
+              { id: 'P02', status: 'revision', owner: 'eugene' },
+              { id: 'P03', status: 'review-queue', owner: 'YoonJongHyuk' },
+              { id: 'P04', status: 'failed', owner: '대구루' }
+            ]
+          },
+          {
+            id: 'EP002',
+            title: '파일럿 2화',
+            status: 'storyboard',
+            owner: 'eugene',
+            summary: '콘티 확정과 패널 목적 문장 정리가 우선',
+            phaseProgress: { current: 2, total: 6 },
+            panels: [
+              { id: 'P01', status: 'not-started', owner: 'eugene' },
+              { id: 'P02', status: 'not-started', owner: 'junteken' },
+              { id: 'P03', status: 'not-started', owner: 'normalkim' }
+            ]
+          },
+          {
+            id: 'EP003',
+            title: '파일럿 3화',
+            status: 'script',
+            owner: 'junteken',
+            summary: '대본 비트와 감정선 먼저 고정',
+            phaseProgress: { current: 1, total: 6 },
+            panels: [
+              { id: 'P01', status: 'not-started', owner: 'junteken' },
+              { id: 'P02', status: 'not-started', owner: '레노버' }
+            ]
+          }
+        ],
+        hypotheses: [
+          { id: 'H1', title: '표면층만으로도 진입이 쉬운가', status: 'collecting', metric: '체류시간 / 첫 이탈률', owner: '레노버' },
+          { id: 'H2', title: '가설층 단서가 다음 화 기대를 높이는가', status: 'pending', metric: '복귀율 / 다음 화 클릭률', owner: '레노버' },
+          { id: 'H5', title: '메타층 장치가 과잉 설명 없이 작동하는가', status: 'pending', metric: '코멘트 질 / 혼란 지점 수', owner: 'sfex11' }
+        ],
+        queue: [
+          { type: 'image', label: 'EP001 P04 재시도', note: 'style-drift와 composition 이슈 동시 해결 필요', owner: '대구루' },
+          { type: 'review', label: 'EP001 리뷰 라운드', note: 'A/B 후보 선택과 수정 범위 결정', owner: 'sfex11' },
+          { type: 'results', label: 'EP001 results.md 초안', note: '관측 항목과 H1 연결 준비', owner: '레노버' }
+        ]
+      }
     }
   ];
 
@@ -715,6 +768,40 @@
 
   function taskDocHref(path) {
     return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/main/' + path;
+  }
+
+  function studioEpisodeStateMeta(stateKey) {
+    var map = {
+      script: { label: '대본', cls: 'studio-script' },
+      storyboard: { label: '콘티', cls: 'studio-storyboard' },
+      render: { label: '패널 생성', cls: 'studio-render' },
+      review: { label: '리뷰', cls: 'studio-review' },
+      publish: { label: '배포', cls: 'studio-publish' },
+      observe: { label: '관측', cls: 'studio-observe' }
+    };
+    return map[stateKey] || { label: stateKey, cls: '' };
+  }
+
+  function studioPanelStateMeta(stateKey) {
+    var map = {
+      'not-started': { label: '미시작', cls: 'not-started' },
+      generating: { label: '생성중', cls: 'generating' },
+      'review-queue': { label: '리뷰대기', cls: 'review-queue' },
+      revision: { label: '수정중', cls: 'revision' },
+      approved: { label: '확정', cls: 'approved' },
+      failed: { label: '실패', cls: 'failed' },
+      abandoned: { label: '제외', cls: 'abandoned' }
+    };
+    return map[stateKey] || { label: stateKey, cls: '' };
+  }
+
+  function studioHypothesisStateMeta(stateKey) {
+    var map = {
+      pending: { label: '대기', cls: 'pending' },
+      collecting: { label: '수집중', cls: 'collecting' },
+      validated: { label: '검증완료', cls: 'validated' }
+    };
+    return map[stateKey] || { label: stateKey, cls: '' };
   }
 
   function getMemberRequests(name) {
@@ -1899,6 +1986,9 @@
     html += '<button class="' + (activeTab === 'plan' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'plan\')">PLAN</button>';
     html += '<button class="' + (activeTab === 'status' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'status\')">STATUS</button>';
     html += '<button class="' + (activeTab === 'tests' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'tests\')">TESTS</button>';
+    if (task.studio) {
+      html += '<button class="' + (activeTab === 'studio' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'studio\')">STUDIO</button>';
+    }
     html += '</div>';
 
     html += '<div class="task-tab-content">';
@@ -2004,6 +2094,61 @@
         html += '</tr>';
       });
       html += '</tbody></table>';
+      html += '</div>';
+      html += '</div>';
+    } else if (activeTab === 'studio' && task.studio) {
+      html += '<div class="detail-section">';
+      html += '<h3>🎬 Episode Board</h3>';
+      html += '<div class="studio-episode-grid">';
+      task.studio.episodes.forEach(function (episode) {
+        var episodeState = studioEpisodeStateMeta(episode.status);
+        var episodeOwner = MEMBERS[episode.owner] || { avatar: '👤' };
+        var pct = Math.round((episode.phaseProgress.current / episode.phaseProgress.total) * 100);
+        html += '<div class="studio-card">';
+        html += '<div class="studio-card-head">';
+        html += '<div><div class="studio-card-title">' + esc(episode.id) + ' · ' + esc(episode.title) + '</div><div class="studio-card-sub">' + esc(episode.summary) + '</div></div>';
+        html += '<span class="studio-state-badge ' + episodeState.cls + '">' + esc(episodeState.label) + '</span>';
+        html += '</div>';
+        html += '<div class="studio-progress-row"><span>' + episodeOwner.avatar + ' ' + esc(episode.owner) + '</span><span>Phase ' + episode.phaseProgress.current + '/' + episode.phaseProgress.total + '</span></div>';
+        html += '<div class="task-progress-bar"><span style="width:' + pct + '%"></span></div>';
+        html += '<div class="studio-panel-list">';
+        episode.panels.forEach(function (panel) {
+          var panelState = studioPanelStateMeta(panel.status);
+          html += '<div class="studio-panel-chip ' + panelState.cls + '">';
+          html += '<span>' + esc(panel.id) + '</span><span>' + esc(panelState.label) + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section">';
+      html += '<h3>🧪 Hypothesis Loop</h3>';
+      html += '<div class="studio-hypothesis-list">';
+      task.studio.hypotheses.forEach(function (hypothesis) {
+        var hypothesisState = studioHypothesisStateMeta(hypothesis.status);
+        html += '<div class="studio-line-item">';
+        html += '<div class="studio-line-main"><strong>' + esc(hypothesis.id) + '</strong> · ' + esc(hypothesis.title) + '</div>';
+        html += '<div class="studio-line-meta"><span class="studio-state-badge ' + hypothesisState.cls + '">' + esc(hypothesisState.label) + '</span><span>' + esc(hypothesis.metric) + '</span><span>' + esc(hypothesis.owner) + '</span></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="detail-section">';
+      html += '<h3>📌 Active Queue</h3>';
+      html += '<div class="studio-queue-list">';
+      task.studio.queue.forEach(function (item) {
+        html += '<div class="studio-line-item">';
+        html += '<div class="studio-line-main"><strong>' + esc(item.label) + '</strong></div>';
+        html += '<div class="studio-line-sub">' + esc(item.note) + '</div>';
+        html += '<div class="studio-line-meta"><span class="badge" style="background:var(--surface3);color:var(--text2)">' + esc(item.type) + '</span><span>' + esc(item.owner) + '</span></div>';
+        html += '</div>';
+      });
+      html += '</div>';
       html += '</div>';
       html += '</div>';
     }
