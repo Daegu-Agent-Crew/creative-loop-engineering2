@@ -378,6 +378,81 @@
           { name: '웹앱 상세', method: '뉴스 클릭', expected: '원문/번역/분석 표시', passed: false }
         ]
       }
+    },
+    {
+      id: 'CLE2-7',
+      cle2Id: 'CLE2-7',
+      slug: 'three-body-comic-studio',
+      title: '삼체 연재 만화 프로젝트 전용 관리 시스템',
+      issue: 17,
+      goal: {
+        objective: 'CLE1의 제작 루프와 CLE2의 태스크 관리 구조를 결합해 삼체 연재 만화 프로젝트 전용 운영 시스템을 구축하고, 에피소드 제작 파이프라인과 이미지 생성 품질 관리, 가설 검증 루프를 한 흐름으로 연결한다.',
+        successCriteria: [
+          '에피소드 단위 제작 파이프라인과 패널 상태 모델이 정의되어 있다.',
+          'OpenClaw(GLM)에서 Codex CLI 이미지 생성을 재현 가능하게 실행하는 매뉴얼 또는 스크립트가 있다.',
+          '이미지 생성 실패, 스타일 편차, A/B 비교를 관리할 수 있는 품질 루프가 정의되어 있다.',
+          '가설 검증 결과를 기록하는 results 템플릿과 상태 추적 규칙이 있다.',
+          'CLE2 대시보드에서 CLE2-7 작업 상태와 단계가 확인된다.'
+        ],
+        scope: {
+          in: ['에피소드 파이프라인 모델링', '패널 상태 관리', '이미지 생성 표준화', '가설 실험 추적', '팀 병렬 작업 구조', 'CLE2-7 tasks 문서', 'CLE2 대시보드 반영'],
+          out: ['이미지 생성 모델 자체 개발', 'GA4 실계정 운영 연동 완료', 'Discord 운영 인프라 구축 완료', 'three-body-comic 전체 리포 구현 대행']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 요구사항 정제 및 시스템 경계 확정', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 2 · 에피소드/패널 데이터 모델 설계', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · 이미지 생성 실행 표준화', owner: '대구루', status: 'pending' },
+          { name: 'Phase 4 · 가설 검증 및 results 템플릿 설계', owner: '레노버', status: 'pending' },
+          { name: 'Phase 5 · 팀 병렬 운영 루프 및 리뷰 흐름 설계', owner: '대구루', status: 'pending' },
+          { name: 'Phase 6 · CLE2 대시보드/문서 통합', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 0, total: 6 },
+        completedTasks: ['이슈 #17 생성', '문서 요구사항 초안 확정'],
+        currentTasks: ['CLE2-7 GOAL/PLAN/STATUS/TESTS 구체화', 'GitHub 연동 보안 정비'],
+        nextTasks: ['에피소드 파이프라인 데이터 구조 정의', 'Codex CLI 이미지 생성 표준 절차 문서화', 'results 템플릿 설계'],
+        blockers: ['브라우저 프런트엔드에 GitHub PAT를 직접 넣는 기존 구조는 운영 불가']
+      },
+      tests: {
+        items: [
+          { name: '태스크 문서 생성', method: '리포 확인', expected: 'tasks/CLE2-7/ 아래 4개 문서가 존재한다', passed: true },
+          { name: '대시보드 노출', method: '브라우저 확인', expected: 'CLE2-7 카드와 상세 탭이 표시된다', passed: true },
+          { name: '파이프라인 모델 정의', method: '문서 리뷰', expected: '대본→콘티→패널→리뷰→배포→관측 단계가 명시된다', passed: true },
+          { name: '이미지 생성 표준화', method: '문서 리뷰', expected: 'OpenClaw가 Codex CLI 이미지 생성을 재현 가능하게 호출하는 절차가 있다', passed: true },
+          { name: 'GitHub 보안 정비', method: '코드 리뷰', expected: '하드코딩 PAT 없이 동기화가 동작한다', passed: true }
+        ]
+      },
+      docs: [
+        {
+          title: '시스템 개요',
+          path: 'tasks/CLE2-7/three-body-comic-studio/docs/SYSTEM-OVERVIEW.md',
+          description: 'CLE2와 three-body-comic 저장소의 책임 경계와 핵심 객체 정의'
+        },
+        {
+          title: '에피소드/패널 파이프라인',
+          path: 'tasks/CLE2-7/three-body-comic-studio/docs/EPISODE-PIPELINE.md',
+          description: '에피소드 단계, 패널 상태, 작업 분배 규칙'
+        },
+        {
+          title: '이미지 생성 플레이북',
+          path: 'tasks/CLE2-7/three-body-comic-studio/docs/IMAGE-GENERATION-PLAYBOOK.md',
+          description: 'OpenClaw(GLM)에서 Codex CLI 이미지 생성을 실행하는 표준 절차'
+        },
+        {
+          title: '가설 검증 템플릿',
+          path: 'tasks/CLE2-7/three-body-comic-studio/docs/HYPOTHESIS-RESULTS-TEMPLATE.md',
+          description: 'results.md 구조와 검증 상태 기준'
+        },
+        {
+          title: '운영 루프',
+          path: 'tasks/CLE2-7/three-body-comic-studio/docs/TEAM-OPERATING-LOOP.md',
+          description: '팀원, 에이전트, PR 리뷰, Discord 알림 기준'
+        }
+      ]
     }
   ];
 
@@ -638,6 +713,10 @@
     return task.status.currentTasks[0];
   }
 
+  function taskDocHref(path) {
+    return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/main/' + path;
+  }
+
   function getMemberRequests(name) {
     return state.requests.filter(function (r) {
       return r.author === name || (r.assignees && r.assignees.indexOf(name) >= 0);
@@ -692,20 +771,23 @@
   var GH_REPO = 'Daegu-Agent-Crew/creative-loop-engineering2';
   var GH_API = 'https://api.github.com/repos/' + GH_REPO + '';
 
-  // Hardcoded PAT (split to avoid pattern matching)
-  var _GH_PAT_PARTS = ['github_pat_11AAPJQ5A05', 'gu6tOkr69d9_xf8Ia8yur', 'Dh3v0zkoRdvNNviv1H6B', 'l6zBWdaFfjLGzkXXX3QS', 'CPJ6J9kFZc'];
-  var _GH_TOKEN = _GH_PAT_PARTS.join('');
+  function ghToken() {
+    return (state.settings.githubToken || '').trim();
+  }
 
-  function ghHeaders() {
-    return {
-      'Authorization': 'token ' + _GH_TOKEN,
+  function ghHeaders(requireAuth) {
+    var token = ghToken();
+    if (requireAuth && !token) return null;
+    var headers = {
       'Accept': 'application/vnd.github.v3+json',
       'Content-Type': 'application/json'
     };
+    if (token) headers.Authorization = 'token ' + token;
+    return headers;
   }
 
   function ghEnabled() {
-    return true;
+    return !!ghToken();
   }
 
   function ghLabelFor(type, key) {
@@ -733,7 +815,7 @@
   }
 
   function ghCreateIssue(r, cb) {
-    var headers = ghHeaders();
+    var headers = ghHeaders(true);
     if (!headers) { if (cb) cb(null); return; }
     fetch(GH_API + '/issues', {
       method: 'POST',
@@ -755,7 +837,7 @@
   }
 
   function ghUpdateIssue(r, cb) {
-    var headers = ghHeaders();
+    var headers = ghHeaders(true);
     if (!headers || !r.githubIssue) { if (cb) cb(null); return; }
     fetch(GH_API + '/issues/' + r.githubIssue, {
       method: 'PATCH',
@@ -772,7 +854,7 @@
   }
 
   function ghAddComment(r, text, cb) {
-    var headers = ghHeaders();
+    var headers = ghHeaders(true);
     if (!headers || !r.githubIssue) { if (cb) cb(null); return; }
     fetch(GH_API + '/issues/' + r.githubIssue + '/comments', {
       method: 'POST',
@@ -784,7 +866,7 @@
   }
 
   function ghSyncFromIssues(cb) {
-    var headers = ghHeaders();
+    var headers = ghHeaders(false);
     if (!headers) { if (cb) cb(null); return; }
     // Fetch all issues with any cle: label, plus any without labels to catch everything
     fetch(GH_API + '/issues?state=all&per_page=100', {
@@ -1825,6 +1907,17 @@
       html += '<h3>🎯 목표</h3>';
       html += '<div class="detail-description">' + esc(task.goal.objective) + '</div>';
       html += '</div>';
+      if (task.docs && task.docs.length) {
+        html += '<div class="detail-section">';
+        html += '<h3>📚 관련 문서</h3>';
+        html += '<div class="grid grid-2">';
+        task.docs.forEach(function (doc) {
+          html += '<a class="quick-action" href="' + esc(taskDocHref(doc.path)) + '" target="_blank" rel="noopener">';
+          html += '<span class="qa-icon">📄</span><div><div class="qa-title">' + esc(doc.title) + '</div><div class="qa-desc">' + esc(doc.description) + '</div></div></a>';
+        });
+        html += '</div>';
+        html += '</div>';
+      }
       html += '<div class="grid grid-2">';
       html += '<div class="detail-section">';
       html += '<h3>✅ 성공 기준</h3>';
@@ -2089,13 +2182,16 @@
     // GitHub
     html += '<div class="settings-card">';
     html += '<h3>🔐 GitHub 연동</h3>';
-    html += '<p class="sc-desc">GitHub Issues와 동기화하여 백엔드로 사용합니다.</p>';
-    html += '<div class="sc-status sc-active">활성화됨</div>';
+    html += '<p class="sc-desc">읽기 동기화는 공개 API로 수행하고, 쓰기 동기화는 이 브라우저에 저장한 개인 토큰이 있을 때만 활성화됩니다.</p>';
+    html += '<div class="sc-status ' + (ghEnabled() ? 'sc-active' : '') + '">' + (ghEnabled() ? '쓰기 동기화 활성' : '읽기 전용 모드') + '</div>';
     html += '<div style="margin-top:14px">';
-    html += '<div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--surface3);font-size:0.85rem;color:var(--green);font-weight:600">✅ GitHub 연결됨 — 자동 동기화 활성</div>';
+    html += '<label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:6px;color:var(--text2)">GitHub Personal Access Token</label>';
+    html += '<input class="text-input" id="githubToken" type="password" placeholder="github_pat_..." value="' + esc(state.settings.githubToken || '') + '">';
+    html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">토큰은 브라우저 localStorage에만 저장되며, public Pages 번들에는 포함되지 않습니다.</div>';
+    html += '<div style="margin-top:10px"><button class="btn btn-primary btn-sm" onclick="window.__CLE2__.saveSettings()">💾 GitHub 설정 저장</button></div>';
     html += '<div style="margin-top:8px"><button class="btn btn-primary btn-sm" onclick="window.__CLE2__.syncFromGitHub()">🔄 GitHub에서 동기화</button></div>';
     html += '<div style="margin-top:8px;font-size:0.75rem;color:var(--text3)">저장소: Daegu-Agent-Crew/creative-loop-engineering2</div>';
-    html += '<div style="margin-top:6px;font-size:0.75rem;color:var(--green)">✅ 새 요구사항/댓글이 자동으로 Issue로 동기화됩니다</div>';
+    html += '<div style="margin-top:6px;font-size:0.75rem;color:' + (ghEnabled() ? 'var(--green)' : 'var(--amber)') + '">' + (ghEnabled() ? '✅ 새 요구사항/댓글/상태 변경이 Issue로 동기화됩니다' : 'ℹ️ 토큰 없이도 Issue 읽기 동기화는 가능하지만, 생성/수정/댓글은 비활성화됩니다') + '</div>';
     html += '</div>';
     html += '</div>';
 
@@ -2470,6 +2566,8 @@
     saveSettings: function () {
       var webhookEl = document.getElementById('discordWebhook');
       if (webhookEl) state.settings.discordWebhook = webhookEl.value.trim();
+      var githubTokenEl = document.getElementById('githubToken');
+      if (githubTokenEl) state.settings.githubToken = githubTokenEl.value.trim();
       saveSettings();
       showToast('✅ 설정이 저장되었습니다', 'success');
       renderSettings();

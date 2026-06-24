@@ -48,6 +48,12 @@ tasks/
         ├── PLAN.md
         ├── STATUS.md
         └── TESTS.md
+└── CLE2-7/              ← 이슈 #17: 삼체 전용 관리 시스템
+    └── three-body-comic-studio/
+        ├── GOAL.md
+        ├── PLAN.md
+        ├── STATUS.md
+        └── TESTS.md
 ```
 
 ## 문서 역할
