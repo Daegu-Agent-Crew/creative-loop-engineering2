@@ -54,7 +54,7 @@ tasks/
 │       ├── PLAN.md
 │       ├── STATUS.md
 │       └── TESTS.md
-└── CLE2-9/              ← 이슈 #20: agent_builder 진화
+└── CLE2-8/              ← 이슈 #20: agent_builder 진화
     └── agent-builder-evolution/
         ├── GOAL.md
         ├── PLAN.md

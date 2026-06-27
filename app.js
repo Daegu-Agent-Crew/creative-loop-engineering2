@@ -526,6 +526,58 @@
           { type: 'results', label: 'EP001 results.md 초안', note: '관측 항목과 H1 연결 준비', owner: '레노버' }
         ]
       }
+    },
+    {
+      id: 'CLE2-8',
+      cle2Id: 'CLE2-8',
+      slug: 'agent-builder-evolution',
+      title: 'agent_builder_public, CLE2 구조 흡수하여 커뮤니티 중심 레포로 진화',
+      issue: 20,
+      prs: [],
+      deliverables: [],
+      goal: {
+        objective: 'agent_builder_public을 단순 starter-kit 문서에서 살아있는 커뮤니티 레포로 진화. CLE2의 태스크 관리, team-memory 통합, SPA 대시보드, Discord 연동 구조를 흡수하여 스터디/커뮤니티 버전의 CLE2를 만든다.',
+        successCriteria: [
+          'agent_builder_public에 tasks/ 폴더 + GOAL/PLAN/STATUS/TESTS 템플릿이 도입된다',
+          'team-memory-kit 파이프라인이 스터디 기록에 연동된다',
+          'CLE2 스타일 SPA 대시보드가 agent_builder용으로 분기/커스터마이즈된다',
+          '이슈 기반 운영이 활성화된다',
+          'Discord 연동으로 미션 제출 → 알림 → 피드백 루프가 구축된다'
+        ],
+        scope: {
+          in: ['tasks/ 구조 도입 (AB-N 네이밍)', 'context/records + context/registry 설계', 'team-memory-kit CLI 연동', 'CLE2 SPA 코드 기반 커뮤니티 대시보드', '이슈 템플릿 및 첫 이슈 생성', 'Discord webhook 연동'],
+          out: ['CLE2 코드 전체 복사', 'Obsidian vault 구조 변경', '외부 사이트 배포 자동화 완성']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 태스크 관리 구조 도입', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · team-memory 통합', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · SPA 대시보드 (CLE2 스타일)', owner: '대구루', status: 'pending' },
+          { name: 'Phase 4 · 이슈 기반 운영 활성화', owner: '대구루', status: 'pending' },
+          { name: 'Phase 5 · Discord 연동', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'proposed',
+        progress: { current: 0, total: 5 },
+        completedTasks: ['GitHub Issue #20 생성', 'CLE2 대시보드 구조 분석', 'CLE2-8 task 문서 생성'],
+        currentTasks: ['Phase 1: tasks/ 폴더 + _template/ 생성 대기'],
+        nextTasks: ['AB-N 태스크 네이밍 규칙 문서화', 'starter-kit 기존 문서 태스크 형태 재구성'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'tasks/ 폴더 구조', method: '리포 확인', expected: 'tasks/ + _template/ (GOAL/PLAN/STATUS/TESTS) 가 존재한다', passed: false },
+          { name: 'AB-N 네이밍 규칙', method: '문서 리뷰', expected: '스터디 미션 → 태스크 매핑 규칙이 문서화되어 있다', passed: false },
+          { name: 'team-memory 구조', method: '리포 확인', expected: 'context/records/ + context/registry/ 가 존재한다', passed: false },
+          { name: 'SPA 대시보드 홈', method: '브라우저 확인', expected: '스터디 현황이 표시된다', passed: false },
+          { name: 'SPA 미션 페이지', method: '브라우저 확인', expected: '주차별 미션 리스트 + 필터가 동작한다', passed: false },
+          { name: '이슈 템플릿', method: '리포 확인', expected: '.github/ISSUE_TEMPLATE/에 템플릿이 있다', passed: false },
+          { name: 'Discord 알림', method: '통합 테스트', expected: '미션 제출 시 Discord에 알림이 전송된다', passed: false },
+          { name: 'README living example', method: '문서 리뷰', expected: 'README가 CLE2-style 운영 방식을 설명한다', passed: false }
+        ]
+      }
     }
   ];
 

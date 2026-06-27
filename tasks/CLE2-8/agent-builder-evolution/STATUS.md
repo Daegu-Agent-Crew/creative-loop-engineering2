@@ -10,7 +10,7 @@
 ## 완료된 작업
 - [x] GitHub Issue #20 생성
 - [x] CLE2 대시보드 구조 분석 (홈/요구사항/등록/에이전트/Tasks/위키/메시지/설정)
-- [x] CLE2-9 task 문서 생성 (GOAL/PLAN/STATUS/TESTS)
+- [x] CLE2-8 task 문서 생성 (GOAL/PLAN/STATUS/TESTS)
 
 ## 진행 중인 작업
 - (없음)
@@ -26,4 +26,4 @@
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
 | 2026-06-27 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
-| 2026-06-27 | CLE2-9 task 문서 초기 생성 | 라이카 |
+| 2026-06-27 | CLE2-8 task 문서 초기 생성 | 라이카 |
