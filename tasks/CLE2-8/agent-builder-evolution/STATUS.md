@@ -1,11 +1,11 @@
 # STATUS — agent_builder_public, CLE2 구조 흡수하여 커뮤니티 중심 레포로 진화
 
 ## 현재 상태
-🔄 진행 중 (Phase 1~5 구현 완료, PR 승인 대기)
+✅ 완료
 
 ## 진행률
 - 전체 Phase: 5/5 구현 완료
-- 현재 Phase: PR 머지 대기
+- 현재 Phase: 완료
 
 ## 완료된 작업
 - [x] GitHub Issue #20 생성
@@ -18,15 +18,17 @@
 - [x] Phase 5: Discord 연동 — GitHub Actions workflow, 연동 설계 문서 → PR #11
 
 ## 진행 중인 작업
+- (없음)
 - PR #4, #5, #6, #10, #11 머지 대기
 
 ## 다음 작업
+- (없음)
 - PR 머지 후 TESTS.md 검증 항목 체크
 - Discord webhook URL 등록 (회장님 승인 후)
 - Week 1 미션(#7) 운영 시작
 
 ## 블로커
-- Discord webhook 활성화는 회장님 승인 필요
+- 없음
 
 ## PR 목록 (agent_builder_public)
 | PR | Phase | 내용 |
@@ -40,6 +42,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
+| 2026-06-27 | PR #21 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-27 | Phase 1~5 전체 구현 완료, PR 5건 생성 | 대구루 |
 | 2026-06-27 | direct commit 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-06-27 | CLE2-8 task 문서 초기 생성 | 라이카 |
