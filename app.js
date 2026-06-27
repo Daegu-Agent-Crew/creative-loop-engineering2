@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v10';
+  var DATA_VERSION = 'v11';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -1062,6 +1062,21 @@
     }).then(function(res) { return res.json(); })
       .then(function(data) {
         if (!Array.isArray(data)) { if (cb) cb(null); return; }
+
+        // Dedup existing requests by githubIssue — keep first, remove duplicates
+        var seen = {};
+        var deduped = [];
+        state.requests.forEach(function(r) {
+          var key = r.githubIssue ? 'gi:' + r.githubIssue : 'id:' + r.id;
+          if (!seen[key]) {
+            seen[key] = true;
+            deduped.push(r);
+          }
+        });
+        if (deduped.length !== state.requests.length) {
+          state.requests = deduped;
+        }
+
         var synced = 0;
         var maxId = state.requests.length ? Math.max.apply(null, state.requests.map(function(r){return r.id;})) : 0;
         data.forEach(function(issue) {
@@ -1072,6 +1087,16 @@
           var match = issue.title.match(/\[CLE2-(\d+)\]/);
           var reqId = match ? parseInt(match[1]) : null;
           var req = reqId ? getRequest(reqId) : null;
+
+          // Dedup by GitHub issue number — prevent duplicates on every sync
+          if (!req) {
+            for (var i = 0; i < state.requests.length; i++) {
+              if (state.requests[i].githubIssue === issue.number) {
+                req = state.requests[i];
+                break;
+              }
+            }
+          }
 
           // Parse labels
           var catLabel = issue.labels.find(function(l) { return l.name.indexOf('cle:') === 0; });
