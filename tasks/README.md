@@ -48,8 +48,14 @@ tasks/
         ├── PLAN.md
         ├── STATUS.md
         └── TESTS.md
-└── CLE2-7/              ← 이슈 #17: 삼체 전용 관리 시스템
-    └── three-body-comic-studio/
+├── CLE2-7/              ← 이슈 #17: 삼체 전용 관리 시스템
+│   └── three-body-comic-studio/
+│       ├── GOAL.md
+│       ├── PLAN.md
+│       ├── STATUS.md
+│       └── TESTS.md
+└── CLE2-9/              ← 이슈 #20: agent_builder 진화
+    └── agent-builder-evolution/
         ├── GOAL.md
         ├── PLAN.md
         ├── STATUS.md
