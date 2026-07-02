@@ -18,41 +18,76 @@ jobs:
           script: |
             const issue = context.payload.issue;
             const title = issue.title;
-            
+
             // Parse CLE2-ID from title (e.g., "[CLE2-4] ..." -> "4")
             const match = title.match(/\[CLE2-(\d+)\]/);
             const cle2Id = match ? match[1] : null;
-            
+
             if (!cle2Id) {
               core.info('Not a CLE2 issue, skipping.');
               return;
             }
-            
+
             // Extract description (before the --- line)
             const body = issue.body || '';
             const descMatch = body.split('\n---\n')[0] || body;
             const description = descMatch.trim();
-            
-            // Build agent request message
-            const message = [
+
+            // Build agent request message for Discord
+            const discordMessage = [
+              `📋 **새 요구사항 등록 — CLE2-${cle2Id}**`,
+              ``,
+              `**제목:** ${title}`,
+              `**이슈:** ${issue.html_url}`,
+              ``,
+              `---`,
+              ``,
+              `@대구루 아래 요구사항을 분석해서 task를 생성해줘.`,
+              ``,
+              `**요구사항:** ${title.replace(/^\[CLE2-\d+\]\s*/, '')}`,
+              `**설명:**`,
+              description,
+              `**이슈 URL:** ${issue.html_url}`,
+              ``,
+              `tasks/CLE2-${cle2Id}/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md를 작성해서 PR로 올려줘.`
+            ].join('\n');
+
+            // Create comment on the issue (for GitHub record)
+            const commentBody = [
               '📋 **대구루에게 요청:**',
               '',
               `CLE2-${cle2Id} 태스크 생성해줘.`,
               '',
-              `**요구사항:** ${issue.title.replace(/^\[CLE2-\d+\]\s*/, '')}`,
+              `**요구사항:** ${title.replace(/^\[CLE2-\d+\]\s*/, '')}`,
               `**설명:** ${description}`,
               `**이슈:** ${issue.html_url}`,
               '',
               '---',
-              '☝️ 이 메시지를 복사해서 Discord에 붙여넣으세요.'
+              '🤖 Discord로 에이전트 요청이 전송되었습니다.'
             ].join('\n');
-            
-            // Create comment on the issue
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: message
+              body: commentBody
             });
-            
+
             core.info(`Agent request comment added to issue #${issue.number}`);
+
+            // Save Discord message for next step
+            core.setOutput('discord_message', discordMessage);
+            core.setOutput('cle2_id', cle2Id);
+            core.setOutput('issue_number', issue.number);
+            core.setOutput('issue_url', issue.html_url);
+            core.setOutput('issue_title', title);
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          MESSAGE: ${{ steps.generate-agent-request.outputs.discord_message }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "$(jq -n --arg msg "$MESSAGE" '{content: $msg}')" \
+            "$DISCORD_WEBHOOK_URL"
