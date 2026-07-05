@@ -1,0 +1,46 @@
+{
+  "task_id": "CLE2-9",
+  "created_at": "2026-07-05",
+  "plan_ref": "PLAN.md",
+  "goals": [
+    {
+      "id": "G001",
+      "title": "Phase 0: 인프라 구축",
+      "objective": "CLE3 신규 GitHub 리포 생성, 디렉토리 구조, GitHub Actions, Discord Bot 리스너, state.json, JSON 스키마, 평가 루브릭 문서화",
+      "status": "pending",
+      "acceptance_criteria": [
+        "리포 생성 + 기본 구조 확립",
+        "GitHub Actions가 push 트리거로 정상 실행",
+        "Discord Bot이 #cle3-approvals에 메시지 게시 가능",
+        "state.json 생성/갱신 확인, Git 추적 포함",
+        "JSON 스키마 6종 정의"
+      ],
+      "verification": "수동 push → Actions 로그 확인, Discord 메시지 수신 확인"
+    },
+    {
+      "id": "G002",
+      "title": "Phase 0.5: 드라이런",
+      "objective": "더미 데이터로 전 파이프라인 1회 통과, Discord 승인 게이트 작동 확인",
+      "status": "pending",
+      "acceptance_criteria": [
+        "더미 데이터로 Phase 1~6 각 단계 최소 1회 성공 실행",
+        "Discord 승인 게이트 정상 작동",
+        "state.json 상태 추적 정상",
+        "평가 점수 기록 정상 동작"
+      ],
+      "verification": "드라이런 로그, state.json 상태 이력"
+    },
+    {
+      "id": "G003",
+      "title": "Phase 1-6: EP001 정식 제작",
+      "objective": "실제 에피소드(EP001)를 처음부터 끝까지 CLE3로 완성, 각 단계 프롬프트 버전+평가 기록",
+      "status": "pending",
+      "acceptance_criteria": [
+        "EP001 전체 6단계 완성",
+        "단계별 프롬프트 버전과 평가 점수 기록",
+        "GitHub Pages에 EP001 배포 완료"
+      ],
+      "verification": "GitHub Pages URL, 평가 기록 파일, state.json 최종 상태"
+    }
+  ]
+}
