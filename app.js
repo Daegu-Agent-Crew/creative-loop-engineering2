@@ -899,6 +899,16 @@
     return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/main/' + path;
   }
 
+  function taskDecisionsPath(task) {
+    if (!task || !task.id || !task.slug) return '';
+    return 'tasks/' + task.id + '/' + task.slug + '/DECISIONS.md';
+  }
+
+  function taskIssueHref(task) {
+    if (!task || !task.issue) return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues';
+    return 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/' + task.issue;
+  }
+
   function cloneJSON(value) {
     return JSON.parse(JSON.stringify(value));
   }
@@ -1304,7 +1314,7 @@
     html += '<a class="quick-action" href="#/new"><span class="qa-icon">➕</span><div><div class="qa-title">새 요구사항 등록</div><div class="qa-desc">아이디어, 버그, 기능 요청</div></div></a>';
     html += '<a class="quick-action" href="#/requests"><span class="qa-icon">📋</span><div><div class="qa-title">전체 요구사항</div><div class="qa-desc">필터 및 검색</div></div></a>';
     html += '<a class="quick-action" href="#/agents"><span class="qa-icon">🤖</span><div><div class="qa-title">에이전트 패널</div><div class="qa-desc">대구루, 레노버 현황</div></div></a>';
-    html += '<a class="quick-action" href="#/tasks"><span class="qa-icon">🗂️</span><div><div class="qa-title">Tasks 대시보드</div><div class="qa-desc">GOAL / PLAN / STATUS / TESTS</div></div></a>';
+    html += '<a class="quick-action" href="#/tasks"><span class="qa-icon">🗂️</span><div><div class="qa-title">Tasks 대시보드</div><div class="qa-desc">GOAL / PLAN / STATUS / TESTS / DECISIONS</div></div></a>';
     html += '<a class="quick-action" href="#/wiki"><span class="qa-icon">📚</span><div><div class="qa-title">팀 위키</div><div class="qa-desc">개념, 프로젝트, 용어 사전</div></div></a>';
     html += '<a class="quick-action" href="#/settings"><span class="qa-icon">⚙️</span><div><div class="qa-title">설정</div><div class="qa-desc">GitHub 연동, 사용자 변경</div></div></a>';
     html += '</div>';
@@ -1606,7 +1616,7 @@
         html += '<span style="font-weight:600">' + esc(taskForReq.id) + '</span>';
         html += '<span class="task-state-badge reviewing">📋 Task 미생성</span>';
         html += '</div>';
-        html += '<div style="color:var(--text3);font-size:0.8rem">이 요구사항에 대한 task 폴더가 아직 생성되지 않았습니다. tasks/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md를 작성하면 자동으로 반영됩니다.</div>';
+        html += '<div style="color:var(--text3);font-size:0.8rem">이 요구사항에 대한 task 폴더가 아직 생성되지 않았습니다. tasks/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md, DECISIONS.md를 작성하면 자동으로 반영됩니다.</div>';
         html += '<div style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/tasks/' + taskForReq.id + '">→ Task 상세 보기</a></div>';
         html += '</div>';
       } else {
@@ -2091,7 +2101,7 @@
 
     var html = '<div style="padding-top:24px" class="page-enter">';
     html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:8px">📋 Tasks 대시보드</h1>';
-    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">tasks/ 디렉토리의 GOAL, PLAN, STATUS, TESTS 문서를 한눈에 확인하세요</p>';
+    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">tasks/ 디렉토리의 GOAL, PLAN, STATUS, TESTS, DECISIONS 문서를 한눈에 확인하세요</p>';
 
     html += '<div class="stats-grid">';
     html += statCard('🗂️', totalTasks, '전체 태스크');
@@ -2201,6 +2211,7 @@
     html += '<button class="' + (activeTab === 'plan' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'plan\')">PLAN</button>';
     html += '<button class="' + (activeTab === 'status' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'status\')">STATUS</button>';
     html += '<button class="' + (activeTab === 'tests' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'tests\')">TESTS</button>';
+    html += '<button class="' + (activeTab === 'decisions' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'decisions\')">DECISIONS</button>';
     if (task.studio) {
       html += '<button class="' + (activeTab === 'studio' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'studio\')">STUDIO</button>';
     }
@@ -2309,6 +2320,32 @@
         html += '</tr>';
       });
       html += '</tbody></table>';
+      html += '</div>';
+      html += '</div>';
+    } else if (activeTab === 'decisions') {
+      html += '<div class="detail-section">';
+      html += '<h3>🧭 의사결정 기록</h3>';
+      html += '<div class="detail-description">이 요구사항의 장기 참조용 판단, 열린 쟁점, 참고 링크는 `DECISIONS.md`에 누적합니다. 짧은 토론은 GitHub Issue 댓글에 남기고, 확정된 내용만 이 문서로 옮기는 방식이 기준입니다.</div>';
+      html += '</div>';
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section">';
+      html += '<h3>📄 문서 바로가기</h3>';
+      html += '<div class="studio-line-item">';
+      html += '<div class="studio-line-main"><strong>DECISIONS.md</strong></div>';
+      html += '<div class="studio-line-sub">' + esc(taskDecisionsPath(task)) + '</div>';
+      html += '<div class="studio-inline-actions">';
+      html += '<a class="btn btn-primary btn-sm" href="' + esc(taskDocHref(taskDecisionsPath(task))) + '" target="_blank" rel="noopener">문서 열기</a>';
+      html += '<a class="btn btn-ghost btn-sm" href="' + esc(taskIssueHref(task)) + '" target="_blank" rel="noopener">이슈 보기</a>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div class="detail-section">';
+      html += '<h3>📝 기록 원칙</h3>';
+      html += '<ul class="task-status-list">';
+      html += '<li>짧은 의견, 링크, 임시 코멘트는 GitHub Issue 댓글에 남깁니다.</li>';
+      html += '<li>구현/운영에 영향을 주는 합의는 `DECISIONS.md`에 날짜와 함께 정리합니다.</li>';
+      html += '<li>최종 상태 변화는 `GOAL.md`, `PLAN.md`, `STATUS.md`, `TESTS.md`에도 반영합니다.</li>';
+      html += '</ul>';
       html += '</div>';
       html += '</div>';
     } else if (activeTab === 'studio' && task.studio) {
