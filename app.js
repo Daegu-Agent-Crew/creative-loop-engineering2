@@ -578,6 +578,54 @@
           { name: 'README living example', method: '문서 리뷰', expected: 'README가 CLE2-style 운영 방식을 설명한다', passed: false }
         ]
       }
+    },
+    {
+      id: 'CLE2-9',
+      cle2Id: 'CLE2-9',
+      slug: 'three-body-cle3',
+      title: '삼체 연재 만화 창작 시스템 (CLE3)',
+      issue: 24,
+      goal: {
+        objective: '`three-body-comic` 저장소와 기존 CLE/CLE2 운영 경험을 바탕으로, 삼체 연재 만화의 기획, 생성, 교정, 배포, 관측까지를 사용자와 AI 에이전트가 함께 다루는 창작 시스템 CLE3를 정의하고 구현 기준을 세운다.',
+        successCriteria: [
+          '`three-body-comic` 현재 구조를 기준으로 CLE3의 시스템 경계와 핵심 객체가 정리된다',
+          'GitHub + GitHub Pages + Discord + OpenClaw + Codex 연동 범위가 문서화된다',
+          '스토리, 화풍, 캐릭터, 패널, 결과물 교정의 협업 루프가 단계별로 정의된다',
+          'CLE2-7에서 만든 운영 레이어와 CLE3에서 새로 필요한 창작 레이어가 구분된다',
+          'CLE2 대시보드에서 CLE2-9 진행 상태와 의사결정을 추적할 수 있다'
+        ],
+        scope: {
+          in: ['three-body-comic 구조 분석', 'CLE/CLE2/CLE2-7 자산 기반 CLE3 재정의', 'GitHub/Pages/Discord/OpenClaw/Codex 연동 설계', '인간+AI 협업 창작 단계 정의', 'CLE2 대시보드 반영'],
+          out: ['이미지 생성 모델 자체 개발', '실서비스 운영 계정 세팅 완료', 'three-body-comic 전체 제작 대행', '완전 자동 만화 생성 즉시 구현']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 현재 자산 분석 및 문제 재정의', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 2 · CLE3 시스템 경계 및 핵심 객체 정의', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · 협업 루프 설계', owner: '레노버', status: 'pending' },
+          { name: 'Phase 4 · 통합 연동 구조 정의', owner: '대구루', status: 'pending' },
+          { name: 'Phase 5 · CLE2 반영 및 후속 구현 이슈 분해', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 5 },
+        completedTasks: ['GitHub Issue #24 생성', 'CLE2-7과 three-body-comic 기존 구조 파악', 'CLE2-9 task 문서 초기 생성'],
+        currentTasks: ['CLE2-7과 CLE3의 경계 재정리', 'three-body-comic 공개/제작/관측 구조를 CLE3 기준으로 재해석', 'GitHub + Pages + Discord + OpenClaw + Codex 연동 단계 재도식화'],
+        nextTasks: ['Story / Style / Character / Panel / Review 객체 모델 정의', '인간 + AI 협업 루프 설계', '후속 구현 이슈 분해'],
+        blockers: ['CLE2-7의 운영 시스템과 CLE3의 창작 시스템이 문서상 혼용되어 있음', 'CLE2 앱에는 아직 CLE2-9 전용 상세 구조가 없음']
+      },
+      tests: {
+        items: [
+          { name: 'CLE2-9 task 문서', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 5개 문서가 존재한다', passed: true },
+          { name: '이슈 연결', method: '문서 리뷰', expected: '모든 문서가 GitHub Issue #24 / CLE2-ID 9와 정합하다', passed: true },
+          { name: '경계 정의', method: '문서 리뷰', expected: 'CLE2-7과 CLE3의 책임 차이가 명시된다', passed: false },
+          { name: '객체 모델 정의', method: '문서 리뷰', expected: 'Story/Style/Character/Episode/Panel/Results 객체가 정의된다', passed: false },
+          { name: '연동 흐름 정의', method: '문서 리뷰', expected: 'GitHub/Pages/Discord/OpenClaw/Codex 흐름이 설명된다', passed: false },
+          { name: 'CLE2 대시보드 카드', method: '브라우저 확인', expected: 'CLE2-9 카드가 Tasks 목록과 상세에 표시된다', passed: true }
+        ]
+      }
     }
   ];
 

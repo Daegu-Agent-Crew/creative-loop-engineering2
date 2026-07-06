@@ -69,6 +69,13 @@ tasks/
         ├── PLAN.md
         ├── STATUS.md
         └── TESTS.md
+└── CLE2-9/              ← 이슈 #24: 삼체 연재 만화 창작 시스템 (CLE3)
+    └── three-body-cle3/
+        ├── GOAL.md
+        ├── PLAN.md
+        ├── STATUS.md
+        ├── TESTS.md
+        └── DECISIONS.md
 ```
 
 ## 문서 역할
