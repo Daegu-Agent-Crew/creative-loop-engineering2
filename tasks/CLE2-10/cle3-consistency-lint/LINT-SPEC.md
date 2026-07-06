@@ -180,3 +180,56 @@
 - CLE2에서는 lint summary를 태스크/리뷰 맥락에 보여준다.
 - `three-body-comic`에서는 episode/panel 산출물 옆에 lint result json 또는 md를 두는 구조가 자연스럽다.
 - 초기 단계에서는 완전 자동 실행보다, 사람이 입력 구조를 채우고 lint 결과를 ReviewNote로 옮기는 반자동 흐름이 현실적이다.
+
+## three-body-comic 저장 경로 기준
+
+### 1. 패널 단위 lint 결과
+- 권장 위치:
+  - `episodes/EPxxx/panels/Pyy/lint.json`
+  - 또는 패널 폴더가 아직 고정되지 않았다면 `episodes/EPxxx/panels/Pyy/lint.md`
+- 목적:
+  - 특정 패널 후보와 직접 연결되는 정합성 결과 저장
+  - Vision QA 직전 수정 라운드에서 바로 참조
+
+### 2. 회차 단위 lint 요약
+- 권장 위치:
+  - `episodes/EPxxx/results.md` 안의 `Consistency Lint Summary` 섹션
+- 목적:
+  - 어떤 ruleId가 반복되는지, 어떤 캐릭터/스타일 문제가 누적되는지 회차 관점에서 관찰
+
+### 3. 실험/가설 연결
+- 권장 위치:
+  - `experiments/EPxxx/results.md` 안의 품질 관측 섹션
+- 목적:
+  - 반복된 lint 문제를 단순 수정이 아니라 제작 프로세스 개선 가설로 승격
+
+## Vision QA handoff 기준
+
+### Vision QA로 넘길 수 없는 상태
+- `critical` 1건 이상
+- `major` 2건 이상
+- `PANEL-001`, `PANEL-002`, `PANEL-003` 같은 메타데이터 누락이 남아 있음
+
+### 조건부로 Vision QA로 넘길 수 있는 상태
+- `major` 1건 이하
+- 나머지가 `minor`, `info`
+- 수정 의도와 남은 리스크가 ReviewNote에 기록됨
+
+### 바로 Vision QA로 넘길 수 있는 상태
+- `critical` 없음
+- `major` 없음
+- `minor`, `info`만 존재
+- `selectedResult`가 고정되어 있고 CharacterSheet / StylePack 기준과 큰 충돌이 없음
+
+## Episode 단위 누적 관측 규칙
+- 같은 `ruleId`가 한 회차에서 3회 이상 반복되면 `results.md`에 회차 패턴으로 기록한다.
+- 같은 `ruleId`가 2화 이상 반복되면 `experiments/EPxxx/results.md` 또는 별도 hypothesis 업데이트 대상으로 올린다.
+- 캐릭터 관련 rule이 반복되면 CharacterSheet 보정, 스타일 관련 rule이 반복되면 StylePack 보정, 패널 메타 rule이 반복되면 storyboard/template 보정 우선순위를 높인다.
+
+## 권장 운영 흐름
+1. `script.md`, `storyboard.md` 기준으로 패널 메타데이터 준비
+2. 패널 생성 후 `lint.json` 또는 `lint.md` 기록
+3. lint 결과를 `ReviewNote(category=consistency)`로 환산
+4. `critical/major` 기준이면 수정 라운드로 복귀
+5. 통과 기준이면 Vision QA (`CLE2-11`)로 handoff
+6. 회차 종료 시 `episodes/EPxxx/results.md`에 누적 lint 패턴 반영

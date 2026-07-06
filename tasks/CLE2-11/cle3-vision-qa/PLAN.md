@@ -7,18 +7,21 @@
 - **입력**: `OBJECT-MODEL.md`, `FOLLOW-UP-ISSUES.md`
 - **출력**: Vision QA rubric 초안
 - **예상 시간**: 0.5일
+- **상태**: 완료
 
 ### Phase 2: ReviewNote 연결과 승인 흐름 설계
 - **담당**: 대구루
 - **입력**: Phase 1 산출물
 - **출력**: 승인/반려/재시도 플로우
 - **예상 시간**: 0.5일
+- **상태**: 완료
 
 ### Phase 3: CLE2 UI 반영 기준 정리
 - **담당**: 대구루
 - **입력**: Phase 2 산출물
 - **출력**: 태스크/리뷰 화면 확장 기준
 - **예상 시간**: 0.5일
+- **상태**: 진행 예정
 
 ## 의존성
 - `tasks/CLE2-9/three-body-cle3/OBJECT-MODEL.md`

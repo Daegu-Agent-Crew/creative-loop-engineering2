@@ -712,15 +712,15 @@
         phases: [
           { name: 'Phase 1 · 린트 범주 정의', owner: '대구루', status: 'done' },
           { name: 'Phase 2 · 결과 포맷 설계', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'in-progress' }
+          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
-        progress: { current: 2, total: 3 },
-        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', '린트 범주 초안 작성', '입력/출력 포맷과 ReviewNote 연결 규칙 초안 작성'],
-        currentTasks: ['CLE2 / three-body-comic 연결 방식 문서화 범위 정리'],
-        nextTasks: ['lint result 저장 경로 기준 정리', 'Episode 단위 누적 관측 규칙 정리', 'Vision QA와 handoff 기준 명문화'],
+        state: 'done',
+        progress: { current: 3, total: 3 },
+        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', '린트 범주 초안 작성', '입력/출력 포맷과 ReviewNote 연결 규칙 초안 작성', 'three-body-comic 저장 경로 기준과 Vision QA handoff 규칙 정리'],
+        currentTasks: [],
+        nextTasks: ['lint rule 세부 목록을 실제 캐릭터/스타일팩 기준으로 보강', 'CLE2-11 Vision QA 루브릭과 승인 기준 정합화', 'three-body-comic 실제 패널 폴더 구조 확정 시 경로 규칙 미세 조정'],
         blockers: []
       },
       tests: {
@@ -753,7 +753,7 @@
         {
           title: 'LINT SPEC',
           path: 'tasks/CLE2-10/cle3-consistency-lint/LINT-SPEC.md',
-          description: '린트 범주, severity, 입출력 스키마, ReviewNote 변환 규칙'
+          description: '린트 범주, severity, 입출력 스키마, 저장 경로, Vision QA handoff 규칙'
         },
         {
           title: 'TESTS',
@@ -784,25 +784,26 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · 검수 기준 정의', owner: '레노버', status: 'pending' },
-          { name: 'Phase 2 · 승인 흐름 설계', owner: '대구루', status: 'pending' },
-          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'pending' }
+          { name: 'Phase 1 · 검수 기준 정의', owner: '레노버', status: 'done' },
+          { name: 'Phase 2 · 승인 흐름 설계', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'in-progress' }
         ]
       },
       status: {
-        state: 'hold',
-        progress: { current: 0, total: 3 },
-        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
-        currentTasks: [],
-        nextTasks: ['검수 루브릭 초안 작성', '승인/반려 상태 모델 정의', 'ReviewNote 연결 규칙 정리'],
+        state: 'in-progress',
+        progress: { current: 2, total: 3 },
+        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Vision QA 루브릭 초안 작성', '승인/반려 상태 모델과 ReviewNote 연결 규칙 정리'],
+        currentTasks: ['CLE2 UI와 회차 결과 문서에 어떤 요약을 노출할지 정리'],
+        nextTasks: ['CLE2 태스크 상세에서 보여줄 QA 요약 항목 정리', 'episodes/EPxxx/results.md 반영 포맷 예시 작성', 'lint와 Vision QA 사이 중복 기록 최소화 규칙 정리'],
         blockers: []
       },
       tests: {
         items: [
           { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
-          { name: 'Vision QA 루브릭', method: '문서 리뷰', expected: '시각 검수 기준이 정리된다', passed: false },
-          { name: '승인 흐름 정의', method: '문서 리뷰', expected: '승인/반려/재시도 흐름이 정리된다', passed: false }
+          { name: 'Vision QA 루브릭', method: '문서 리뷰', expected: '시각 검수 기준과 평가 축이 정리된다', passed: true },
+          { name: '승인 흐름 정의', method: '문서 리뷰', expected: '승인/반려/재시도 흐름과 상태 모델이 정리된다', passed: true },
+          { name: 'lint handoff 기준', method: '문서 리뷰', expected: 'CLE2-10에서 CLE2-11로 넘어오는 입력 조건이 정리된다', passed: true }
         ]
       },
       relatedTasks: [
@@ -827,6 +828,11 @@
           title: 'PLAN',
           path: 'tasks/CLE2-11/cle3-vision-qa/PLAN.md',
           description: '검수 기준, 승인 흐름, UI 반영 계획'
+        },
+        {
+          title: 'VISION QA RUBRIC',
+          path: 'tasks/CLE2-11/cle3-vision-qa/VISION-QA-RUBRIC.md',
+          description: '평가 축, 점수 체계, 승인 상태 모델, lint handoff 기준'
         },
         {
           title: 'TESTS',
