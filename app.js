@@ -886,7 +886,8 @@
           { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
           { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: true },
-          { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: false }
+          { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: true },
+          { name: 'EP001 파일 매핑', method: '문서 리뷰', expected: 'EP001의 script/storyboard/results/panels가 화면 요소와 연결된다', passed: true }
         ]
       },
       relatedTasks: [
@@ -916,6 +917,11 @@
           title: 'Information Architecture',
           path: 'tasks/CLE2-12/cle3-episode-workspace/INFORMATION-ARCHITECTURE.md',
           description: 'Episode 중심 화면 구조와 script/storyboard/panels/results 대응 관계'
+        },
+        {
+          title: 'File to UI Mapping',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/FILE-TO-UI-MAPPING.md',
+          description: 'EP001 실제 파일을 Episode Header, Scene, Panel, Results 화면으로 매핑한 기준'
         },
         {
           title: 'TESTS',
