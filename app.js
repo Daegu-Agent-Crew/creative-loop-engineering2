@@ -786,15 +786,15 @@
         phases: [
           { name: 'Phase 1 · 검수 기준 정의', owner: '레노버', status: 'done' },
           { name: 'Phase 2 · 승인 흐름 설계', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'in-progress' }
+          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
-        progress: { current: 2, total: 3 },
-        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Vision QA 루브릭 초안 작성', '승인/반려 상태 모델과 ReviewNote 연결 규칙 정리'],
-        currentTasks: ['CLE2 UI와 회차 결과 문서에 어떤 요약을 노출할지 정리'],
-        nextTasks: ['CLE2 태스크 상세에서 보여줄 QA 요약 항목 정리', 'episodes/EPxxx/results.md 반영 포맷 예시 작성', 'lint와 Vision QA 사이 중복 기록 최소화 규칙 정리'],
+        state: 'done',
+        progress: { current: 3, total: 3 },
+        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Vision QA 루브릭 초안 작성', '승인/반려 상태 모델과 ReviewNote 연결 규칙 정리', 'CLE2 UI 노출 기준과 episodes/EPxxx/results.md 반영 포맷 정리'],
+        currentTasks: [],
+        nextTasks: ['CLE2-12 Episode Workspace 정보 구조 안에 QA summary 배치 기준 연결', '실제 episode results.md 템플릿에 Vision QA Summary 섹션 반영 여부 결정', 'conditional 상태 운영 라운드 규칙 보강'],
         blockers: []
       },
       tests: {
@@ -835,6 +835,11 @@
           description: '평가 축, 점수 체계, 승인 상태 모델, lint handoff 기준'
         },
         {
+          title: 'UI / Results Format',
+          path: 'tasks/CLE2-11/cle3-vision-qa/UI-AND-RESULTS-FORMAT.md',
+          description: 'CLE2 UI 요약 항목, episode results 반영 형식, lint와의 역할 분리 기준'
+        },
+        {
           title: 'TESTS',
           path: 'tasks/CLE2-11/cle3-vision-qa/TESTS.md',
           description: 'Vision QA 태스크의 검증 기준'
@@ -863,24 +868,24 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · 정보 구조 정의', owner: '대구루', status: 'pending' },
-          { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'pending' },
+          { name: 'Phase 1 · 정보 구조 정의', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'in-progress' },
           { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'pending' }
         ]
       },
       status: {
-        state: 'hold',
-        progress: { current: 0, total: 3 },
-        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
-        currentTasks: [],
-        nextTasks: ['정보 구조 초안 작성', 'three-body-comic 매핑표 작성', 'STUDIO 경계 문서화'],
+        state: 'in-progress',
+        progress: { current: 1, total: 3 },
+        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성'],
+        currentTasks: ['three-body-comic 실제 script/storyboard/results/panels 구조와 화면 요소 매핑 정리'],
+        nextTasks: ['실제 파일 단위 매핑표 보강', 'STUDIO 경계 문서화', 'CLE2 반영용 화면 배치 기준 정리'],
         blockers: []
       },
       tests: {
         items: [
           { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
-          { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: false },
+          { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: true },
           { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: false }
         ]
       },
@@ -906,6 +911,11 @@
           title: 'PLAN',
           path: 'tasks/CLE2-12/cle3-episode-workspace/PLAN.md',
           description: '정보 구조, 실제 구조 매핑, STUDIO 경계 정리 계획'
+        },
+        {
+          title: 'Information Architecture',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/INFORMATION-ARCHITECTURE.md',
+          description: 'Episode 중심 화면 구조와 script/storyboard/panels/results 대응 관계'
         },
         {
           title: 'TESTS',

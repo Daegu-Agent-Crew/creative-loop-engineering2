@@ -17,6 +17,16 @@
 - 이유: 정합성 문제가 큰 상태에서 시각 검수까지 같이 하면 리뷰 비용이 커지고 판단 기준이 흐려진다.
 - 영향: CLE2-10은 사전 게이트, CLE2-11은 장면 전달력과 승인 판단 단계로 역할이 분리된다.
 
+### 2026-07-06
+- 결정: Vision QA 결과는 CLE2 UI에는 요약값 중심으로, `episodes/EPxxx/results.md`에는 회차 retrospective 중심으로 남긴다.
+- 이유: 패널 단위 상세와 회차 단위 학습 포인트를 같은 밀도로 보여주면 읽기가 어려워진다.
+- 영향: 패널 상세는 `vision-qa.json/md`, 회차 요약은 `results.md`, 화면 배치는 추후 `CLE2-12`에서 구체화한다.
+
+### 2026-07-06
+- 결정: lint와 Vision QA는 같은 문제를 중복 기록하지 않는다.
+- 이유: 품질 로그가 두 군데에서 어긋나기 시작하면 운영 비용이 급격히 올라간다.
+- 영향: 메타데이터/규칙 위반은 lint, 전달력/감정/구도 판단은 Vision QA가 담당한다.
+
 ## 열린 쟁점
 - [ ] Vision QA를 에피소드 단위로 묶어 볼지, 패널 단위 우선으로 볼지 결정 필요
 - [ ] `conditional` 상태를 몇 라운드까지 허용할지 운영 규칙 결정 필요
@@ -27,3 +37,4 @@
 - 관련 문서: `tasks/CLE2-9/three-body-cle3/OBJECT-MODEL.md`
 - 선행 규격: `tasks/CLE2-10/cle3-consistency-lint/LINT-SPEC.md`
 - 세부 규격: `tasks/CLE2-11/cle3-vision-qa/VISION-QA-RUBRIC.md`
+- UI/결과 포맷: `tasks/CLE2-11/cle3-vision-qa/UI-AND-RESULTS-FORMAT.md`
