@@ -18,6 +18,7 @@
 ## 진행 중인 작업
 - EP002~EP005 markdown fallback 구조를 더 다듬기
 - 패널 단위 QA와 lint 위치를 workspace 화면에 더 자연스럽게 통합
+- QA 탭의 패널 구조화 리뷰 결과를 workspace 요약 surface와 더 강하게 연결
 
 ## 다음 작업
 - [ ] EP002~EP005에도 같은 매핑 규칙이 유지되는지 확인
