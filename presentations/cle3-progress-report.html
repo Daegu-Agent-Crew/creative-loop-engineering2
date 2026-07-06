@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLE3 진행 보고</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121937;
+      --panel-2: #182146;
+      --text: #eef2ff;
+      --muted: #a8b1d1;
+      --line: #2b3768;
+      --accent: #7dd3fc;
+      --accent-2: #c084fc;
+      --good: #86efac;
+      --warn: #fcd34d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(125,211,252,0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(192,132,252,0.14), transparent 24%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px 96px;
+    }
+    .hero {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(24,33,70,0.95), rgba(18,25,55,0.96));
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+    .lead {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .meta {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 20px 0 28px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: rgba(18,25,55,0.9);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .stat-value {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .section {
+      margin-top: 28px;
+    }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .two {
+      grid-template-columns: 1.15fr .85fr;
+    }
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .task-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .done { color: var(--good); border-color: rgba(134,239,172,.35); }
+    .progress { color: var(--warn); border-color: rgba(252,211,77,.35); }
+    ul {
+      padding-left: 18px;
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+    li + li { margin-top: 6px; }
+    .timeline {
+      border-left: 2px solid var(--line);
+      padding-left: 16px;
+      display: grid;
+      gap: 16px;
+    }
+    .timeline-item {
+      position: relative;
+    }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -23px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(125,211,252,0.12);
+    }
+    .timeline-item small,
+    .muted { color: var(--muted); }
+    .codeish {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      color: #dbeafe;
+    }
+    .footer-note {
+      margin-top: 28px;
+      padding: 16px 18px;
+      border-left: 3px solid var(--accent);
+      background: rgba(125,211,252,0.06);
+      color: var(--muted);
+    }
+    @media (max-width: 980px) {
+      .stats, .two, .three { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Creative Loop Engineering 2</div>
+      <h1>CLE3 진행 보고</h1>
+      <p class="lead">
+        삼체 연재 만화 창작 시스템(CLE3)을 상위 설계 태스크로 정리하고,
+        정합성 린트, Vision QA, Episode Workspace로 후속 구현 태스크를 분리한 뒤
+        각 문서와 CLE2 대시보드 구조를 실제 저장소 기준으로 맞춘 현재 상태 보고입니다.
+      </p>
+      <div class="meta">
+        <span class="pill">기준일: 2026-07-07</span>
+        <span class="pill">상위 이슈: CLE2-9 / #24</span>
+        <span class="pill">저장소: creative-loop-engineering2</span>
+        <span class="pill">연동 저장소: three-body-comic</span>
+      </div>
+    </section>
+
+    <section class="grid stats">
+      <div class="card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">핵심 태스크 축</div>
+      </div>
+      <div class="card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">후속 구현 이슈 생성</div>
+      </div>
+      <div class="card">
+        <div class="stat-value">12+</div>
+        <div class="stat-label">핵심 설계 문서 추가</div>
+      </div>
+      <div class="card">
+        <div class="stat-value">5</div>
+        <div class="stat-label">GitHub 이슈 체계 정리</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>핵심 결과</h2>
+        <p>설계, 품질 게이트, 작업 뷰를 각각 분리해 추적 가능한 구조로 전환</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <div class="task-title">
+            <span class="badge done">완료</span>
+            <h3>CLE2-9</h3>
+          </div>
+          <div class="muted">상위 설계 태스크</div>
+          <ul>
+            <li>CLE3 객체 모델 정리</li>
+            <li>TB/HM 원리 객체 매핑</li>
+            <li>후속 태스크 분해 기준 확정</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="task-title">
+            <span class="badge done">완료</span>
+            <h3>CLE2-10</h3>
+          </div>
+          <div class="muted">정합성 린트 시스템</div>
+          <ul>
+            <li>린트 범주 4개 고정</li>
+            <li>severity / schema / ReviewNote 변환 규칙 정의</li>
+            <li>three-body-comic 저장 경로 기준 정리</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="task-title">
+            <span class="badge done">완료</span>
+            <h3>CLE2-11</h3>
+          </div>
+          <div class="muted">Vision QA 시스템</div>
+          <ul>
+            <li>평가 축 5개 정의</li>
+            <li>승인 상태 모델 정리</li>
+            <li>CLE2 UI / results.md 반영 형식 정의</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid two">
+        <div class="card">
+          <div class="task-title">
+            <span class="badge progress">진행 중</span>
+            <h3>CLE2-12</h3>
+          </div>
+          <div class="muted">Episode Workspace</div>
+          <ul>
+            <li>정보 구조 초안 작성</li>
+            <li>EP001 기준 파일 → UI 매핑 완료</li>
+            <li>STUDIO와의 역할 경계 및 화면 배치 기준 정리</li>
+            <li>다음 단계: EP002~EP005에 같은 규칙 적용 확인</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>생성된 GitHub 이슈</h3>
+          <ul>
+            <li><span class="codeish">#24</span> CLE2-9 상위 설계</li>
+            <li><span class="codeish">#26</span> CLE2-10 정합성 린트</li>
+            <li><span class="codeish">#27</span> CLE2-11 Vision QA</li>
+            <li><span class="codeish">#28</span> CLE2-12 Episode Workspace</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>구조 변화</h2>
+        <p>운영 보드와 창작 작업 뷰를 분리해 혼용을 막는 방향</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>이전 혼선</h3>
+          <ul>
+            <li>CLE2-7 STUDIO와 CLE3 창작 시스템 경계가 문서상 혼용</li>
+            <li>품질 관리가 단일 흐름으로 뭉쳐 있음</li>
+            <li>three-body-comic 실제 파일 구조와 CLE2 문서 구조가 느슨함</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>현재 정리</h3>
+          <ul>
+            <li>STUDIO = 운영 큐 / 담당 / 상태 추적</li>
+            <li>Workspace = 회차 목적 / 장면 / 패널 / 검수 / 결과</li>
+            <li>Lint = 규칙 위반, Vision QA = 전달력/승인 판단</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>타임라인</h2>
+        <p>이번 작업에서 실제로 추가된 설계 자산</p>
+      </div>
+      <div class="card timeline">
+        <div class="timeline-item">
+          <small>Step 1</small>
+          <h3>CLE2-9 상위 설계 정리</h3>
+          <div class="muted">OBJECT-MODEL, FOLLOW-UP-ISSUES, 관련 태스크 링크 추가</div>
+        </div>
+        <div class="timeline-item">
+          <small>Step 2</small>
+          <h3>후속 이슈 생성</h3>
+          <div class="muted">#26 정합성 린트, #27 Vision QA, #28 Episode Workspace</div>
+        </div>
+        <div class="timeline-item">
+          <small>Step 3</small>
+          <h3>CLE2-10 초안 완료</h3>
+          <div class="muted">LINT-SPEC, 저장 경로, Vision QA handoff 규칙 정리</div>
+        </div>
+        <div class="timeline-item">
+          <small>Step 4</small>
+          <h3>CLE2-11 초안 완료</h3>
+          <div class="muted">VISION-QA-RUBRIC, UI / results 형식, 중복 기록 최소화 규칙 정리</div>
+        </div>
+        <div class="timeline-item">
+          <small>Step 5</small>
+          <h3>CLE2-12 진행 중</h3>
+          <div class="muted">Information Architecture, File-to-UI Mapping, Studio Boundary / Layout 정리</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>실제 저장소 기준</h2>
+        <p>Episode Workspace는 three-body-comic의 현재 파일 구조를 전제로 설계</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>three-body-comic 실체</h3>
+          <ul>
+            <li><span class="codeish">episodes/EPxxx/script.md</span></li>
+            <li><span class="codeish">episodes/EPxxx/storyboard.md</span></li>
+            <li><span class="codeish">episodes/EPxxx/results.md</span></li>
+            <li><span class="codeish">episodes/EPxxx/panels/</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Workspace 화면 섹션</h3>
+          <ul>
+            <li>Episode Header</li>
+            <li>Story Summary</li>
+            <li>Scene Outline</li>
+            <li>Panel Strip</li>
+            <li>Results Lane</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>다음 단계</h2>
+        <p>문서 초안을 실제 UI / 운영 템플릿으로 연결하는 단계</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>1. CLE2-12 보강</h3>
+          <ul>
+            <li>EP002~EP005 매핑 확인</li>
+            <li>패널 파일명 규칙 일관성 검사</li>
+            <li>옵션 A 링크형 공존을 실제 UI에 반영할지 결정</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>2. three-body-comic 템플릿 반영</h3>
+          <ul>
+            <li><span class="codeish">results.md</span>에 Lint / Vision QA Summary 섹션 추가 검토</li>
+            <li><span class="codeish">panels/</span> 하위 lint / qa 파일 위치 확정</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>3. CLE2 UI 구현</h3>
+          <ul>
+            <li>관련 태스크 링크 기반 진입</li>
+            <li>Episode Workspace 요약 섹션 추가</li>
+            <li>STUDIO와 Workspace를 분리된 책임으로 유지</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      현재까지의 작업은 "문서만 쌓은 상태"가 아니라, GitHub 이슈, CLE2 대시보드 메타데이터, three-body-comic 실제 파일 구조를 함께 맞물리게 만드는 방향으로 진행되었습니다.
+    </div>
+  </div>
+</body>
+</html>

@@ -869,16 +869,16 @@
       plan: {
         phases: [
           { name: 'Phase 1 · 정보 구조 정의', owner: '대구루', status: 'done' },
-          { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'in-progress' },
-          { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'pending' }
+          { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
-        progress: { current: 1, total: 3 },
-        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성'],
-        currentTasks: ['three-body-comic 실제 script/storyboard/results/panels 구조와 화면 요소 매핑 정리'],
-        nextTasks: ['실제 파일 단위 매핑표 보강', 'STUDIO 경계 문서화', 'CLE2 반영용 화면 배치 기준 정리'],
+        state: 'done',
+        progress: { current: 3, total: 3 },
+        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성', 'EP001 기준 실제 파일 -> 화면 요소 매핑표 작성', 'STUDIO 경계 문서화 및 CLE2 화면 배치 기준 정리'],
+        currentTasks: [],
+        nextTasks: ['EP002~EP005에도 같은 매핑 규칙이 유지되는지 확인', 'CLE2 실제 UI에서 옵션 A 링크형 공존부터 반영할지 결정', '패널 하위 파일 구조 확정 시 lint / vision-qa 위치 미세 조정'],
         blockers: []
       },
       tests: {
@@ -922,6 +922,11 @@
           title: 'File to UI Mapping',
           path: 'tasks/CLE2-12/cle3-episode-workspace/FILE-TO-UI-MAPPING.md',
           description: 'EP001 실제 파일을 Episode Header, Scene, Panel, Results 화면으로 매핑한 기준'
+        },
+        {
+          title: 'Studio Boundary / Layout',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/STUDIO-BOUNDARY-AND-LAYOUT.md',
+          description: 'STUDIO와 Episode Workspace의 역할 차이, CLE2 화면 배치 옵션과 추천안'
         },
         {
           title: 'TESTS',

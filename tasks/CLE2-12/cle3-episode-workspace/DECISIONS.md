@@ -17,6 +17,11 @@
 - 이유: EP001이 현재 가장 구체적인 실제 파일 묶음을 가지고 있어 초기 매핑 기준으로 쓰기 적합하다.
 - 영향: `FILE-TO-UI-MAPPING.md`를 기준으로 이후 EP002~EP005에도 같은 규칙이 유지되는지 검증한다.
 
+### 2026-07-07
+- 결정: STUDIO와 Episode Workspace는 통합 화면보다 역할 분리된 링크형 공존으로 먼저 간다.
+- 이유: 지금 단계에서 운영 보드와 창작 작업 뷰를 한 화면 책임으로 묶으면 다시 혼용될 가능성이 높다.
+- 영향: 초기 CLE2 반영은 `CLE2-7`과 `CLE2-12`를 관련 태스크로 연결하고, 이후 데이터가 쌓이면 3열 작업형으로 확장한다.
+
 ## 열린 쟁점
 - [ ] Episode Workspace를 CLE2 안에 둘지, `three-body-comic` 보조 뷰로 둘지 결정 필요
 - [ ] panels 하위 폴더 구조가 확정되면 selectedResult/lint/vision-qa 파일 위치를 화면 모델에 어떻게 반영할지 결정 필요
@@ -28,3 +33,4 @@
 - 관련 문서: `tasks/CLE2-9/three-body-cle3/OBJECT-MODEL.md`
 - 정보 구조: `tasks/CLE2-12/cle3-episode-workspace/INFORMATION-ARCHITECTURE.md`
 - 파일 매핑: `tasks/CLE2-12/cle3-episode-workspace/FILE-TO-UI-MAPPING.md`
+- 경계/배치: `tasks/CLE2-12/cle3-episode-workspace/STUDIO-BOUNDARY-AND-LAYOUT.md`
