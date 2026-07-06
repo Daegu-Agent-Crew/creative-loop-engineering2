@@ -1,11 +1,11 @@
 # STATUS — CLE3 Vision QA / 결과 검수 시스템
 
 ## 현재 상태
-🟡 진행 중
+🟢 최소 기준 완료
 
 ## 진행률
-- 전체 Phase: 3/4 완료
-- 현재 Phase: CLE3 QA 워크플로우 1차 반영 완료, 패널 단위 구조화 1차 반영 완료
+- 전체 Phase: 4/4 완료
+- 현재 Phase: 최소 기준 완료, 결과 파일 고정은 후속 개선으로 이관
 
 ## 완료된 작업
 - [x] CLE2-11 task 문서 초기 생성 (2026-07-06)
@@ -15,10 +15,10 @@
 - [x] CLE2 UI 노출 기준과 `episodes/EPxxx/results.md` 반영 포맷 정리 (2026-07-06)
 - [x] `creative-loop-engineering3` QA 탭에 에피소드 단위 리뷰 상태/메모/export UI 1차 반영 (2026-07-07)
 - [x] `creative-loop-engineering3` QA 탭에 패널 단위 구조화 필드(`composition/clarity/emotion/consistency/action_required`)와 요약/export 반영 (2026-07-07)
+- [x] `results.md` 반영용 `Vision QA Summary` 고정 포맷 preview/copy/download 반영 (2026-07-07)
 
 ## 진행 중인 작업
-- `results.md` 반영용 export 포맷을 더 구조화
-- 패널 단위 구조화 리뷰를 실제 `results.md` 또는 전용 파일 포맷으로 고정
+- 없음
 
 ## 다음 작업
 - [ ] CLE2-12 Episode Workspace 정보 구조 안에 QA summary 배치 기준 연결
@@ -31,6 +31,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
+| 2026-07-07 | `Vision QA Summary` results 포맷 preview/copy/download를 반영하고 최소 완료 처리 | Codex |
 | 2026-07-07 | CLE3 QA 탭에 패널 단위 구조화 필드와 요약/export를 반영 | Codex |
 | 2026-07-07 | CLE3 QA 탭에 리뷰 상태/메모/export UI 1차 반영, 상태를 구현 진행형으로 갱신 | Codex |
 | 2026-07-06 | CLE2 UI 요약 항목과 episode results 반영 포맷 초안 작성 | Codex |

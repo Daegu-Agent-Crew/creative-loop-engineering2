@@ -20,11 +20,12 @@
 | 3 | 저장 경로 기준 | 문서 리뷰 | CLE2 / three-body-comic 어디에 lint 결과를 둘지 기준이 있다 | ☑ |
 | 4 | Episode 누적 규칙 | 문서 리뷰 | 반복 lint가 results / experiments로 승격되는 규칙이 있다 | ☑ |
 | 5 | CLE3 lint report 노출 | 브라우저 확인 | Episode Workspace overview / QA 탭에 lint status와 finding 요약이 표시된다 | ☑ |
+| 6 | CLE3 교차 비교 규칙 | 브라우저 확인 | page-count / panel-count / panel-coverage / dryrun-style 경고가 실제 화면에 표시된다 | ☑ |
 
 ## 검증 결과
 - **검증 일자**: 2026-07-07
 - **검증자**: Codex
-- **결과**: 문서 기준 통과 / CLE2 및 CLE3 브라우저 확인 1차 통과
+- **결과**: 문서 기준 통과 / CLE2 및 CLE3 브라우저 확인 통과 / 최소 기준 완료
 
 ## 비고
 초기 단계에서는 자동 수정보다 "문제 발견과 리뷰 연결"이 우선이다.
