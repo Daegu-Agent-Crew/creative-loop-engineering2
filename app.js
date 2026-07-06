@@ -446,6 +446,13 @@
           { name: 'GitHub 보안 정비', method: '코드 리뷰', expected: '하드코딩 PAT 없이 동기화가 동작한다', passed: true }
         ]
       },
+      relatedTasks: [
+        {
+          id: 'CLE2-9',
+          relation: '후속 상위 작업',
+          note: 'CLE2-7은 STUDIO 운영 기반이고, CLE2-9는 이를 포함하는 CLE3 창작 시스템 정의다.'
+        }
+      ],
       docs: [
         {
           title: '시스템 개요',
@@ -626,7 +633,39 @@
           { name: 'CLE2 대시보드 카드', method: '브라우저 확인', expected: 'CLE2-9 카드가 Tasks 목록과 상세에 표시된다', passed: true }
         ]
       },
+      relatedTasks: [
+        {
+          id: 'CLE2-7',
+          relation: '선행 기반 작업',
+          note: 'CLE2-7에서 운영 시스템과 제작 파이프라인을 정리했고, CLE2-9는 그 위에서 CLE3 창작 객체와 협업 구조를 정의한다.'
+        },
+        {
+          id: 'CLE2-10',
+          relation: '후속 구현 태스크',
+          note: 'CharacterSheet, StylePack, Panel 기준 정합성 린트 규칙과 결과 포맷을 구체화한다.'
+        },
+        {
+          id: 'CLE2-11',
+          relation: '후속 구현 태스크',
+          note: '패널 시각 검수, 승인/반려 흐름, ReviewNote 연결 규칙을 다룬다.'
+        },
+        {
+          id: 'CLE2-12',
+          relation: '후속 구현 태스크',
+          note: 'Story/Episode/Scene/Panel/Results를 한 흐름으로 보여주는 작업 뷰 기준을 다룬다.'
+        }
+      ],
       docs: [
+        {
+          title: '후속 구현 이슈 초안',
+          path: 'tasks/CLE2-9/three-body-cle3/FOLLOW-UP-ISSUES.md',
+          description: '정합성 린트, Vision QA, Episode Workspace로 분해하는 후속 태스크 계획'
+        },
+        {
+          title: 'CLE3 객체 모델',
+          path: 'tasks/CLE2-9/three-body-cle3/OBJECT-MODEL.md',
+          description: 'TB/HM 원리를 Story, Episode, Panel, Review, Results 객체로 매핑한 기준 문서'
+        },
         {
           title: 'CLE3 분석 보고서',
           path: 'tasks/CLE2-9/three-body-cle3/research/00-cle3-analysis-report.md',
@@ -646,6 +685,220 @@
           title: '흥행 만화 구조 패턴',
           path: 'tasks/CLE2-9/three-body-cle3/research/03-hit-manga-structure-patterns.md',
           description: '연재 훅, 떡밥, 페이지 리듬을 규칙으로 정리한 구조 패턴'
+        }
+      ]
+    },
+    {
+      id: 'CLE2-10',
+      cle2Id: 'CLE2-10',
+      slug: 'cle3-consistency-lint',
+      title: 'CLE3 정합성 린트 시스템',
+      issue: 26,
+      goal: {
+        objective: 'CLE3의 CharacterSheet, StylePack, Panel 객체를 기준으로 정합성 위반을 자동 또는 반자동으로 점검하는 린트 시스템의 기준을 정의한다.',
+        successCriteria: [
+          'CharacterSheet / StylePack / Panel 기준 린트 대상과 규칙 범주가 문서화된다',
+          '린트 입력 포맷과 출력 포맷이 정의된다',
+          'ReviewNote의 consistency 카테고리와 연결 방식이 정리된다',
+          'CLE2-9 객체 모델과의 관계가 명시된다',
+          'CLE2 대시보드에서 CLE2-10 상태를 추적할 수 있다'
+        ],
+        scope: {
+          in: ['캐릭터/스타일/패널 정합성 린트 규칙', '입력/출력 포맷', 'ReviewNote 연결', 'CLE2 대시보드 반영'],
+          out: ['이미지 모델 재학습', 'Vision QA 승인 플로우 전체 구현', 'three-body-comic 전체 자동 수정']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 린트 범주 정의', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · 결과 포맷 설계', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'hold',
+        progress: { current: 0, total: 3 },
+        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
+        currentTasks: [],
+        nextTasks: ['린트 범주 초안 작성', '입력/출력 포맷 정의', 'ReviewNote 연결 규칙 정리'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
+          { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
+          { name: '린트 범주 정의', method: '문서 리뷰', expected: '캐릭터/스타일/패널 린트 범주가 정리된다', passed: false },
+          { name: '결과 포맷 정의', method: '문서 리뷰', expected: '입력/출력 schema 초안이 정리된다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        {
+          id: 'CLE2-9',
+          relation: '상위 기반 태스크',
+          note: 'CLE2-9에서 정의한 CLE3 객체 모델을 기준으로 정합성 규칙을 구현 단위로 구체화한다.'
+        }
+      ],
+      docs: [
+        {
+          title: 'GOAL',
+          path: 'tasks/CLE2-10/cle3-consistency-lint/GOAL.md',
+          description: '정합성 린트 시스템 목표와 범위'
+        },
+        {
+          title: 'PLAN',
+          path: 'tasks/CLE2-10/cle3-consistency-lint/PLAN.md',
+          description: '린트 범주, 결과 포맷, 운영 연결 계획'
+        },
+        {
+          title: 'TESTS',
+          path: 'tasks/CLE2-10/cle3-consistency-lint/TESTS.md',
+          description: '정합성 린트 태스크의 검증 기준'
+        }
+      ]
+    },
+    {
+      id: 'CLE2-11',
+      cle2Id: 'CLE2-11',
+      slug: 'cle3-vision-qa',
+      title: 'CLE3 Vision QA / 결과 검수 시스템',
+      issue: 27,
+      goal: {
+        objective: '생성된 패널 후보를 시각적으로 검수하고 승인, 반려, 수정 요청으로 연결하는 CLE3 Vision QA 기준을 정의한다.',
+        successCriteria: [
+          'Panel.selectedResult 선택 기준이 문서화된다',
+          'ReviewNote의 clarity, composition, emotion 카테고리 연결 규칙이 정리된다',
+          '사람 승인 포인트와 AI 재시도 포인트가 구분된다',
+          'CLE2-9 객체 모델 및 CLE2-10 린트와의 경계가 명확해진다',
+          'CLE2 대시보드에서 CLE2-11 상태를 추적할 수 있다'
+        ],
+        scope: {
+          in: ['패널 시각 검수 루브릭', '승인/반려/수정 요청 상태 모델', 'ReviewNote 기록 방식', 'CLE2 반영'],
+          out: ['이미지 모델 개선', '정합성 린트 규칙 엔진 구현', '배포 후 반응 분석 자동화']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 검수 기준 정의', owner: '레노버', status: 'pending' },
+          { name: 'Phase 2 · 승인 흐름 설계', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'hold',
+        progress: { current: 0, total: 3 },
+        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
+        currentTasks: [],
+        nextTasks: ['검수 루브릭 초안 작성', '승인/반려 상태 모델 정의', 'ReviewNote 연결 규칙 정리'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
+          { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
+          { name: 'Vision QA 루브릭', method: '문서 리뷰', expected: '시각 검수 기준이 정리된다', passed: false },
+          { name: '승인 흐름 정의', method: '문서 리뷰', expected: '승인/반려/재시도 흐름이 정리된다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        {
+          id: 'CLE2-9',
+          relation: '상위 기반 태스크',
+          note: 'CLE2-9의 Panel, ReviewNote 객체 정의를 바탕으로 시각 검수와 승인 흐름을 구체화한다.'
+        },
+        {
+          id: 'CLE2-10',
+          relation: '인접 구현 태스크',
+          note: '정합성 린트는 규칙 점검이고, CLE2-11은 실제 시각 결과의 승인/반려 흐름을 다룬다.'
+        }
+      ],
+      docs: [
+        {
+          title: 'GOAL',
+          path: 'tasks/CLE2-11/cle3-vision-qa/GOAL.md',
+          description: 'Vision QA 시스템 목표와 범위'
+        },
+        {
+          title: 'PLAN',
+          path: 'tasks/CLE2-11/cle3-vision-qa/PLAN.md',
+          description: '검수 기준, 승인 흐름, UI 반영 계획'
+        },
+        {
+          title: 'TESTS',
+          path: 'tasks/CLE2-11/cle3-vision-qa/TESTS.md',
+          description: 'Vision QA 태스크의 검증 기준'
+        }
+      ]
+    },
+    {
+      id: 'CLE2-12',
+      cle2Id: 'CLE2-12',
+      slug: 'cle3-episode-workspace',
+      title: 'CLE3 Episode Workspace / 에피소드 작업 뷰',
+      issue: 28,
+      goal: {
+        objective: 'Story, Episode, Scene, Panel, Results 객체를 실제 작업 흐름으로 묶어 보여주는 에피소드 작업 뷰 기준을 정의한다.',
+        successCriteria: [
+          'Episode 중심 작업 뷰의 핵심 화면과 정보 구조가 문서화된다',
+          'script / storyboard / panels / release / results 연결 방식이 정리된다',
+          'CLE2-7 STUDIO와의 경계가 명시된다',
+          'CLE2-9 객체 모델과의 관계가 명시된다',
+          'CLE2 대시보드에서 CLE2-12 상태를 추적할 수 있다'
+        ],
+        scope: {
+          in: ['에피소드 중심 작업 뷰 정보 구조', '객체 간 연결 방식', 'STUDIO와의 역할 분리', 'CLE2 반영'],
+          out: ['완성 UI 전면 구현', '백엔드 자동화 구축', '공개 뷰어 전체 대체']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 정보 구조 정의', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'hold',
+        progress: { current: 0, total: 3 },
+        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
+        currentTasks: [],
+        nextTasks: ['정보 구조 초안 작성', 'three-body-comic 매핑표 작성', 'STUDIO 경계 문서화'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
+          { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
+          { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: false },
+          { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        {
+          id: 'CLE2-9',
+          relation: '상위 기반 태스크',
+          note: 'CLE2-9 객체 모델을 바탕으로 Story/Episode/Scene/Panel/Results를 실제 작업 화면 흐름으로 엮는다.'
+        },
+        {
+          id: 'CLE2-7',
+          relation: '선행 운영 기반',
+          note: 'CLE2-7 STUDIO 보드는 운영/큐 관리이고, CLE2-12는 창작 객체 중심 작업 뷰를 다룬다.'
+        }
+      ],
+      docs: [
+        {
+          title: 'GOAL',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/GOAL.md',
+          description: 'Episode Workspace 목표와 범위'
+        },
+        {
+          title: 'PLAN',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/PLAN.md',
+          description: '정보 구조, 실제 구조 매핑, STUDIO 경계 정리 계획'
+        },
+        {
+          title: 'TESTS',
+          path: 'tasks/CLE2-12/cle3-episode-workspace/TESTS.md',
+          description: 'Episode Workspace 태스크의 검증 기준'
         }
       ]
     }
@@ -877,6 +1130,11 @@
       });
     }
     return parts.length ? '<div class="gh-links">' + parts.join('') + '</div>' : '';
+  }
+
+  function taskIssueLabel(task) {
+    if (!task || !task.issue) return 'Issue 준비중';
+    return 'Issue #' + task.issue;
   }
 
   /* ====== Dynamic Tasks (requirement ↔ task integration) ====== */
@@ -1694,7 +1952,7 @@
         html += '<div class="task-card-head">';
         html += '<div>';
         html += '<div class="task-card-title">' + esc(taskForReq.id) + ' · ' + esc(taskForReq.title) + '</div>';
-        html += '<div class="task-card-sub">Issue #' + taskForReq.issue + ' · ' + esc(taskForReq.slug) + '</div>';
+        html += '<div class="task-card-sub">' + esc(taskIssueLabel(taskForReq)) + ' · ' + esc(taskForReq.slug) + '</div>';
         html += '</div>';
         html += '<span class="task-state-badge ' + tStateMeta.cls + '">' + tStateMeta.icon + ' ' + tStateMeta.label + '</span>';
         html += '</div>';
@@ -2191,7 +2449,7 @@
       html += '<div class="task-card-head">';
       html += '<div>';
       html += '<div class="task-card-title">' + esc(task.id) + ' · ' + esc(task.title) + '</div>';
-      html += '<div class="task-card-sub">Issue #' + task.issue + ' · ' + esc(task.slug) + '</div>';
+      html += '<div class="task-card-sub">' + esc(taskIssueLabel(task)) + ' · ' + esc(task.slug) + '</div>';
       html += '</div>';
       if (isStub) {
         html += '<span class="task-state-badge reviewing">📋 미생성</span>';
@@ -2257,7 +2515,7 @@
     html += '<div class="detail-header-card">';
     html += '<div class="detail-badges">';
     html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">' + esc(task.id) + '</span>';
-    html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">Issue #' + task.issue + '</span>';
+    html += '<span class="badge" style="background:var(--surface3);color:var(--text2)">' + esc(taskIssueLabel(task)) + '</span>';
     html += '<span class="task-state-badge ' + stateMeta.cls + '">' + stateMeta.icon + ' ' + stateMeta.label + '</span>';
     html += '</div>';
     html += '<h1>' + esc(task.title) + '</h1>';
@@ -2275,6 +2533,21 @@
     html += '<div class="task-progress-bar"><span style="width:' + progressPct + '%"></span></div>';
     html += '</div>';
     html += '</div>';
+
+    if (task.relatedTasks && task.relatedTasks.length) {
+      html += '<div class="detail-section" style="margin-top:18px">';
+      html += '<h3>🔗 관련 태스크</h3>';
+      html += '<div class="grid grid-2">';
+      task.relatedTasks.forEach(function (related) {
+        html += '<a class="quick-action" href="#/tasks/' + esc(related.id) + '">';
+        html += '<span class="qa-icon">🧭</span><div>';
+        html += '<div class="qa-title">' + esc(related.id) + ' · ' + esc(related.relation) + '</div>';
+        html += '<div class="qa-desc">' + esc(related.note) + '</div>';
+        html += '</div></a>';
+      });
+      html += '</div>';
+      html += '</div>';
+    }
 
     html += '<div class="task-detail-tabs">';
     html += '<button class="' + (activeTab === 'goal' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'goal\')">GOAL</button>';

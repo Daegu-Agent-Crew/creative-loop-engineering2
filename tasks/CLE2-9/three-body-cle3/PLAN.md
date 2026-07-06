@@ -18,6 +18,7 @@
 - **출력**: CLE3 객체 모델과 책임 분리
 - **세부**:
   - Story, Style Pack, Character Sheet, Episode, Scene, Panel, Review Note, Release, Results 객체 정의
+  - 삼체 매력 원리(TB)와 흥행 만화 구조 패턴(HM)을 각 객체의 필수 필드와 검토 규칙에 직접 매핑
   - `creative-loop-engineering2`, `three-body-comic`, Discord, GitHub Pages의 책임 경계 명시
   - 운영 데이터와 실제 제작 산출물의 이동 경로 정의
 
@@ -46,7 +47,9 @@
 - **세부**:
   - CLE2 대시보드에 CLE2-9 카드/상세 반영
   - DECISIONS.md에 핵심 기준 누적
-  - 구현 이슈를 "동기화", "뷰어 생성", "관측 연결" 등으로 분할
+  - 구현 이슈를 "정합성 린트", "Vision QA", "Episode Workspace" 등으로 분할
+  - 각 후속 이슈가 어떤 CLE3 객체를 직접 다루는지 매핑
+  - 상위 설계 태스크(CLE2-9)와 하위 구현 태스크 간 링크 규칙 정의
 
 ## 의존성
 - `three-body-comic` 저장소 구조와 Pages 운영 상태
