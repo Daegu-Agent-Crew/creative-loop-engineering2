@@ -608,28 +608,28 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · 현재 자산 분석 및 문제 재정의', owner: '대구루', status: 'in-progress' },
-          { name: 'Phase 2 · CLE3 시스템 경계 및 핵심 객체 정의', owner: '대구루', status: 'pending' },
-          { name: 'Phase 3 · 협업 루프 설계', owner: '레노버', status: 'pending' },
-          { name: 'Phase 4 · 통합 연동 구조 정의', owner: '대구루', status: 'pending' },
-          { name: 'Phase 5 · CLE2 반영 및 후속 구현 이슈 분해', owner: '대구루', status: 'pending' }
+          { name: 'Phase 1 · 현재 자산 분석 및 문제 재정의', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · CLE3 시스템 경계 및 핵심 객체 정의', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · 협업 루프 설계', owner: '레노버', status: 'done' },
+          { name: 'Phase 4 · 통합 연동 구조 정의', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 5 · CLE2 반영 및 후속 구현 이슈 분해', owner: '대구루', status: 'in-progress' }
         ]
       },
       status: {
         state: 'in-progress',
-        progress: { current: 1, total: 5 },
-        completedTasks: ['GitHub Issue #24 생성', 'CLE2-7과 three-body-comic 기존 구조 파악', 'CLE2-9 task 문서 초기 생성'],
-        currentTasks: ['CLE2-7과 CLE3의 경계 재정리', 'three-body-comic 공개/제작/관측 구조를 CLE3 기준으로 재해석', 'GitHub + Pages + Discord + OpenClaw + Codex 연동 단계 재도식화'],
-        nextTasks: ['Story / Style / Character / Panel / Review 객체 모델 정의', '인간 + AI 협업 루프 설계', '후속 구현 이슈 분해'],
-        blockers: ['CLE2-7의 운영 시스템과 CLE3의 창작 시스템이 문서상 혼용되어 있음', 'CLE2 앱에는 아직 CLE2-9 전용 상세 구조가 없음']
+        progress: { current: 4, total: 5 },
+        completedTasks: ['GitHub Issue #24 생성', 'CLE2-7과 three-body-comic 기존 구조 파악', 'CLE2-9 task 문서 초기 생성', 'CLE2-7과 CLE3 경계 재정리', 'CLE3 객체 모델 정의', 'CLE2-10~12 후속 구현 이슈 분해와 연결', 'creative-loop-engineering3 저장소/Pages 기준 실제 구현 착수'],
+        currentTasks: ['CLE3 구현 진척을 CLE2 요구사항 데이터와 문서에 지속 반영', 'GitHub + Pages + localStorage 기반 운영 경계 재정리', '하위 구현 태스크(CLE2-10~12)의 실제 구현 상태 추적'],
+        nextTasks: ['CLE3 통합 연동 흐름을 issue/문서 기준으로 재정리', 'Discord/OpenClaw/Codex 운영 연결 범위를 더 구체화', '패널 단위 QA와 결과 export를 후속 구현 태스크에 연결'],
+        blockers: ['CLE2 앱에는 아직 상위 태스크 / 하위 구현 태스크 상태를 한눈에 보여주는 전용 UI가 없음']
       },
       tests: {
         items: [
           { name: 'CLE2-9 task 문서', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 5개 문서가 존재한다', passed: true },
           { name: '이슈 연결', method: '문서 리뷰', expected: '모든 문서가 GitHub Issue #24 / CLE2-ID 9와 정합하다', passed: true },
-          { name: '경계 정의', method: '문서 리뷰', expected: 'CLE2-7과 CLE3의 책임 차이가 명시된다', passed: false },
-          { name: '객체 모델 정의', method: '문서 리뷰', expected: 'Story/Style/Character/Episode/Panel/Results 객체가 정의된다', passed: false },
-          { name: '연동 흐름 정의', method: '문서 리뷰', expected: 'GitHub/Pages/Discord/OpenClaw/Codex 흐름이 설명된다', passed: false },
+          { name: '경계 정의', method: '문서 리뷰', expected: 'CLE2-7과 CLE3의 책임 차이가 명시된다', passed: true },
+          { name: '객체 모델 정의', method: '문서 리뷰', expected: 'Story/Style/Character/Episode/Panel/Results 객체가 정의된다', passed: true },
+          { name: '연동 흐름 정의', method: '문서 리뷰', expected: 'GitHub/Pages/Discord/OpenClaw/Codex 흐름이 설명된다', passed: true },
           { name: 'CLE2 대시보드 카드', method: '브라우저 확인', expected: 'CLE2-9 카드가 Tasks 목록과 상세에 표시된다', passed: true }
         ]
       },
@@ -712,14 +712,15 @@
         phases: [
           { name: 'Phase 1 · 린트 범주 정의', owner: '대구루', status: 'done' },
           { name: 'Phase 2 · 결과 포맷 설계', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'done' }
+          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'done' },
+          { name: 'Phase 4 · CLE3 화면 반영', owner: '대구루', status: 'in-progress' }
         ]
       },
       status: {
-        state: 'done',
-        progress: { current: 3, total: 3 },
-        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', '린트 범주 초안 작성', '입력/출력 포맷과 ReviewNote 연결 규칙 초안 작성', 'three-body-comic 저장 경로 기준과 Vision QA handoff 규칙 정리'],
-        currentTasks: [],
+        state: 'in-progress',
+        progress: { current: 3, total: 4 },
+        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', '린트 범주 초안 작성', '입력/출력 포맷과 ReviewNote 연결 규칙 초안 작성', 'three-body-comic 저장 경로 기준과 Vision QA handoff 규칙 정리', 'CLE3 overview/QA 화면에 lint report 1차 반영'],
+        currentTasks: ['script / storyboard / panels / results 교차 비교 규칙을 실제 CLE3 app에 연결', 'warning / info 수준을 에피소드별로 더 세분화'],
         nextTasks: ['lint rule 세부 목록을 실제 캐릭터/스타일팩 기준으로 보강', 'CLE2-11 Vision QA 루브릭과 승인 기준 정합화', 'three-body-comic 실제 패널 폴더 구조 확정 시 경로 규칙 미세 조정'],
         blockers: []
       },
@@ -729,7 +730,8 @@
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
           { name: '린트 범주 정의', method: '문서 리뷰', expected: '캐릭터/스타일/패널/교차 객체 린트 범주가 정리된다', passed: true },
           { name: '결과 포맷 정의', method: '문서 리뷰', expected: '입력/출력 schema 초안이 정리된다', passed: true },
-          { name: 'ReviewNote 연결 규칙', method: '문서 리뷰', expected: 'lint finding이 consistency ReviewNote로 변환되는 규칙이 있다', passed: true }
+          { name: 'ReviewNote 연결 규칙', method: '문서 리뷰', expected: 'lint finding이 consistency ReviewNote로 변환되는 규칙이 있다', passed: true },
+          { name: 'CLE3 화면 반영', method: '브라우저 확인', expected: 'Episode Workspace overview/QA 탭에 lint status와 finding 요약이 표시된다', passed: true }
         ]
       },
       relatedTasks: [
@@ -786,14 +788,15 @@
         phases: [
           { name: 'Phase 1 · 검수 기준 정의', owner: '레노버', status: 'done' },
           { name: 'Phase 2 · 승인 흐름 설계', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'done' }
+          { name: 'Phase 3 · UI 반영 기준 정리', owner: '대구루', status: 'done' },
+          { name: 'Phase 4 · CLE3 리뷰 워크플로우 반영', owner: '대구루', status: 'in-progress' }
         ]
       },
       status: {
-        state: 'done',
-        progress: { current: 3, total: 3 },
-        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Vision QA 루브릭 초안 작성', '승인/반려 상태 모델과 ReviewNote 연결 규칙 정리', 'CLE2 UI 노출 기준과 episodes/EPxxx/results.md 반영 포맷 정리'],
-        currentTasks: [],
+        state: 'in-progress',
+        progress: { current: 3, total: 4 },
+        completedTasks: ['CLE2-11 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Vision QA 루브릭 초안 작성', '승인/반려 상태 모델과 ReviewNote 연결 규칙 정리', 'CLE2 UI 노출 기준과 episodes/EPxxx/results.md 반영 포맷 정리', 'CLE3 QA 탭에 에피소드 단위 리뷰 상태/메모/export UI 1차 반영'],
+        currentTasks: ['패널 단위 승인/반려 상태로 세분화', 'results.md 반영용 export 포맷을 더 구조화'],
         nextTasks: ['CLE2-12 Episode Workspace 정보 구조 안에 QA summary 배치 기준 연결', '실제 episode results.md 템플릿에 Vision QA Summary 섹션 반영 여부 결정', 'conditional 상태 운영 라운드 규칙 보강'],
         blockers: []
       },
@@ -803,7 +806,8 @@
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
           { name: 'Vision QA 루브릭', method: '문서 리뷰', expected: '시각 검수 기준과 평가 축이 정리된다', passed: true },
           { name: '승인 흐름 정의', method: '문서 리뷰', expected: '승인/반려/재시도 흐름과 상태 모델이 정리된다', passed: true },
-          { name: 'lint handoff 기준', method: '문서 리뷰', expected: 'CLE2-10에서 CLE2-11로 넘어오는 입력 조건이 정리된다', passed: true }
+          { name: 'lint handoff 기준', method: '문서 리뷰', expected: 'CLE2-10에서 CLE2-11로 넘어오는 입력 조건이 정리된다', passed: true },
+          { name: 'CLE3 QA 탭 반영', method: '브라우저 확인', expected: 'QA 탭에 승인/수정 요청/보류 상태와 리뷰 메모, markdown export가 표시된다', passed: true }
         ]
       },
       relatedTasks: [
@@ -870,14 +874,15 @@
         phases: [
           { name: 'Phase 1 · 정보 구조 정의', owner: '대구루', status: 'done' },
           { name: 'Phase 2 · 실제 구조 매핑', owner: '대구루', status: 'done' },
-          { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'done' }
+          { name: 'Phase 3 · STUDIO 경계 정리', owner: '대구루', status: 'done' },
+          { name: 'Phase 4 · CLE3 Workspace 구현 반영', owner: '대구루', status: 'in-progress' }
         ]
       },
       status: {
-        state: 'done',
-        progress: { current: 3, total: 3 },
-        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성', 'EP001 기준 실제 파일 -> 화면 요소 매핑표 작성', 'STUDIO 경계 문서화 및 CLE2 화면 배치 기준 정리'],
-        currentTasks: [],
+        state: 'in-progress',
+        progress: { current: 3, total: 4 },
+        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성', 'EP001 기준 실제 파일 -> 화면 요소 매핑표 작성', 'STUDIO 경계 문서화 및 CLE2 화면 배치 기준 정리', 'CLE3 저장소에서 EP001~EP005 기반 실제 Episode Workspace 1차 구현'],
+        currentTasks: ['EP002~EP005 markdown fallback 구조를 더 다듬기', '패널 단위 QA와 lint 위치를 workspace 화면에 더 자연스럽게 통합'],
         nextTasks: ['EP002~EP005에도 같은 매핑 규칙이 유지되는지 확인', 'CLE2 실제 UI에서 옵션 A 링크형 공존부터 반영할지 결정', '패널 하위 파일 구조 확정 시 lint / vision-qa 위치 미세 조정'],
         blockers: []
       },
@@ -887,7 +892,8 @@
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
           { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: true },
           { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: true },
-          { name: 'EP001 파일 매핑', method: '문서 리뷰', expected: 'EP001의 script/storyboard/results/panels가 화면 요소와 연결된다', passed: true }
+          { name: 'EP001 파일 매핑', method: '문서 리뷰', expected: 'EP001의 script/storyboard/results/panels가 화면 요소와 연결된다', passed: true },
+          { name: 'CLE3 Workspace 구현', method: '브라우저 확인', expected: 'EP001~EP005가 Episode Workspace에서 열리고, json/markdown fallback이 동작한다', passed: true }
         ]
       },
       relatedTasks: [
