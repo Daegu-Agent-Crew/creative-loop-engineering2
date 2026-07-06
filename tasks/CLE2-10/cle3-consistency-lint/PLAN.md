@@ -7,18 +7,21 @@
 - **입력**: `OBJECT-MODEL.md`, `FOLLOW-UP-ISSUES.md`
 - **출력**: 린트 범주 목록
 - **예상 시간**: 0.5일
+- **상태**: 완료
 
 ### Phase 2: 입력/출력 포맷과 ReviewNote 연결 설계
 - **담당**: 대구루
 - **입력**: Phase 1 산출물
 - **출력**: lint result schema 초안
 - **예상 시간**: 0.5일
+- **상태**: 완료
 
 ### Phase 3: CLE2 / `three-body-comic` 연결 방식 정리
 - **담당**: 레노버
 - **입력**: Phase 2 산출물
 - **출력**: 운영 연결 방안
 - **예상 시간**: 0.5일
+- **상태**: 진행 예정
 
 ## 의존성
 - `tasks/CLE2-9/three-body-cle3/OBJECT-MODEL.md`

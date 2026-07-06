@@ -710,25 +710,26 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · 린트 범주 정의', owner: '대구루', status: 'pending' },
-          { name: 'Phase 2 · 결과 포맷 설계', owner: '대구루', status: 'pending' },
-          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'pending' }
+          { name: 'Phase 1 · 린트 범주 정의', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · 결과 포맷 설계', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · 운영 연결 정리', owner: '레노버', status: 'in-progress' }
         ]
       },
       status: {
-        state: 'hold',
-        progress: { current: 0, total: 3 },
-        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결'],
-        currentTasks: [],
-        nextTasks: ['린트 범주 초안 작성', '입력/출력 포맷 정의', 'ReviewNote 연결 규칙 정리'],
+        state: 'in-progress',
+        progress: { current: 2, total: 3 },
+        completedTasks: ['CLE2-10 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', '린트 범주 초안 작성', '입력/출력 포맷과 ReviewNote 연결 규칙 초안 작성'],
+        currentTasks: ['CLE2 / three-body-comic 연결 방식 문서화 범위 정리'],
+        nextTasks: ['lint result 저장 경로 기준 정리', 'Episode 단위 누적 관측 규칙 정리', 'Vision QA와 handoff 기준 명문화'],
         blockers: []
       },
       tests: {
         items: [
           { name: 'task 문서 존재', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
           { name: '상위 태스크 연결', method: '문서 리뷰', expected: 'CLE2-9와의 관계가 문서와 대시보드에 명시된다', passed: true },
-          { name: '린트 범주 정의', method: '문서 리뷰', expected: '캐릭터/스타일/패널 린트 범주가 정리된다', passed: false },
-          { name: '결과 포맷 정의', method: '문서 리뷰', expected: '입력/출력 schema 초안이 정리된다', passed: false }
+          { name: '린트 범주 정의', method: '문서 리뷰', expected: '캐릭터/스타일/패널/교차 객체 린트 범주가 정리된다', passed: true },
+          { name: '결과 포맷 정의', method: '문서 리뷰', expected: '입력/출력 schema 초안이 정리된다', passed: true },
+          { name: 'ReviewNote 연결 규칙', method: '문서 리뷰', expected: 'lint finding이 consistency ReviewNote로 변환되는 규칙이 있다', passed: true }
         ]
       },
       relatedTasks: [
@@ -748,6 +749,11 @@
           title: 'PLAN',
           path: 'tasks/CLE2-10/cle3-consistency-lint/PLAN.md',
           description: '린트 범주, 결과 포맷, 운영 연결 계획'
+        },
+        {
+          title: 'LINT SPEC',
+          path: 'tasks/CLE2-10/cle3-consistency-lint/LINT-SPEC.md',
+          description: '린트 범주, severity, 입출력 스키마, ReviewNote 변환 규칙'
         },
         {
           title: 'TESTS',
