@@ -12,6 +12,11 @@
 - 이유: 둘을 같은 단위로 다루면 STUDIO 운영 개선과 창작 시스템 설계가 다시 혼용된다.
 - 영향: `CLE2-7`에서 정리한 자산은 재사용하되, CLE3의 목표/범위는 `CLE2-9`에서 별도 관리한다.
 
+### 2026-07-06
+- 결정: 다른 AI에게 받은 CLE3 컨설팅 자료는 `tasks/CLE2-9/three-body-cle3/research/`에 원본 문서로 보관하고, 핵심 반영점만 이슈 댓글과 DECISIONS/PLAN에 요약한다.
+- 이유: 이슈 댓글만으로는 장문 분석과 실행 가이드를 지속적으로 참조하기 어렵고, 문서만 두면 타임라인과 알림이 끊긴다.
+- 영향: 장기 지식 자산은 저장소 안에서 유지하고, GitHub 이슈는 요약·합의·알림 채널로 사용한다.
+
 ## 열린 쟁점
 - [ ] CLE3 전용 상세 탭이 CLE2 UI에 추가로 필요한지 검토
 - [ ] STUDIO 보드를 CLE3 하위 기능으로 흡수할지, CLE2-7에 남겨둘지 결정 필요
@@ -21,3 +26,4 @@
 - GitHub Issue: #24
 - 선행 이슈: #17
 - 관련 저장소: `three-body-comic`
+- 리서치 문서: `research/00-cle3-analysis-report.md`, `research/01-knowledge-integration-guide.md`, `research/02-three-body-appeal.md`, `research/03-hit-manga-structure-patterns.md`

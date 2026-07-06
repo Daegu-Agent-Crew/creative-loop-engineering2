@@ -4,12 +4,13 @@
 
 ### Phase 1: 현재 자산 분석 및 문제 재정의
 - **담당**: 대구루
-- **입력**: Issue #24, `three-body-comic`, CLE2-7 문서
+- **입력**: Issue #24, `three-body-comic`, CLE2-7 문서, 외부 CLE3 컨설팅 리서치 4종
 - **출력**: CLE3가 해결할 문제 목록과 기준 구조
 - **세부**:
   - `three-body-comic`의 source/publish/experiment 구조 재점검
   - CLE2-7이 이미 다룬 운영 레이어와 새로 필요한 창작 레이어 분리
   - "자동 출력"보다 중요한 중간 협업 단계를 먼저 목록화
+  - 외부 리서치 문서의 권고안을 "즉시 반영 / 후속 검토 / 보류"로 분류
 
 ### Phase 2: CLE3 시스템 경계 및 핵심 객체 정의
 - **담당**: 대구루
@@ -51,6 +52,7 @@
 - `three-body-comic` 저장소 구조와 Pages 운영 상태
 - CLE2-7 STUDIO 보드 및 관련 설계 문서
 - OpenClaw/Codex 현재 실행 환경
+- `tasks/CLE2-9/three-body-cle3/research/` 아래 외부 컨설팅 문서
 
 ## 리스크
 - CLE2-7과 CLE3의 경계를 분명히 하지 않으면 문서와 구현이 다시 섞일 수 있음

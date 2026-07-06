@@ -625,7 +625,29 @@
           { name: '연동 흐름 정의', method: '문서 리뷰', expected: 'GitHub/Pages/Discord/OpenClaw/Codex 흐름이 설명된다', passed: false },
           { name: 'CLE2 대시보드 카드', method: '브라우저 확인', expected: 'CLE2-9 카드가 Tasks 목록과 상세에 표시된다', passed: true }
         ]
-      }
+      },
+      docs: [
+        {
+          title: 'CLE3 분석 보고서',
+          path: 'tasks/CLE2-9/three-body-cle3/research/00-cle3-analysis-report.md',
+          description: '파이프라인 결함, 정합성 린트, QA 구조 개선 제안'
+        },
+        {
+          title: '지식 반영 가이드',
+          path: 'tasks/CLE2-9/three-body-cle3/research/01-knowledge-integration-guide.md',
+          description: '흥행 분석을 프롬프트, 루브릭, 가설 루프에 주입하는 방법'
+        },
+        {
+          title: '삼체 흥행 원리',
+          path: 'tasks/CLE2-9/three-body-cle3/research/02-three-body-appeal.md',
+          description: '삼체 원작의 매력을 각색 규칙으로 정리한 원리 문서'
+        },
+        {
+          title: '흥행 만화 구조 패턴',
+          path: 'tasks/CLE2-9/three-body-cle3/research/03-hit-manga-structure-patterns.md',
+          description: '연재 훅, 떡밥, 페이지 리듬을 규칙으로 정리한 구조 패턴'
+        }
+      ]
     }
   ];
 
