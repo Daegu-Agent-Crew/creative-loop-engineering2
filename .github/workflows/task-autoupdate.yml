@@ -18,135 +18,154 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Parse CLE2 ID from commit and update STATUS.md
+      - name: Parse CLE2 IDs from commit and update STATUS.md
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            
-            // Get the commit message that triggered this push
+
+            // Get the commit messages that triggered this push
             const commits = context.payload.commits || [];
             if (commits.length === 0) {
               core.info('No commits found, skipping.');
               return;
             }
-            
-            // Check all commits for CLE2-N pattern in merge commits
-            let cle2Id = null;
+
+            // Collect ALL CLE2-N IDs and PR numbers from ALL commits (fix: was non-global, only first match)
+            const cle2Ids = new Set();
             let prNumber = null;
-            
+
             for (const commit of commits) {
               const msg = commit.message || '';
-              // Match patterns like "feat: CLE2-4 ..." or "(#9)" or "(#10)"
-              const idMatch = msg.match(/CLE2-(\d+)/i);
-              if (idMatch) {
-                cle2Id = idMatch[1];
+
+              // Fix: use matchAll to catch multiple CLE2-N in a single commit message
+              for (const m of msg.matchAll(/CLE2-(\d+)/ig)) {
+                cle2Ids.add(m[1]);
               }
-              const prMatch = msg.match(/\(#(\d+)\)/);
-              if (prMatch) {
-                prNumber = prMatch[1];
+
+              // Fix: also collect all PR numbers, prefer the last one found
+              for (const m of msg.matchAll(/\(#(\d+)\)/g)) {
+                prNumber = m[1];
               }
             }
-            
-            if (!cle2Id) {
+
+            if (cle2Ids.size === 0) {
               core.info('No CLE2-ID found in commit messages, skipping.');
               return;
             }
-            
-            core.info(`Found CLE2-${cle2Id}, PR #${prNumber || 'unknown'}`);
-            
+
             const today = new Date().toISOString().slice(0, 10);
-            const taskBase = `tasks/CLE2-${cle2Id}`;
-            
-            // Find the slug directory
-            let slugDir = '';
-            try {
-              const entries = fs.readdirSync(taskBase);
-              for (const entry of entries) {
-                const stat = fs.statSync(`${taskBase}/${entry}`);
-                if (stat.isDirectory()) {
-                  slugDir = entry;
-                  break;
+            const refTag = prNumber ? `PR #${prNumber}` : 'direct commit';
+
+            // Process each CLE2-N ID found (fix: was single ID, now iterates all)
+            for (const cle2Id of cle2Ids) {
+              core.info(`Processing CLE2-${cle2Id}, ${refTag}`);
+
+              const taskBase = `tasks/CLE2-${cle2Id}`;
+
+              // Find ALL slug directories (fix: was first directory only)
+              let slugDirs = [];
+              try {
+                const entries = fs.readdirSync(taskBase);
+                for (const entry of entries) {
+                  const stat = fs.statSync(`${taskBase}/${entry}`);
+                  if (stat.isDirectory()) {
+                    slugDirs.push(entry);
+                  }
+                }
+              } catch (e) {
+                core.info(`No task directory found for CLE2-${cle2Id}, skipping.`);
+                continue;
+              }
+
+              if (slugDirs.length === 0) {
+                core.info(`No slug directory found for CLE2-${cle2Id}, skipping.`);
+                continue;
+              }
+
+              // If multiple slug dirs exist, process all but log a warning
+              if (slugDirs.length > 1) {
+                core.warning(`CLE2-${cle2Id} has ${slugDirs.length} slug directories: ${slugDirs.join(', ')}. Processing all.`);
+              }
+
+              for (const slugDir of slugDirs) {
+                const statusPath = `${taskBase}/${slugDir}/STATUS.md`;
+                if (!fs.existsSync(statusPath)) {
+                  core.info(`STATUS.md not found at ${statusPath}, skipping.`);
+                  continue;
+                }
+
+                // Update STATUS.md
+                let content = fs.readFileSync(statusPath, 'utf8');
+
+                content = content.replace(/## 현재 상태\n[🔄✅⏸️].*$/m, `## 현재 상태\n✅ 완료`);
+                content = content.replace(/🔄 진행 중/g, '✅ 완료');
+                content = content.replace(/⏸️ 대기/g, '✅ 완료');
+
+                const phaseMatch = content.match(/전체 Phase:\s*(\d+)\/(\d+)/);
+                if (phaseMatch) {
+                  const total = phaseMatch[2];
+                  content = content.replace(/전체 Phase:\s*\d+\/\d+\s*완료/, `전체 Phase: ${total}/${total} 완료`);
+                  content = content.replace(/현재 Phase:.*$/m, '현재 Phase: 완료');
+                }
+
+                // Move 진행 중 items to 완료
+                const inProgressMatch = content.match(/## 진행 중인 작업\n((?:- \[ \].*\n)*)/);
+                if (inProgressMatch && inProgressMatch[1].trim()) {
+                  const inProgressItems = inProgressMatch[1].replace(/- \[ \]/g, '- [x]');
+                  content = content.replace(
+                    /(## 완료된 작업\n(?:- \[x\].*\n)*)/,
+                    `$1${inProgressItems}`
+                  );
+                }
+                content = content.replace(
+                  /## 진행 중인 작업\n(?:- \[ \].*\n)*/g,
+                  '## 진행 중인 작업\n- (없음)\n'
+                );
+
+                // Add changelog entry
+                const changelogEntry = `| ${today} | ${refTag} 머지 완료, 자동 업데이트 | GitHub Actions |`;
+                if (content.includes('## 변경 이력')) {
+                  const lastSep = content.lastIndexOf('|---');
+                  if (lastSep >= 0) {
+                    const insertPos = content.indexOf('\n', lastSep);
+                    content = content.slice(0, insertPos + 1) + changelogEntry + '\n' + content.slice(insertPos + 1);
+                  }
+                }
+
+                content = content.replace(/## 다음 작업\n(?:- \[ \].*\n)*/g, '## 다음 작업\n- (없음)\n');
+                content = content.replace(/## 블로커\n-.*$/m, '## 블로커\n- 없음');
+
+                fs.writeFileSync(statusPath, content);
+                core.info(`Updated ${statusPath}`);
+
+                // Update TESTS.md
+                const testsPath = `${taskBase}/${slugDir}/TESTS.md`;
+                if (fs.existsSync(testsPath)) {
+                  let testsContent = fs.readFileSync(testsPath, 'utf8');
+                  testsContent = testsContent.replace(/⬜/g, '✅');
+                  testsContent = testsContent.replace(/\*\*결과\*\*:.*$/m, '**결과**: 통과');
+                  testsContent = testsContent.replace(/\*\*검증 일자\*\*:.*$/m, `**검증 일자**: ${today}`);
+                  fs.writeFileSync(testsPath, testsContent);
+                  core.info(`Updated ${testsPath}`);
                 }
               }
-            } catch (e) {
-              core.info(`No task directory found for CLE2-${cle2Id}, skipping.`);
-              return;
             }
-            
-            if (!slugDir) {
-              core.info('No slug directory found, skipping.');
-              return;
-            }
-            
-            const statusPath = `${taskBase}/${slugDir}/STATUS.md`;
-            if (!fs.existsSync(statusPath)) {
-              core.info('STATUS.md not found, skipping.');
-              return;
-            }
-            
-            // Update STATUS.md
-            let content = fs.readFileSync(statusPath, 'utf8');
-            
-            content = content.replace(/## 현재 상태\n[🔄✅⏸️].*$/m, `## 현재 상태\n✅ 완료`);
-            content = content.replace(/🔄 진행 중/g, '✅ 완료');
-            content = content.replace(/⏸️ 대기/g, '✅ 완료');
-            
-            const phaseMatch = content.match(/전체 Phase:\s*(\d+)\/(\d+)/);
-            if (phaseMatch) {
-              const total = phaseMatch[2];
-              content = content.replace(/전체 Phase:\s*\d+\/\d+\s*완료/, `전체 Phase: ${total}/${total} 완료`);
-              content = content.replace(/현재 Phase:.*$/m, '현재 Phase: 완료');
-            }
-            
-            // Move 진행 중 items to 완료
-            const inProgressMatch = content.match(/## 진행 중인 작업\n((?:- \[ \].*\n)*)/);
-            if (inProgressMatch && inProgressMatch[1].trim()) {
-              const inProgressItems = inProgressMatch[1].replace(/- \[ \]/g, '- [x]');
-              content = content.replace(
-                /(## 완료된 작업\n(?:- \[x\].*\n)*)/,
-                `$1${inProgressItems}`
-              );
-            }
-            content = content.replace(
-              /## 진행 중인 작업\n(?:- \[ \].*\n)*/g,
-              '## 진행 중인 작업\n- (없음)\n'
-            );
-            
-            // Add changelog entry
-            const refTag = prNumber ? `PR #${prNumber}` : 'direct commit';
-            const changelogEntry = `| ${today} | ${refTag} 머지 완료, 자동 업데이트 | GitHub Actions |`;
-            if (content.includes('## 변경 이력')) {
-              const lastSep = content.lastIndexOf('|---');
-              if (lastSep >= 0) {
-                const insertPos = content.indexOf('\n', lastSep);
-                content = content.slice(0, insertPos + 1) + changelogEntry + '\n' + content.slice(insertPos + 1);
-              }
-            }
-            
-            content = content.replace(/## 다음 작업\n(?:- \[ \].*\n)*/g, '## 다음 작업\n- (없음)\n');
-            content = content.replace(/## 블로커\n-.*$/m, '## 블로커\n- 없음');
-            
-            fs.writeFileSync(statusPath, content);
-            core.info(`Updated ${statusPath}`);
-            
-            // Update TESTS.md
-            const testsPath = `${taskBase}/${slugDir}/TESTS.md`;
-            if (fs.existsSync(testsPath)) {
-              let testsContent = fs.readFileSync(testsPath, 'utf8');
-              testsContent = testsContent.replace(/⬜/g, '✅');
-              testsContent = testsContent.replace(/\*\*결과\*\*:.*$/m, '**결과**: 통과');
-              testsContent = testsContent.replace(/\*\*검증 일자\*\*:.*$/m, `**검증 일자**: ${today}`);
-              fs.writeFileSync(testsPath, testsContent);
-              core.info(`Updated ${testsPath}`);
-            }
-          
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add tasks/
-          git diff --staged --quiet || git commit -m "chore: auto-update CLE2-${{ vars.CLE2_ID || 'task' }} task status (merged)"
-          git push
+          git diff --staged --quiet || {
+            # Fix: use actual CLE2 IDs from commit messages, not unset vars.CLE2_ID
+            # Extract CLE2 IDs from the trigger commits
+            CLE2_IDS=$(git log --format='%s' -${{ github.event.commits.length || 1 }} | grep -oP 'CLE2-\d+' | sort -u | tr '\n' ' ' | sed 's/ $//')
+            if [ -z "$CLE2_IDS" ]; then
+              CLE2_IDS="task"
+            fi
+            git commit -m "chore: auto-update ${CLE2_IDS} task status (merged)"
+            git push
+          }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

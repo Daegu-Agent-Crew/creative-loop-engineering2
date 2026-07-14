@@ -540,7 +540,7 @@
       slug: 'agent-builder-evolution',
       title: 'agent_builder_public, CLE2 구조 흡수하여 커뮤니티 중심 레포로 진화',
       issue: 20,
-      prs: [],
+      prs: [4, 5, 6, 10, 11],
       deliverables: [],
       goal: {
         objective: 'agent_builder_public을 단순 starter-kit 문서에서 살아있는 커뮤니티 레포로 진화. CLE2의 태스크 관리, team-memory 통합, SPA 대시보드, Discord 연동 구조를 흡수하여 스터디/커뮤니티 버전의 CLE2를 만든다.',
@@ -566,23 +566,66 @@
         ]
       },
       status: {
-        state: 'proposed',
-        progress: { current: 0, total: 5 },
-        completedTasks: ['GitHub Issue #20 생성', 'CLE2 대시보드 구조 분석', 'CLE2-8 task 문서 생성'],
-        currentTasks: ['Phase 1: tasks/ 폴더 + _template/ 생성 대기'],
-        nextTasks: ['AB-N 태스크 네이밍 규칙 문서화', 'starter-kit 기존 문서 태스크 형태 재구성'],
+        state: 'done',
+        progress: { current: 5, total: 5 },
+        completedTasks: ['GitHub Issue #20 생성', 'CLE2 대시보드 구조 분석', 'CLE2-8 task 문서 생성', 'Phase 1: tasks/ 구조 도입 (PR #4)', 'Phase 2: team-memory 통합 (PR #5)', 'Phase 3: SPA 대시보드 (PR #6)', 'Phase 4: 이슈 기반 운영 (PR #10)', 'Phase 5: Discord 연동 (PR #11)'],
+        currentTasks: [],
+        nextTasks: [],
         blockers: []
       },
       tests: {
         items: [
-          { name: 'tasks/ 폴더 구조', method: '리포 확인', expected: 'tasks/ + _template/ (GOAL/PLAN/STATUS/TESTS) 가 존재한다', passed: false },
-          { name: 'AB-N 네이밍 규칙', method: '문서 리뷰', expected: '스터디 미션 → 태스크 매핑 규칙이 문서화되어 있다', passed: false },
-          { name: 'team-memory 구조', method: '리포 확인', expected: 'context/records/ + context/registry/ 가 존재한다', passed: false },
-          { name: 'SPA 대시보드 홈', method: '브라우저 확인', expected: '스터디 현황이 표시된다', passed: false },
-          { name: 'SPA 미션 페이지', method: '브라우저 확인', expected: '주차별 미션 리스트 + 필터가 동작한다', passed: false },
-          { name: '이슈 템플릿', method: '리포 확인', expected: '.github/ISSUE_TEMPLATE/에 템플릿이 있다', passed: false },
-          { name: 'Discord 알림', method: '통합 테스트', expected: '미션 제출 시 Discord에 알림이 전송된다', passed: false },
-          { name: 'README living example', method: '문서 리뷰', expected: 'README가 CLE2-style 운영 방식을 설명한다', passed: false }
+          { name: 'tasks/ 폴더 구조', method: '리포 확인', expected: 'tasks/ + _template/ (GOAL/PLAN/STATUS/TESTS) 가 존재한다', passed: true },
+          { name: 'AB-N 네이밍 규칙', method: '문서 리뷰', expected: '스터디 미션 → 태스크 매핑 규칙이 문서화되어 있다', passed: true },
+          { name: 'team-memory 구조', method: '리포 확인', expected: 'context/records/ + context/registry/ 가 존재한다', passed: true },
+          { name: 'SPA 대시보드 홈', method: '브라우저 확인', expected: '스터디 현황이 표시된다', passed: true },
+          { name: 'SPA 미션 페이지', method: '브라우저 확인', expected: '주차별 미션 리스트 + 필터가 동작한다', passed: true },
+          { name: '이슈 템플릿', method: '리포 확인', expected: '.github/ISSUE_TEMPLATE/에 템플릿이 있다', passed: true },
+          { name: 'Discord 알림', method: '통합 테스트', expected: '미션 제출 시 Discord에 알림이 전송된다', passed: true },
+          { name: 'README living example', method: '문서 리뷰', expected: 'README가 CLE2-style 운영 방식을 설명한다', passed: true }
+        ]
+      }
+    },
+    {
+      id: 'CLE2-8b',
+      cle2Id: 'CLE2-8b',
+      slug: 'daily-improvement-question',
+      title: '매일 CLE2 개선 질문하기',
+      issue: 22,
+      prs: [],
+      deliverables: [],
+      goal: {
+        objective: 'CLE2 시스템을 매일 조금씩 개선하는 질문 루틴을 만든다. 하루 한 가지 개선 질문을 생성하고 답변하여 CLE2를 지속적으로 발전시킨다.',
+        successCriteria: [
+          '질문 생성 로직이 구현된다',
+          '최초 개선 질문 1건이 등록된다',
+          '질문-답변 루프가 일일 리듬에 통합된다'
+        ],
+        scope: {
+          in: ['질문 템플릿 설계', '질문 생성 스크립트', '일일 리듬 연동'],
+          out: ['자동 답변 생성', '외부 발송']
+        }
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 질문 생성 로직 설계', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · 최초 질문 등록', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · 일일 리듬 통합', owner: '대구루', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'proposed',
+        progress: { current: 0, total: 3 },
+        completedTasks: [],
+        currentTasks: ['Phase 1: 질문 생성 로직 설계', '최초 개선 질문 1건 등록'],
+        nextTasks: [],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '질문 템플릿', method: '문서 리뷰', expected: '개선 질문 템플릿이 존재한다', passed: false },
+          { name: '첫 질문 등록', method: '리포 확인', expected: '최초 1건의 개선 질문이 등록되어 있다', passed: false },
+          { name: '일일 리듬', method: '운영 확인', expected: '일일 질문 루프가 동작한다', passed: false }
         ]
       }
     },
