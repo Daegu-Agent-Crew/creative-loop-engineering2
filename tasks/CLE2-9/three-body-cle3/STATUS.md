@@ -25,15 +25,18 @@
 - [x] `CLE2-11` Vision QA 최소 기준 완료
 - [x] `CLE2-12` Episode Workspace 최소 기준 완료
 - [x] CLE3 app에서 lint / panel QA / release gate / results 요약 포맷 연결 완료
+- [x] CLE2-13 AI 협업 운영 프로토콜을 CLE3에 연결
+- [x] EP001~EP005에 Discovery, 판단 기록, 사람 승인 게이트 적용
+- [x] 패널 작업 큐에 근거, 확신도, 가정, 불확실성, 참조와 에스컬레이션 이유 추가
 
 ## 진행 중인 작업
 - CLE3 구현 진척을 CLE2 요구사항 데이터와 문서에 지속 반영
-- 실데이터 전환 전 단계의 운영 범위와 자동화 연결 범위 정리
+- 패널 생성과 Vision QA 실제 실행 어댑터 연결
 
 ## 다음 작업
 - GitHub/Pages/Discord/OpenClaw/Codex 운영 연결 범위를 더 구체화
 - `results.md` 실제 파일 반영 또는 자동 저장 전략 결정
-- EP002~EP005에 패널 단위 데이터/QA 구조를 확장
+- Discovery 입력 비용과 재작업 감소 효과 관측
 - CLE2 상위/하위 태스크 상태를 더 잘 보여주는 관리 UI 정리
 
 ## 블로커
@@ -42,6 +45,7 @@
 ## 변경 이력
 | 날짜 | 변경 내용 | 작성자 |
 |------|-----------|--------|
+| 2026-07-14 | CLE2-13 프로토콜과 EP001~EP005 Discovery/Decision/Approval, 패널 큐 판단 메타데이터 반영 | Codex |
 | 2026-07-08 | CLE2-10/11/12 최소 완료와 CLE3 lint/QA/workspace 연결 상태를 상위 요구사항 상태에 반영 | Codex |
 | 2026-07-07 | CLE3 실제 구현(Workspace, lint, Vision QA) 진행 상황을 상위 요구사항 상태에 반영 | Codex |
 | 2026-07-06 | CLE2-10/11/12 GitHub Issue #26/#27/#28 생성 후 문서 기준 동기화 | 대구루 |

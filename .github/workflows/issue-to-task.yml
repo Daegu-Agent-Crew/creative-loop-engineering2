@@ -49,7 +49,8 @@ jobs:
               description,
               `**이슈 URL:** ${issue.html_url}`,
               ``,
-              `tasks/CLE2-${cle2Id}/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md를 작성해서 PR로 올려줘.`
+              `tasks/CLE2-${cle2Id}/ 디렉토리에 GOAL.md, DISCOVERY.md, PLAN.md, STATUS.md, TESTS.md, DECISIONS.md를 작성해서 PR로 올려줘.`,
+              `DISCOVERY.md에는 Unknown Map, 사용할 도구, 레퍼런스, 사람 결정 항목을 포함해줘.`
             ].join('\n');
 
             // Create comment on the issue (for GitHub record)
@@ -61,6 +62,9 @@ jobs:
               `**요구사항:** ${title.replace(/^\[CLE2-\d+\]\s*/, '')}`,
               `**설명:** ${description}`,
               `**이슈:** ${issue.html_url}`,
+              '',
+              '표준 태스크 문서: GOAL / DISCOVERY / PLAN / STATUS / TESTS / DECISIONS',
+              'DISCOVERY에는 Unknown Map, 도구, 레퍼런스와 사람 결정 항목을 기록합니다.',
               '',
               '---',
               '🤖 Discord로 에이전트 요청이 전송되었습니다.'
