@@ -1,6 +1,6 @@
 # CLE2 Tasks — AI 에이전트 병렬 작업 지원 체계
 
-각 요구사항(Issue)은 독립적인 태스크 폴더를 가지며, 표준화된 5개 문서로 관리됩니다.
+각 요구사항(Issue)은 독립적인 태스크 폴더를 가지며, 표준화된 6개 문서로 관리됩니다.
 
 ## 디렉토리 구조
 
@@ -9,69 +9,16 @@ tasks/
 ├── README.md            ← 이 파일 (운영 규칙)
 ├── _template/           ← 새 태스크 생성용 템플릿
 │   ├── GOAL.md
+│   ├── DISCOVERY.md
 │   ├── PLAN.md
 │   ├── STATUS.md
 │   ├── TESTS.md
 │   └── DECISIONS.md
-├── CLE2-1/              ← 이슈 #1: team-memory 활성화
-│   └── team-memory-activation/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-2/              ← 이슈 #3: 유튜브→wiki 스킬
-│   └── youtube-wiki-skill/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-3/              ← 이슈 #4: CLE2 개선
-│   └── cle2-improvement/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-4/              ← 이슈 #8: 요구사항↔tasks 통합
-│   └── task-integration/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-5/              ← 이슈 #13: 결과물 쇼케이스 & 피드백
-│   └── deliverables-feedback/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-6/              ← 이슈 #15: AI 에이전트 뉴스 수집 시스템
-│   └── ai-agent-news/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       └── DECISIONS.md
-├── CLE2-7/              ← 이슈 #17: 삼체 전용 관리 시스템
-│   └── three-body-comic-studio/
-│       ├── GOAL.md
-│       ├── PLAN.md
-│       ├── STATUS.md
-│       ├── TESTS.md
-│       ├── DECISIONS.md
-│       └── docs/
-└── CLE2-8/              ← 이슈 #20: agent_builder 진화
-    └── agent-builder-evolution/
+├── CLE2-1..12/          ← 기존 요구사항 태스크; 다음 계획 변경 시 DISCOVERY 보강
+└── CLE2-13/
+    └── ai-collaboration-protocol/
         ├── GOAL.md
-        ├── PLAN.md
-        ├── STATUS.md
-        └── TESTS.md
-└── CLE2-9/              ← 이슈 #24: 삼체 연재 만화 창작 시스템 (CLE3)
-    └── three-body-cle3/
-        ├── GOAL.md
+        ├── DISCOVERY.md
         ├── PLAN.md
         ├── STATUS.md
         ├── TESTS.md
@@ -83,6 +30,7 @@ tasks/
 | 문서 | 목적 | 작성 시점 |
 |------|------|-----------|
 | **GOAL.md** | 달성 목표, 성공 기준, 범위 | 태스크 생성 시 |
+| **DISCOVERY.md** | 작업 맥락, Unknown, 도구, 레퍼런스, 사람 결정 항목 | 실행 계획 확정 전과 새 위험 발견 시 |
 | **PLAN.md** | 단계별 실행 계획, 담당자 할당 | 태스크 시작 시 |
 | **STATUS.md** | 현재 진행 상황, 다음 액션 | 작업 중 지속 갱신 |
 | **TESTS.md** | 검증 기준, 테스트 결과 | 완료 전 검증 |
@@ -100,7 +48,8 @@ tasks/
 
 1. `tasks/_template/` 복사 → `tasks/CLE2-{ID}/{slug}/`
 2. GOAL.md 작성 → 이슈 생성
-3. PLAN.md로 단계 분해 → 담당 에이전트 할당
-4. 작업 시작 후 STATUS.md 주기적 갱신
-5. 주요 판단은 DECISIONS.md에 누적
-6. 완료 전 TESTS.md 검증 → PR 생성
+3. DISCOVERY.md에서 Unknown, 도구, 레퍼런스, 사람 결정 항목 확인
+4. PLAN.md로 단계 분해 → 담당 에이전트와 승인 게이트 할당
+5. 작업 시작 후 STATUS.md 주기적 갱신
+6. 주요 판단은 DECISIONS.md에 근거와 불확실성을 함께 누적
+7. 완료 전 TESTS.md 검증 → PR 생성

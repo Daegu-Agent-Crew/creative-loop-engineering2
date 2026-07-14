@@ -606,6 +606,24 @@
           out: ['이미지 생성 모델 자체 개발', '실서비스 운영 계정 세팅 완료', 'three-body-comic 전체 제작 대행', '완전 자동 만화 생성 즉시 구현']
         }
       },
+      discovery: {
+        unknowns: {
+          knownKnown: ['CLE3 산출물의 원본은 episodes/EPxxx 내부에 둔다', 'EP001/EP002는 Phase 4 패널 생성 중이다'],
+          knownUnknown: ['EP002의 15p script와 16p storyboard/panels rebaseline 시점', '자동 이미지 생성과 Vision QA 실행기의 최종 연결 방식', 'Git 원본과 localStorage QA 기록 동기화 방식'],
+          unknownKnown: ['운영자가 캐릭터 일관성, 장면 충실도, 흥행 훅 중 실제로 우선하는 기준'],
+          unknownUnknown: ['페이지 병렬 생성이 만드는 장면 연속성 드리프트', '오래된 storyboard 기준을 판단 메타데이터가 정당화할 위험']
+        },
+        tools: [
+          { name: 'GitHub / CLE2', status: 'available', purpose: '요구사항, 결정, PR 관리' },
+          { name: 'CLE3 파일 / 쉘', status: 'available', purpose: '생성 큐와 산출물 관리' },
+          { name: 'Codex imagegen', status: 'available', purpose: 'CLE3 내부 패널 생성' },
+          { name: 'GitHub Pages', status: 'available', purpose: 'Episode Workspace 조회' }
+        ],
+        references: ['CLE3 AGENTS.md', 'config/panel-generation-policy.json', 'docs/AUTONOMOUS-PANEL-GENERATION.md', 'CLE2-9 OBJECT-MODEL.md'],
+        needsDecision: ['EP002 rebaseline 시점', '최종 공개 승인'],
+        assumptions: ['EP001을 Discovery/Decision/Approval 데이터의 시범 에피소드로 사용한다.'],
+        challenge: '정상 패널은 제한 병렬화하고 예외 및 네 승인 게이트만 사람에게 올려 자율 생성 속도와 창작 통제를 함께 확보한다.'
+      },
       plan: {
         phases: [
           { name: 'Phase 1 · 현재 자산 분석 및 문제 재정의', owner: '대구루', status: 'done' },
@@ -618,14 +636,14 @@
       status: {
         state: 'in-progress',
         progress: { current: 4, total: 5 },
-        completedTasks: ['GitHub Issue #24 생성', 'CLE2-7과 three-body-comic 기존 구조 파악', 'CLE2-9 task 문서 초기 생성', 'CLE2-7과 CLE3 경계 재정리', 'CLE3 객체 모델 정의', 'CLE2-10~12 후속 구현 이슈 분해와 연결', 'creative-loop-engineering3 저장소/Pages 기준 실제 구현 착수'],
-        currentTasks: ['CLE3 구현 진척을 CLE2 요구사항 데이터와 문서에 지속 반영', 'GitHub + Pages + localStorage 기반 운영 경계 재정리', '하위 구현 태스크(CLE2-10~12)의 실제 구현 상태 추적'],
-        nextTasks: ['CLE3 통합 연동 흐름을 issue/문서 기준으로 재정리', 'Discord/OpenClaw/Codex 운영 연결 범위를 더 구체화', '패널 단위 QA와 결과 export를 후속 구현 태스크에 연결'],
+        completedTasks: ['GitHub Issue #24 생성', 'CLE2-7과 three-body-comic 기존 구조 파악', 'CLE2-9 task 문서 초기 생성', 'CLE2-7과 CLE3 경계 재정리', 'CLE3 객체 모델 정의', 'CLE2-10~12 후속 구현 이슈 분해와 연결', 'creative-loop-engineering3 저장소/Pages 기준 실제 구현 착수', 'CLE2-13 Discovery/Decision/Approval 프로토콜을 EP001~EP005에 적용'],
+        currentTasks: ['CLE3 패널 생성과 QA 자동 실행 연결', '하위 구현 태스크(CLE2-10~13)의 실제 운영 상태 추적'],
+        nextTasks: ['EP002 기준선 rebaseline 결정', 'Discovery 입력 비용과 재작업 감소 효과 측정', 'Discord/OpenClaw 운영 연결 범위 구체화'],
         blockers: ['CLE2 앱에는 아직 상위 태스크 / 하위 구현 태스크 상태를 한눈에 보여주는 전용 UI가 없음']
       },
       tests: {
         items: [
-          { name: 'CLE2-9 task 문서', method: '리포 확인', expected: 'GOAL/PLAN/STATUS/TESTS/DECISIONS 5개 문서가 존재한다', passed: true },
+          { name: 'CLE2-9 task 문서', method: '리포 확인', expected: 'GOAL/DISCOVERY/PLAN/STATUS/TESTS/DECISIONS 문서가 존재한다', passed: true },
           { name: '이슈 연결', method: '문서 리뷰', expected: '모든 문서가 GitHub Issue #24 / CLE2-ID 9와 정합하다', passed: true },
           { name: '경계 정의', method: '문서 리뷰', expected: 'CLE2-7과 CLE3의 책임 차이가 명시된다', passed: true },
           { name: '객체 모델 정의', method: '문서 리뷰', expected: 'Story/Style/Character/Episode/Panel/Results 객체가 정의된다', passed: true },
@@ -653,6 +671,11 @@
           id: 'CLE2-12',
           relation: '후속 구현 태스크',
           note: 'Story/Episode/Scene/Panel/Results를 한 흐름으로 보여주는 작업 뷰 기준을 다룬다.'
+        },
+        {
+          id: 'CLE2-13',
+          relation: '운영 프로토콜',
+          note: 'Tool First, Unknown Discovery, 판단 근거 기록과 사람 승인 게이트를 CLE3에 적용한다.'
         }
       ],
       docs: [
@@ -881,9 +904,9 @@
       status: {
         state: 'in-progress',
         progress: { current: 3, total: 4 },
-        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성', 'EP001 기준 실제 파일 -> 화면 요소 매핑표 작성', 'STUDIO 경계 문서화 및 CLE2 화면 배치 기준 정리', 'CLE3 저장소에서 EP001~EP005 기반 실제 Episode Workspace 1차 구현'],
-        currentTasks: ['EP002~EP005 markdown fallback 구조를 더 다듬기', '패널 단위 QA와 lint 위치를 workspace 화면에 더 자연스럽게 통합'],
-        nextTasks: ['EP002~EP005에도 같은 매핑 규칙이 유지되는지 확인', 'CLE2 실제 UI에서 옵션 A 링크형 공존부터 반영할지 결정', '패널 하위 파일 구조 확정 시 lint / vision-qa 위치 미세 조정'],
+        completedTasks: ['CLE2-12 task 문서 초기 생성', 'CLE2-9 후속 구현 태스크로 연결', 'Episode Workspace 정보 구조 초안 작성', 'EP001 기준 실제 파일 -> 화면 요소 매핑표 작성', 'STUDIO 경계 문서화 및 CLE2 화면 배치 기준 정리', 'CLE3 저장소에서 EP001~EP005 기반 실제 Episode Workspace 1차 구현', 'EP001~EP005 Discovery/Decision/Approval 조회와 개요 요약 추가'],
+        currentTasks: ['패널 단위 QA와 Discovery 에스컬레이션 상태 연결'],
+        nextTasks: ['승인 export를 Git 원본으로 확정하는 저장 흐름 구현', '패널 하위 파일 구조 확정 시 lint / vision-qa 위치 미세 조정'],
         blockers: []
       },
       tests: {
@@ -893,7 +916,8 @@
           { name: '정보 구조 정의', method: '문서 리뷰', expected: 'Episode 중심 작업 뷰 정보 구조가 정리된다', passed: true },
           { name: '실제 구조 매핑', method: '문서 리뷰', expected: 'three-body-comic 구조와 연결표가 정리된다', passed: true },
           { name: 'EP001 파일 매핑', method: '문서 리뷰', expected: 'EP001의 script/storyboard/results/panels가 화면 요소와 연결된다', passed: true },
-          { name: 'CLE3 Workspace 구현', method: '브라우저 확인', expected: 'EP001~EP005가 Episode Workspace에서 열리고, json/markdown fallback이 동작한다', passed: true }
+          { name: 'CLE3 Workspace 구현', method: '브라우저 확인', expected: 'EP001~EP005가 Episode Workspace에서 열리고, json/markdown fallback이 동작한다', passed: true },
+          { name: 'Discovery 운영 데이터', method: '브라우저 확인', expected: 'EP001~EP005에서 Unknown, 도구, 판단 기록과 승인 게이트가 조회된다', passed: true }
         ]
       },
       relatedTasks: [
@@ -939,6 +963,83 @@
           path: 'tasks/CLE2-12/cle3-episode-workspace/TESTS.md',
           description: 'Episode Workspace 태스크의 검증 기준'
         }
+      ]
+    },
+    {
+      id: 'CLE2-13',
+      cle2Id: 'CLE2-13',
+      slug: 'ai-collaboration-protocol',
+      title: 'AI 협업 운영 프로토콜',
+      issue: 29,
+      prs: [],
+      deliverables: [],
+      goal: {
+        objective: 'CLE2 요구사항 관리와 CLE3 실행 파이프라인에 Tool First, Unknown Discovery, Human in the Loop, 판단 근거 기록을 공통 운영 규칙으로 적용한다.',
+        successCriteria: [
+          'CLE2 표준 태스크에 DISCOVERY.md가 포함된다',
+          'CLE2 상세 화면에서 Unknown, 도구, 레퍼런스, 사람 결정 항목을 조회할 수 있다',
+          'DECISIONS.md가 근거, 확신도, 불확실성, 대안, 승인 상태를 기록한다',
+          'CLE3 EP001에서 discovery, decisions, approvals 데이터가 조회된다',
+          'CLE3 패널 작업 계획에 판단 근거, 가정, 불확실성이 포함된다'
+        ],
+        scope: {
+          in: ['CLE2 태스크 템플릿과 UI', 'CLE3 Episode Workspace와 패널 작업 큐', '중요 승인 게이트와 예외 에스컬레이션'],
+          out: ['모델의 비공개 내부 사고 과정 저장', '모든 작업 단계의 사람 승인 의무화', '외부 모델 자체의 성능 개선']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['CLE2는 요구사항별 표준 문서를 관리한다', 'CLE3는 Phase, 스키마, 패널 큐, Vision QA를 가지고 있다'],
+          knownUnknown: ['다른 프로젝트에도 동일한 승인 게이트가 적절한가', 'Unknown 항목의 종료 또는 폐기 기준', '자동 QA 연결 후 판단 기록 비용'],
+          unknownKnown: ['팀의 암묵적 코딩 스타일과 리뷰 관행', '운영자가 실제로 중요하게 보는 품질 기준과 승인 속도'],
+          unknownUnknown: ['Discovery가 형식적 시작 지연이 될 위험', '낮은 확신도의 판단 누적', 'localStorage와 Git 원본의 상태 불일치']
+        },
+        tools: [
+          { name: 'GitHub', status: 'available', purpose: '이슈, PR, 장기 기록' },
+          { name: '로컬 파일 / 쉘', status: 'available', purpose: '구현과 검증' },
+          { name: 'CLE3 이미지 생성', status: 'available', purpose: '실제 패널 산출' },
+          { name: 'GitHub Pages', status: 'available', purpose: '조회 UI' }
+        ],
+        references: ['tasks/_template/', 'CLE3 panel-generation-policy.json', 'CLE2-8 / #22', 'CLE2-9 / #24'],
+        needsDecision: ['CLE3 시범 적용 결과를 다른 프로젝트 공통 규칙으로 확대할지 결정'],
+        assumptions: ['CLE2가 운영 규칙을 소유하고 각 실행 시스템이 기계 판독 데이터를 소유한다.'],
+        challenge: '정상 경로는 정책으로 자동화하고 예외와 가치 판단만 사람에게 올려 자율성과 통제를 함께 확보한다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · CLE2 문서 프로토콜', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · CLE2 조회 UI', owner: 'Codex', status: 'done' },
+          { name: 'Phase 3 · CLE3 전체 에피소드 적용', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · 실행 큐 및 검증', owner: 'Codex', status: 'done' }
+        ]
+      },
+      status: {
+        state: 'done',
+        progress: { current: 4, total: 4 },
+        completedTasks: ['GitHub Issue #29 생성', 'CLE2 표준 DISCOVERY.md와 조회 UI 추가', '기존 5개 템플릿 확장', 'CLE2-13 문서 세트 작성', 'CLE3 EP001~EP005 governance 데이터 추가', '패널 큐 판단 메타데이터와 CI 검증 추가', 'CLE2/CLE3 데스크톱·모바일 브라우저 검증'],
+        currentTasks: [],
+        nextTasks: ['실제 운영에서 Discovery 입력 비용과 재작업 감소 효과 측정'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'CLE2 템플릿', method: '파일 검사', expected: '표준 6개 문서와 확장 필드가 존재한다', passed: true },
+          { name: 'CLE2 Discovery 조회', method: '브라우저 확인', expected: 'Unknown, 도구, 레퍼런스, 사람 결정 항목이 보인다', passed: true },
+          { name: 'CLE3 전체 에피소드 Discovery', method: 'JSON/브라우저 확인', expected: 'EP001~EP005에서 세 운영 파일이 조회된다', passed: true },
+          { name: '패널 작업 계획', method: '스크립트 실행', expected: '선택 결과에 근거, 가정, 불확실성이 포함된다', passed: true },
+          { name: '거버넌스 CI 검증', method: '스크립트 실행', expected: '5개 에피소드의 파일, 게이트, 참조와 패널 큐 메타데이터가 통과한다', passed: true }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-8', relation: '일일 탐색 루프', note: 'Blind Spot Scan과 트레이드오프 재검토를 반복 실행한다.' },
+        { id: 'CLE2-9', relation: '첫 적용 대상', note: 'CLE3에 Discovery, 판단 기록과 사람 승인 게이트를 시범 적용한다.' },
+        { id: 'CLE2-12', relation: '조회 UI 기반', note: 'Episode Workspace에서 실행 상태와 사람 결정 항목을 함께 보여준다.' }
+      ],
+      docs: [
+        { title: 'DISCOVERY', path: 'tasks/CLE2-13/ai-collaboration-protocol/DISCOVERY.md', description: 'Unknown Map, 도구, 레퍼런스와 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-13/ai-collaboration-protocol/PLAN.md', description: 'CLE2 문서/UI와 CLE3 시범 적용 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-13/ai-collaboration-protocol/DECISIONS.md', description: '운영 프로토콜의 판단 근거와 불확실성' },
+        { title: 'TESTS', path: 'tasks/CLE2-13/ai-collaboration-protocol/TESTS.md', description: '두 저장소의 완료 및 운영 검증 기준' }
       ]
     }
   ];
@@ -1269,6 +1370,11 @@
   function taskDecisionsPath(task) {
     if (!task || !task.id || !task.slug) return '';
     return 'tasks/' + task.id + '/' + task.slug + '/DECISIONS.md';
+  }
+
+  function taskDiscoveryPath(task) {
+    if (!task || !task.id || !task.slug) return '';
+    return 'tasks/' + task.id + '/' + task.slug + '/DISCOVERY.md';
   }
 
   function taskIssueHref(task) {
@@ -1681,7 +1787,7 @@
     html += '<a class="quick-action" href="#/new"><span class="qa-icon">➕</span><div><div class="qa-title">새 요구사항 등록</div><div class="qa-desc">아이디어, 버그, 기능 요청</div></div></a>';
     html += '<a class="quick-action" href="#/requests"><span class="qa-icon">📋</span><div><div class="qa-title">전체 요구사항</div><div class="qa-desc">필터 및 검색</div></div></a>';
     html += '<a class="quick-action" href="#/agents"><span class="qa-icon">🤖</span><div><div class="qa-title">에이전트 패널</div><div class="qa-desc">대구루, 레노버 현황</div></div></a>';
-    html += '<a class="quick-action" href="#/tasks"><span class="qa-icon">🗂️</span><div><div class="qa-title">Tasks 대시보드</div><div class="qa-desc">GOAL / PLAN / STATUS / TESTS / DECISIONS</div></div></a>';
+    html += '<a class="quick-action" href="#/tasks"><span class="qa-icon">🗂️</span><div><div class="qa-title">Tasks 대시보드</div><div class="qa-desc">GOAL / DISCOVERY / PLAN / STATUS / TESTS / DECISIONS</div></div></a>';
     html += '<a class="quick-action" href="#/wiki"><span class="qa-icon">📚</span><div><div class="qa-title">팀 위키</div><div class="qa-desc">개념, 프로젝트, 용어 사전</div></div></a>';
     html += '<a class="quick-action" href="#/settings"><span class="qa-icon">⚙️</span><div><div class="qa-title">설정</div><div class="qa-desc">GitHub 연동, 사용자 변경</div></div></a>';
     html += '</div>';
@@ -1983,7 +2089,7 @@
         html += '<span style="font-weight:600">' + esc(taskForReq.id) + '</span>';
         html += '<span class="task-state-badge reviewing">📋 Task 미생성</span>';
         html += '</div>';
-        html += '<div style="color:var(--text3);font-size:0.8rem">이 요구사항에 대한 task 폴더가 아직 생성되지 않았습니다. tasks/ 디렉토리에 GOAL.md, PLAN.md, STATUS.md, TESTS.md, DECISIONS.md를 작성하면 자동으로 반영됩니다.</div>';
+        html += '<div style="color:var(--text3);font-size:0.8rem">이 요구사항에 대한 task 폴더가 아직 생성되지 않았습니다. tasks/ 디렉토리에 GOAL.md, DISCOVERY.md, PLAN.md, STATUS.md, TESTS.md, DECISIONS.md를 작성하면 자동으로 반영됩니다.</div>';
         html += '<div style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/tasks/' + taskForReq.id + '">→ Task 상세 보기</a></div>';
         html += '</div>';
       } else {
@@ -2468,7 +2574,7 @@
 
     var html = '<div style="padding-top:24px" class="page-enter">';
     html += '<h1 style="font-size:1.4rem;font-weight:700;margin-bottom:8px">📋 Tasks 대시보드</h1>';
-    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">tasks/ 디렉토리의 GOAL, PLAN, STATUS, TESTS, DECISIONS 문서를 한눈에 확인하세요</p>';
+    html += '<p style="color:var(--text2);font-size:0.85rem;margin-bottom:24px">tasks/ 디렉토리의 GOAL, DISCOVERY, PLAN, STATUS, TESTS, DECISIONS 문서를 한눈에 확인하세요</p>';
 
     html += '<div class="stats-grid">';
     html += statCard('🗂️', totalTasks, '전체 태스크');
@@ -2590,6 +2696,7 @@
 
     html += '<div class="task-detail-tabs">';
     html += '<button class="' + (activeTab === 'goal' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'goal\')">GOAL</button>';
+    html += '<button class="' + (activeTab === 'discovery' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'discovery\')">DISCOVERY</button>';
     html += '<button class="' + (activeTab === 'plan' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'plan\')">PLAN</button>';
     html += '<button class="' + (activeTab === 'status' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'status\')">STATUS</button>';
     html += '<button class="' + (activeTab === 'tests' ? 'active' : '') + '" onclick="window.__CLE2__.setTaskTab(\'' + task.id + '\', \'tests\')">TESTS</button>';
@@ -2640,6 +2747,63 @@
       html += '</ul></div>';
       html += '</div>';
       html += '</div>';
+      html += '</div>';
+    } else if (activeTab === 'discovery') {
+      var discovery = task.discovery || {};
+      var unknowns = discovery.unknowns || {};
+      var unknownGroups = [
+        { title: 'Known Known', items: unknowns.knownKnown || [] },
+        { title: 'Known Unknown', items: unknowns.knownUnknown || [] },
+        { title: 'Unknown Known', items: unknowns.unknownKnown || [] },
+        { title: 'Unknown Unknown 후보', items: unknowns.unknownUnknown || [] }
+      ];
+      html += '<div class="detail-section">';
+      html += '<h3>작업 전 Discovery</h3>';
+      html += '<div class="detail-description">목표를 실행하기 전에 실제 코드와 데이터, 사용할 도구, 레퍼런스와 불확실성을 확인합니다. 모든 Unknown을 제거하지 않고 가정으로 진행할 항목과 사람 결정이 필요한 항목을 구분합니다.</div>';
+      if (task.discovery) {
+        html += '<div class="studio-inline-actions" style="margin-top:14px">';
+        html += '<a class="btn btn-primary btn-sm" href="' + esc(taskDocHref(taskDiscoveryPath(task))) + '" target="_blank" rel="noopener">DISCOVERY.md 열기</a>';
+        html += '</div>';
+      } else {
+        html += '<div class="detail-description" style="margin-top:14px">기존 태스크입니다. 다음 계획 변경 전에 DISCOVERY.md를 작성해 Unknown과 도구 상태를 기준선으로 남겨야 합니다.</div>';
+      }
+      html += '</div>';
+      html += '<div class="grid grid-2">';
+      unknownGroups.forEach(function (group) {
+        html += '<div class="detail-section"><h3>' + esc(group.title) + ' <span class="task-state-badge reviewing">' + group.items.length + '</span></h3>';
+        if (group.items.length) {
+          html += '<ul class="task-status-list">';
+          group.items.forEach(function (item) { html += '<li>' + esc(item) + '</li>'; });
+          html += '</ul>';
+        } else {
+          html += '<div class="detail-description">아직 기록된 항목이 없습니다.</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section"><h3>도구와 접근</h3>';
+      if (discovery.tools && discovery.tools.length) {
+        discovery.tools.forEach(function (tool) {
+          html += '<div class="studio-line-item"><div class="studio-line-main"><strong>' + esc(tool.name) + '</strong> <span class="task-test-badge ' + (tool.status === 'available' ? 'passed' : 'pending') + '">' + esc(tool.status) + '</span></div><div class="studio-line-sub">' + esc(tool.purpose) + '</div></div>';
+        });
+      } else {
+        html += '<div class="detail-description">도구 상태가 아직 기록되지 않았습니다.</div>';
+      }
+      html += '</div>';
+      html += '<div class="detail-section"><h3>사람 결정 필요</h3><ul class="task-status-list">';
+      (discovery.needsDecision || []).forEach(function (item) { html += '<li>' + esc(item) + '</li>'; });
+      if (!discovery.needsDecision || !discovery.needsDecision.length) html += '<li>현재 요청된 결정 없음</li>';
+      html += '</ul><h3 style="margin-top:18px">계속 진행할 가정</h3><ul class="task-status-list">';
+      (discovery.assumptions || []).forEach(function (item) { html += '<li>' + esc(item) + '</li>'; });
+      if (!discovery.assumptions || !discovery.assumptions.length) html += '<li>기록된 가정 없음</li>';
+      html += '</ul></div></div>';
+      html += '<div class="grid grid-2">';
+      html += '<div class="detail-section"><h3>레퍼런스</h3><ul class="task-status-list">';
+      (discovery.references || []).forEach(function (item) { html += '<li>' + esc(item) + '</li>'; });
+      if (!discovery.references || !discovery.references.length) html += '<li>등록된 레퍼런스 없음</li>';
+      html += '</ul></div>';
+      html += '<div class="detail-section"><h3>도전 목표</h3><div class="detail-description">' + esc(discovery.challenge || '기존 시간, 비용, 품질의 제약을 다시 검토할 가설을 기록하세요.') + '</div></div>';
       html += '</div>';
     } else if (activeTab === 'plan') {
       html += '<div class="detail-section">';
