@@ -109,17 +109,24 @@ jobs:
                   content = content.replace(/현재 Phase:.*$/m, '현재 Phase: 완료');
                 }
 
-                // Move 진행 중 items to 완료
-                const inProgressMatch = content.match(/## 진행 중인 작업\n((?:- \[ \].*\n)*)/);
-                if (inProgressMatch && inProgressMatch[1].trim()) {
-                  const inProgressItems = inProgressMatch[1].replace(/- \[ \]/g, '- [x]');
-                  content = content.replace(
-                    /(## 완료된 작업\n(?:- \[x\].*\n)*)/,
-                    `$1${inProgressItems}`
-                  );
+                // Move 진행 중 items to 완료 (fix: handle all 3 checkbox formats)
+                const inProgressSection = content.match(/## 진행 중인 작업\n([\s\S]*?)(?=\n## |$)/);
+                if (inProgressSection) {
+                  // Match all checkbox variants: ☐ ⬜ and - [ ]
+                  const checkboxLines = inProgressSection[1].match(/^- \[ \].*$/gm) || [];
+                  checkboxLines.push(...(inProgressSection[1].match(/^[☐⬜].*$/gm) || []));
+                  if (checkboxLines.length > 0) {
+                    const completedItems = checkboxLines.map(s => s.replace(/- \[ \]/, '- [x]').replace(/[☐⬜]/, '✅')).join('\n') + '\n';
+                    content = content.replace(
+                      /(## 완료된 작업\n(?:- \[x\].*\n|✅.*\n)*)/,
+                      `$1${completedItems}`
+                    );
+                  }
                 }
+                // Fix: Replace entire section content to prevent duplicate (없음) insertion.
+                // Old regex used (?:- \[ \].*\n)* which matches zero times → duplicate (없음) each run.
                 content = content.replace(
-                  /## 진행 중인 작업\n(?:- \[ \].*\n)*/g,
+                  /## 진행 중인 작업\n[\s\S]*?(?=\n## |$)/,
                   '## 진행 중인 작업\n- (없음)\n'
                 );
 
@@ -133,21 +140,39 @@ jobs:
                   }
                 }
 
-                content = content.replace(/## 다음 작업\n(?:- \[ \].*\n)*/g, '## 다음 작업\n- (없음)\n');
+                // Fix: Same zero-match fix for 다음 작업 section
+                content = content.replace(
+                  /## 다음 작업\n[\s\S]*?(?=\n## |$)/,
+                  '## 다음 작업\n- (없음)\n'
+                );
                 content = content.replace(/## 블로커\n-.*$/m, '## 블로커\n- 없음');
 
                 fs.writeFileSync(statusPath, content);
                 core.info(`Updated ${statusPath}`);
 
-                // Update TESTS.md
+                // Update TESTS.md (fix: handle all 3 checkbox formats ☐ ⬜ - [ ])
                 const testsPath = `${taskBase}/${slugDir}/TESTS.md`;
                 if (fs.existsSync(testsPath)) {
                   let testsContent = fs.readFileSync(testsPath, 'utf8');
-                  testsContent = testsContent.replace(/⬜/g, '✅');
+                  // Fix: all 3 checkbox formats → checked
+                  testsContent = testsContent.replace(/[☐⬜]/gu, '✅');
+                  testsContent = testsContent.replace(/- \[ \]/g, '- [x]');
                   testsContent = testsContent.replace(/\*\*결과\*\*:.*$/m, '**결과**: 통과');
                   testsContent = testsContent.replace(/\*\*검증 일자\*\*:.*$/m, `**검증 일자**: ${today}`);
                   fs.writeFileSync(testsPath, testsContent);
                   core.info(`Updated ${testsPath}`);
+                }
+
+                // Fix: Check GOAL.md completion before blindly marking '완료'
+                const goalPath = `${taskBase}/${slugDir}/GOAL.md`;
+                if (fs.existsSync(goalPath)) {
+                  const goalContent = fs.readFileSync(goalPath, 'utf8');
+                  const uncheckedGoals = goalContent.match(/- \[ \]/g) || [];
+                  const uncheckedBoxes = goalContent.match(/[☐⬜]/gu) || [];
+                  const totalUnchecked = uncheckedGoals.length + uncheckedBoxes.length;
+                  if (totalUnchecked > 0) {
+                    core.warning(`CLE2-${cle2Id}/${slugDir}: GOAL.md has ${totalUnchecked} unchecked items, but STATUS marked as 완료. Manual verification needed.`);
+                  }
                 }
               }
             }
