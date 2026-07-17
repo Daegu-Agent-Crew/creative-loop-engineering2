@@ -6,43 +6,61 @@
 <title>AI 에이전트 역공학 설문</title>
 <style>
 :root {
-  --bg: #0d1117; --surface: #161b22; --border: #30363d;
+  --bg: #0d1117; --surface: #161b22; --surface2: #1c2330; --border: #30363d;
   --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --green: #3fb950;
+  --yellow: #d29922; --red: #f85149; --purple: #bc8cff;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; }
-h1 { font-size: 1.5rem; margin-bottom: 8px; }
-h2 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; color: var(--accent); }
-.subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
-.item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-.item-title { font-weight: 600; margin-bottom: 8px; }
-.item-grid { display: grid; gap: 8px; }
-textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 0.875rem; resize: vertical; min-height: 60px; font-family: inherit; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; padding: 16px; max-width: 960px; margin: 0 auto; }
+h1 { font-size: 1.4rem; margin-bottom: 4px; }
+h2 { font-size: 1.05rem; margin-top: 20px; margin-bottom: 8px; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 20px; font-size: 0.85rem; }
+.item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; transition: border-color .2s; }
+.item:hover { border-color: var(--muted); }
+.item-title { font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
+.item-desc { color: var(--muted); font-size: 0.78rem; margin-bottom: 8px; }
+.item-grid { display: grid; gap: 6px; }
+textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 10px; font-size: 0.85rem; resize: vertical; min-height: 54px; font-family: inherit; }
 textarea:focus { outline: none; border-color: var(--accent); }
-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-select { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px 12px; font-size: 0.875rem; }
-.meta-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.meta-row > div { flex: 1; min-width: 180px; }
-input[type="text"], input[type="password"] { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 0.875rem; }
+label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+select { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px 10px; font-size: 0.85rem; }
+input[type="text"], input[type="password"] { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 10px; font-size: 0.85rem; }
 input:focus { outline: none; border-color: var(--accent); }
-.btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 0.9rem; cursor: pointer; font-weight: 600; }
-.btn:hover { opacity: 0.9; }
-.btn-secondary { background: var(--surface); border: 1px solid var(--border); }
-.tabs { display: flex; gap: 4px; margin-bottom: 20px; }
-.tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); font-size: 0.875rem; }
+.btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 10px 20px; font-size: 0.875rem; cursor: pointer; font-weight: 600; transition: opacity .2s; }
+.btn:hover { opacity: 0.85; }
+.btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab { padding: 8px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); font-size: 0.82rem; transition: all .2s; }
+.tab:hover { border-color: var(--muted); }
 .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .hidden { display: none; }
-.result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-.result-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+.result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+.result-card h3 { font-size: 0.9rem; margin-bottom: 4px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 600; }
 .badge-high { background: #1a5c2e; color: var(--green); }
-.badge-medium { background: #4a3a1e; color: #d29922; }
-.badge-low { background: #4a1e1e; color: #f85149; }
-.comment { border-left: 3px solid var(--accent); padding: 12px 16px; margin-bottom: 12px; background: var(--surface); border-radius: 0 8px 8px 0; }
-.comment-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
-.alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.875rem; }
-.alert-error { background: #3d1414; border: 1px solid #f8514940; color: #f85149; }
+.badge-medium { background: #4a3a1e; color: var(--yellow); }
+.badge-low { background: #4a1e1e; color: var(--red); }
+.comment { border-left: 3px solid var(--purple); padding: 12px 14px; margin-bottom: 10px; background: var(--surface); border-radius: 0 8px 8px 0; }
+.comment-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; font-size: 0.82rem; }
+.alert-error { background: #3d1414; border: 1px solid #f8514940; color: var(--red); }
 .alert-success { background: #1a3d14; border: 1px solid #3fb95040; color: var(--green); }
+.alert-info { background: #0d2240; border: 1px solid #58a6ff40; color: var(--accent); }
+.id-display { background: var(--surface2); border: 1px dashed var(--accent); border-radius: 8px; padding: 12px; margin: 12px 0; text-align: center; font-family: monospace; font-size: 0.85rem; word-break: break-all; cursor: pointer; }
+.id-display:hover { background: var(--surface); }
+.summary-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 12px; white-space: pre-wrap; font-size: 0.85rem; }
+.form-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.form-section h3 { font-size: 0.9rem; margin-bottom: 8px; color: var(--accent); }
+@media (max-width: 640px) {
+  body { padding: 12px; }
+  h1 { font-size: 1.2rem; }
+  .meta-row { flex-direction: column; gap: 8px; }
+  .meta-row > div { min-width: 100%; }
+  .item { padding: 10px; }
+  textarea { min-height: 48px; }
+}
 </style>
 </head>
 <body>
@@ -51,8 +69,9 @@ input:focus { outline: none; border-color: var(--accent); }
 <p class="subtitle">AI 에이전트의 운영 정책을 역공학하고, 개선 처방을 받습니다.</p>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('submit')">📝 설문 작성</div>
-  <div class="tab" onclick="showTab('view')">🔍 결과 조회</div>
+  <div class="tab active" data-tab="submit" onclick="showTab('submit')">📝 설문 작성</div>
+  <div class="tab" data-tab="view" onclick="showTab('view')">🔍 결과 조회</div>
+  <div class="tab" data-tab="comment" onclick="showTab('comment')">💬 처방 작성</div>
 </div>
 
 <!-- 설문 작성 -->
@@ -63,8 +82,12 @@ input:focus { outline: none; border-color: var(--accent); }
 </div>
 <div id="survey-items"></div>
 <h2>📋 운영 설계도 요약</h2>
-<textarea id="summary" placeholder="이 AI 에이전트의 운영 설계도를 한 장으로 요약하세요."></textarea>
-<div style="margin-top:20px; text-align:center;">
+<div style="display:flex;gap:8px;margin-bottom:8px;">
+  <button class="btn btn-sm btn-outline" onclick="autoSummary()">자동 생성</button>
+  <button class="btn btn-sm btn-outline" onclick="document.getElementById('summary').value=''">지우기</button>
+</div>
+<textarea id="summary" placeholder="이 AI 에이전트의 운영 설계도를 한 장으로 요약하세요. '자동 생성' 버튼으로 14개 항목 기반 초안을 만들 수 있습니다."></textarea>
+<div style="margin-top:16px; text-align:center;">
   <button class="btn" onclick="submitSurvey()">설문 제출</button>
 </div>
 <div id="submit-alert"></div>
@@ -76,9 +99,37 @@ input:focus { outline: none; border-color: var(--accent); }
   <div><label>설문 ID</label><input type="text" id="viewId" placeholder="설문 ID 입력"></div>
   <div><label>비밀번호</label><input type="password" id="viewPw" placeholder="설문 시 설정한 비밀번호"></div>
 </div>
-<button class="btn" onclick="loadResult()">조회</button>
+<div style="display:flex;gap:8px;">
+  <button class="btn" onclick="loadResult()">조회</button>
+  <button class="btn btn-outline" onclick="document.getElementById('viewId').value='';document.getElementById('viewPw').value='';document.getElementById('view-content').innerHTML='';document.getElementById('view-alert').innerHTML='';">지우기</button>
+</div>
 <div id="view-alert"></div>
 <div id="view-content"></div>
+</div>
+
+<!-- 처방 작성 -->
+<div id="tab-comment" class="hidden">
+<div class="form-section">
+<h3>분석 에이전트 정보</h3>
+<div class="meta-row">
+  <div><label>설문 ID</label><input type="text" id="commentSurveyId" placeholder="분석할 설문 ID"></div>
+  <div><label>분석 에이전트 이름</label><input type="text" id="commentAnalyst" placeholder="예: 대구루, 라이카..."></div>
+  <div><label>API Key</label><input type="password" id="commentApiKey" placeholder="관리자 API Key"></div>
+</div>
+</div>
+<div class="form-section">
+<h3>전체 평가</h3>
+<textarea id="commentOverall" placeholder="설문 전체에 대한 평가와 개선 제안을 작성하세요." style="min-height:100px;"></textarea>
+</div>
+<div class="form-section">
+<h3>항목별 제안 (선택)</h3>
+<div id="comment-suggestions"></div>
+<button class="btn btn-sm btn-outline" onclick="addSuggestion()" style="margin-top:8px;">+ 항목 추가</button>
+</div>
+<div style="text-align:center;margin-top:16px;">
+  <button class="btn" onclick="submitComment()">처방 등록</button>
+</div>
+<div id="comment-alert"></div>
 </div>
 
 <script>
@@ -101,14 +152,14 @@ const ITEMS = [
   { key: 'unknownAreas', label: 'Unknown Areas', desc: '알 수 없는 영역' },
 ];
 
-// Render survey items
+// --- Render survey items ---
 const container = document.getElementById('survey-items');
 ITEMS.forEach(item => {
   const div = document.createElement('div');
   div.className = 'item';
   div.innerHTML = `
     <div class="item-title">${item.label}</div>
-    <div style="color:var(--muted);font-size:0.8rem;margin-bottom:8px;">${item.desc}</div>
+    <div class="item-desc">${item.desc}</div>
     <div class="item-grid">
       <label>답변 (관찰 가능한 행동 기반)</label>
       <textarea id="${item.key}-answer" placeholder="실제 대화에서 관찰한 내용을 작성하세요."></textarea>
@@ -125,18 +176,58 @@ ITEMS.forEach(item => {
   container.appendChild(div);
 });
 
+// --- Comment suggestion items ---
+let suggestionCount = 0;
+function addSuggestion(prefillItem = '', prefillComment = '') {
+  const c = document.getElementById('comment-suggestions');
+  const div = document.createElement('div');
+  div.className = 'item-grid';
+  div.id = `sug-${suggestionCount}`;
+  const options = ITEMS.map(i => `<option value="${i.key}" ${i.key===prefillItem?'selected':''}>${i.label}</option>`).join('');
+  div.innerHTML = `
+    <select id="sug-item-${suggestionCount}"><option value="">항목 선택...</option>${options}</select>
+    <textarea id="sug-text-${suggestionCount}" placeholder="해당 항목에 대한 개선 제안..." style="min-height:48px;">${prefillComment}</textarea>
+    <button class="btn btn-sm btn-outline" onclick="document.getElementById('sug-${suggestionCount}').remove()">삭제</button>
+  `;
+  c.appendChild(div);
+  suggestionCount++;
+}
+
+// --- Tab switching ---
 function showTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
-  event.target.classList.add('active');
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
   document.getElementById('tab-' + tab).classList.remove('hidden');
 }
 
 function showAlert(elId, msg, type) {
-  const el = document.getElementById(elId);
-  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  document.getElementById(elId).innerHTML = msg ? `<div class="alert alert-${type}">${msg}</div>` : '';
 }
 
+// --- Auto summary ---
+function autoSummary() {
+  const name = document.getElementById('agentName').value.trim() || '[에이전트]';
+  const lines = [`# ${name} 운영 설계도`, ''];
+  let highCount = 0, medCount = 0, lowCount = 0;
+  const parts = [];
+  ITEMS.forEach(item => {
+    const answer = document.getElementById(`${item.key}-answer`).value.trim();
+    const conf = document.getElementById(`${item.key}-confidence`).value;
+    if (answer) {
+      parts.push(`**${item.label}**: ${answer.slice(0, 120)}${answer.length > 120 ? '...' : ''}`);
+      if (conf === 'high') highCount++;
+      else if (conf === 'medium') medCount++;
+      else lowCount++;
+    }
+  });
+  lines.push(`> Confidence 분포: 🟢 High ${highCount} / 🟡 Medium ${medCount} / 🔴 Low ${lowCount}`, '');
+  parts.forEach(p => lines.push(`- ${p}`));
+  lines.push('', `--- 총 ${parts.length}/14 항목 분석 완료`);
+  document.getElementById('summary').value = lines.join('\n');
+}
+
+// --- Submit survey ---
 async function submitSurvey() {
   const agentName = document.getElementById('agentName').value.trim();
   const password = document.getElementById('password').value;
@@ -169,7 +260,13 @@ async function submitSurvey() {
     });
     const data = await res.json();
     if (res.ok) {
-      showAlert('submit-alert', `✅ 설문 제출 완료! ID: ${data.id}`, 'success');
+      showAlert('submit-alert', '', '');
+      document.getElementById('submit-alert').innerHTML = `
+        <div class="alert alert-success">✅ 설문 제출 완료!</div>
+        <div class="id-display" onclick="copyId('${data.id}')" title="클릭하여 복사">📋 설문 ID: ${data.id}</div>
+        <div style="text-align:center;margin-top:8px;">
+          <button class="btn btn-sm" onclick="goToView('${data.id}')">결과 보기 →</button>
+        </div>`;
     } else {
       showAlert('submit-alert', `❌ ${data.error}`, 'error');
     }
@@ -178,6 +275,19 @@ async function submitSurvey() {
   }
 }
 
+function copyId(id) {
+  navigator.clipboard.writeText(id).then(() => {
+    event.target.style.borderColor = 'var(--green)';
+    setTimeout(() => { event.target.style.borderColor = ''; }, 1500);
+  });
+}
+
+function goToView(id) {
+  document.getElementById('viewId').value = id;
+  showTab('view');
+}
+
+// --- Load result ---
 async function loadResult() {
   const id = document.getElementById('viewId').value.trim();
   const pw = document.getElementById('viewPw').value;
@@ -198,37 +308,95 @@ async function loadResult() {
     }
     showAlert('view-alert', '', '');
 
-    // Render survey
-    let html = `<div class="result-card"><h3>${data.survey.agentName}</h3><div class="comment-meta">${data.survey.createdAt}</div></div>`;
+    // Header
+    let html = `<div class="result-card"><h3 style="font-size:1.1rem;">${esc(data.survey.agentName)}</h3><div class="comment-meta">📅 ${data.survey.createdAt} · ID: ${data.survey.id}</div></div>`;
+
+    // Items
     for (const item of ITEMS) {
       const it = data.survey.items[item.key];
       if (!it) continue;
-      html += `<div class="result-card"><h3>${item.label} <span class="badge badge-${it.confidence}">${it.confidence}</span></h3><p>${it.answer}</p>`;
-      if (it.evidence) html += `<div class="comment-meta">📌 Evidence: ${it.evidence}</div>`;
+      html += `<div class="result-card"><h3>${item.label} <span class="badge badge-${it.confidence}">${it.confidence}</span></h3><p>${esc(it.answer)}</p>`;
+      if (it.evidence) html += `<div class="comment-meta">📌 Evidence: ${esc(it.evidence)}</div>`;
       html += '</div>';
     }
+
+    // Summary
     if (data.survey.summary) {
-      html += `<div class="result-card"><h3>📋 운영 설계도</h3><p style="white-space:pre-wrap;">${data.survey.summary}</p></div>`;
+      html += `<div class="result-card"><h3>📋 운영 설계도</h3><div class="summary-box">${esc(data.survey.summary)}</div></div>`;
     }
 
-    // Render comments
+    // Comments
     if (data.comments && data.comments.length > 0) {
       html += '<h2>💬 개선 처방</h2>';
       data.comments.forEach(c => {
-        html += `<div class="comment"><div class="comment-meta"><strong>${c.analyst}</strong> · ${c.createdAt}</div><p>${c.overall}</p>`;
+        html += `<div class="comment"><div class="comment-meta"><strong>${esc(c.analyst)}</strong> · ${c.createdAt}</div><p>${esc(c.overall)}</p>`;
         if (c.suggestions && c.suggestions.length) {
           c.suggestions.forEach(s => {
-            html += `<div style="margin-top:8px;font-size:0.85rem;"><strong>${s.item}:</strong> ${s.comment}</div>`;
+            const label = ITEMS.find(i => i.key === s.item)?.label || s.item;
+            html += `<div style="margin-top:6px;font-size:0.82rem;padding:6px 8px;background:var(--surface2);border-radius:4px;"><strong>${label}:</strong> ${esc(s.comment)}</div>`;
           });
         }
         html += '</div>';
       });
+    } else {
+      html += '<div class="alert alert-info" style="margin-top:12px;">아직 처방이 없습니다. 처방 작성 탭에서 등록할 수 있습니다.</div>';
     }
 
     content.innerHTML = html;
   } catch (e) {
     showAlert('view-alert', `❌ 네트워크 오류: ${e.message}`, 'error');
   }
+}
+
+// --- Submit comment ---
+async function submitComment() {
+  const surveyId = document.getElementById('commentSurveyId').value.trim();
+  const analyst = document.getElementById('commentAnalyst').value.trim();
+  const overall = document.getElementById('commentOverall').value.trim();
+  const apiKey = document.getElementById('commentApiKey').value.trim();
+
+  if (!surveyId || !analyst || !overall) {
+    showAlert('comment-alert', '설문 ID, 에이전트 이름, 전체 평가를 입력하세요.', 'error');
+    return;
+  }
+  if (!apiKey) {
+    showAlert('comment-alert', 'API Key를 입력하세요.', 'error');
+    return;
+  }
+
+  // Collect suggestions
+  const suggestions = [];
+  for (let i = 0; i < suggestionCount; i++) {
+    const el = document.getElementById(`sug-item-${i}`);
+    if (!el) continue;
+    const item = el.value;
+    const text = document.getElementById(`sug-text-${i}`)?.value.trim();
+    if (item && text) suggestions.push({ item, comment: text });
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/comment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
+      body: JSON.stringify({ surveyId, analyst, overall, suggestions }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showAlert('comment-alert', `✅ 처방 등록 완료! (${data.commentId})`, 'success');
+      document.getElementById('commentOverall').value = '';
+    } else {
+      showAlert('comment-alert', `❌ ${data.error}`, 'error');
+    }
+  } catch (e) {
+    showAlert('comment-alert', `❌ 네트워크 오류: ${e.message}`, 'error');
+  }
+}
+
+// --- XSS escape ---
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
 }
 </script>
 </body>
