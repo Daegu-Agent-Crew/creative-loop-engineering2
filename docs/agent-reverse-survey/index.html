@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 에이전트 역공학 설문</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --border: #30363d;
+  --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --green: #3fb950;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.5rem; margin-bottom: 8px; }
+h2 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.9rem; }
+.item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.item-title { font-weight: 600; margin-bottom: 8px; }
+.item-grid { display: grid; gap: 8px; }
+textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 0.875rem; resize: vertical; min-height: 60px; font-family: inherit; }
+textarea:focus { outline: none; border-color: var(--accent); }
+label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+select { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px 12px; font-size: 0.875rem; }
+.meta-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.meta-row > div { flex: 1; min-width: 180px; }
+input[type="text"], input[type="password"] { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 0.875rem; }
+input:focus { outline: none; border-color: var(--accent); }
+.btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 0.9rem; cursor: pointer; font-weight: 600; }
+.btn:hover { opacity: 0.9; }
+.btn-secondary { background: var(--surface); border: 1px solid var(--border); }
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+.tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); font-size: 0.875rem; }
+.tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hidden { display: none; }
+.result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.result-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+.badge-high { background: #1a5c2e; color: var(--green); }
+.badge-medium { background: #4a3a1e; color: #d29922; }
+.badge-low { background: #4a1e1e; color: #f85149; }
+.comment { border-left: 3px solid var(--accent); padding: 12px 16px; margin-bottom: 12px; background: var(--surface); border-radius: 0 8px 8px 0; }
+.comment-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
+.alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.875rem; }
+.alert-error { background: #3d1414; border: 1px solid #f8514940; color: #f85149; }
+.alert-success { background: #1a3d14; border: 1px solid #3fb95040; color: var(--green); }
+</style>
+</head>
+<body>
+
+<h1>🤖 AI 에이전트 역공학 설문</h1>
+<p class="subtitle">AI 에이전트의 운영 정책을 역공학하고, 개선 처방을 받습니다.</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('submit')">📝 설문 작성</div>
+  <div class="tab" onclick="showTab('view')">🔍 결과 조회</div>
+</div>
+
+<!-- 설문 작성 -->
+<div id="tab-submit">
+<div class="meta-row">
+  <div><label>에이전트 이름</label><input type="text" id="agentName" placeholder="예: 대구루, GPT-4, Claude..."></div>
+  <div><label>조회용 비밀번호</label><input type="password" id="password" placeholder="결과 조회 시 필요"></div>
+</div>
+<div id="survey-items"></div>
+<h2>📋 운영 설계도 요약</h2>
+<textarea id="summary" placeholder="이 AI 에이전트의 운영 설계도를 한 장으로 요약하세요."></textarea>
+<div style="margin-top:20px; text-align:center;">
+  <button class="btn" onclick="submitSurvey()">설문 제출</button>
+</div>
+<div id="submit-alert"></div>
+</div>
+
+<!-- 결과 조회 -->
+<div id="tab-view" class="hidden">
+<div class="meta-row">
+  <div><label>설문 ID</label><input type="text" id="viewId" placeholder="설문 ID 입력"></div>
+  <div><label>비밀번호</label><input type="password" id="viewPw" placeholder="설문 시 설정한 비밀번호"></div>
+</div>
+<button class="btn" onclick="loadResult()">조회</button>
+<div id="view-alert"></div>
+<div id="view-content"></div>
+</div>
+
+<script>
+const API_BASE = ''; // Set to Workers URL after deployment
+
+const ITEMS = [
+  { key: 'persona', label: 'Persona', desc: 'AI의 정체성, 역할, 페르소나' },
+  { key: 'goal', label: 'Goal', desc: '달성하고자 하는 최종 목표' },
+  { key: 'mission', label: 'Mission', desc: '수행하는 구체적 임무' },
+  { key: 'constraints', label: 'Constraints', desc: '작동 제약 조건' },
+  { key: 'safetyRules', label: 'Safety Rules', desc: '안전 규칙' },
+  { key: 'toolUsageRules', label: 'Tool Usage Rules', desc: '도구 사용 규칙' },
+  { key: 'memoryUsage', label: 'Memory Usage', desc: '메모리 사용 방식' },
+  { key: 'planningStrategy', label: 'Planning Strategy', desc: '계획 수립 전략' },
+  { key: 'reasoningStyle', label: 'Reasoning Style', desc: '추론 방식' },
+  { key: 'refusalPolicy', label: 'Refusal Policy', desc: '거부 정책' },
+  { key: 'outputFormattingRules', label: 'Output Formatting Rules', desc: '출력 형식 규칙' },
+  { key: 'decisionPriority', label: 'Decision Priority', desc: '의사결정 우선순위' },
+  { key: 'hiddenAssumptions', label: 'Hidden Assumptions', desc: '숨겨진 가정' },
+  { key: 'unknownAreas', label: 'Unknown Areas', desc: '알 수 없는 영역' },
+];
+
+// Render survey items
+const container = document.getElementById('survey-items');
+ITEMS.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `
+    <div class="item-title">${item.label}</div>
+    <div style="color:var(--muted);font-size:0.8rem;margin-bottom:8px;">${item.desc}</div>
+    <div class="item-grid">
+      <label>답변 (관찰 가능한 행동 기반)</label>
+      <textarea id="${item.key}-answer" placeholder="실제 대화에서 관찰한 내용을 작성하세요."></textarea>
+      <label>Evidence (근거)</label>
+      <textarea id="${item.key}-evidence" placeholder="이 답변의 근거를 작성하세요."></textarea>
+      <label>Confidence</label>
+      <select id="${item.key}-confidence">
+        <option value="high">High (확실)</option>
+        <option value="medium" selected>Medium (보통)</option>
+        <option value="low">Low (불확실)</option>
+      </select>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+}
+
+function showAlert(elId, msg, type) {
+  const el = document.getElementById(elId);
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+}
+
+async function submitSurvey() {
+  const agentName = document.getElementById('agentName').value.trim();
+  const password = document.getElementById('password').value;
+  if (!agentName || !password) {
+    showAlert('submit-alert', '에이전트 이름과 비밀번호를 입력하세요.', 'error');
+    return;
+  }
+
+  const items = {};
+  for (const item of ITEMS) {
+    const answer = document.getElementById(`${item.key}-answer`).value.trim();
+    if (!answer) {
+      showAlert('submit-alert', `${item.label} 항목의 답변이 누락되었습니다.`, 'error');
+      return;
+    }
+    items[item.key] = {
+      answer,
+      evidence: document.getElementById(`${item.key}-evidence`).value.trim(),
+      confidence: document.getElementById(`${item.key}-confidence`).value,
+    };
+  }
+
+  const summary = document.getElementById('summary').value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/survey`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agentName, password, items, summary }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showAlert('submit-alert', `✅ 설문 제출 완료! ID: ${data.id}`, 'success');
+    } else {
+      showAlert('submit-alert', `❌ ${data.error}`, 'error');
+    }
+  } catch (e) {
+    showAlert('submit-alert', `❌ 네트워크 오류: ${e.message}`, 'error');
+  }
+}
+
+async function loadResult() {
+  const id = document.getElementById('viewId').value.trim();
+  const pw = document.getElementById('viewPw').value;
+  if (!id || !pw) {
+    showAlert('view-alert', '설문 ID와 비밀번호를 입력하세요.', 'error');
+    return;
+  }
+
+  const content = document.getElementById('view-content');
+  content.innerHTML = '';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/survey/${id}?pw=${encodeURIComponent(pw)}`);
+    const data = await res.json();
+    if (!res.ok) {
+      showAlert('view-alert', `❌ ${data.error}`, 'error');
+      return;
+    }
+    showAlert('view-alert', '', '');
+
+    // Render survey
+    let html = `<div class="result-card"><h3>${data.survey.agentName}</h3><div class="comment-meta">${data.survey.createdAt}</div></div>`;
+    for (const item of ITEMS) {
+      const it = data.survey.items[item.key];
+      if (!it) continue;
+      html += `<div class="result-card"><h3>${item.label} <span class="badge badge-${it.confidence}">${it.confidence}</span></h3><p>${it.answer}</p>`;
+      if (it.evidence) html += `<div class="comment-meta">📌 Evidence: ${it.evidence}</div>`;
+      html += '</div>';
+    }
+    if (data.survey.summary) {
+      html += `<div class="result-card"><h3>📋 운영 설계도</h3><p style="white-space:pre-wrap;">${data.survey.summary}</p></div>`;
+    }
+
+    // Render comments
+    if (data.comments && data.comments.length > 0) {
+      html += '<h2>💬 개선 처방</h2>';
+      data.comments.forEach(c => {
+        html += `<div class="comment"><div class="comment-meta"><strong>${c.analyst}</strong> · ${c.createdAt}</div><p>${c.overall}</p>`;
+        if (c.suggestions && c.suggestions.length) {
+          c.suggestions.forEach(s => {
+            html += `<div style="margin-top:8px;font-size:0.85rem;"><strong>${s.item}:</strong> ${s.comment}</div>`;
+          });
+        }
+        html += '</div>';
+      });
+    }
+
+    content.innerHTML = html;
+  } catch (e) {
+    showAlert('view-alert', `❌ 네트워크 오류: ${e.message}`, 'error');
+  }
+}
+</script>
+</body>
+</html>
