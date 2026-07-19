@@ -78,6 +78,24 @@ input:focus { outline: none; border-color: var(--accent); }
 .priority-high { color: var(--red); }
 .priority-medium { color: var(--yellow); }
 .priority-low { color: var(--green); }
+.admin-toolbar { position: sticky; top: 8px; z-index: 5; background: #161b22ee; backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+.admin-toolbar-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 8px; margin: 14px 0; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 11px; }
+.stat-value { display: block; font-size: 1.25rem; font-weight: 750; color: var(--accent); }
+.stat-label { color: var(--muted); font-size: 0.72rem; }
+.admin-survey { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+.admin-survey > summary { cursor: pointer; padding: 14px; font-weight: 700; list-style-position: inside; }
+.admin-survey > summary:hover { background: var(--surface2); }
+.admin-body { padding: 0 14px 14px; }
+.admin-section { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+.admin-section h3 { font-size: 0.9rem; color: var(--accent); margin-bottom: 8px; }
+.admin-item-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; }
+.admin-item { background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 9px; font-size: 0.8rem; }
+.admin-item strong { display: block; margin-bottom: 3px; }
+.admin-cycle { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 11px; margin-top: 8px; }
+.admin-action { border-left: 3px solid var(--accent); background: var(--bg); padding: 9px 11px; margin-top: 7px; border-radius: 0 7px 7px 0; font-size: 0.8rem; }
+.admin-empty { color: var(--muted); font-size: 0.82rem; padding: 8px 0; }
 @media (max-width: 640px) {
   body { padding: 12px; }
   h1 { font-size: 1.2rem; }
@@ -86,6 +104,7 @@ input:focus { outline: none; border-color: var(--accent); }
   .item { padding: 10px; }
   textarea { min-height: 48px; }
   .cycle-header, .action-controls, .form-row { display: flex; flex-direction: column; align-items: stretch; }
+  .admin-toolbar-row { display: flex; flex-direction: column; }
 }
 </style>
 </head>
@@ -98,6 +117,7 @@ input:focus { outline: none; border-color: var(--accent); }
   <div class="tab active" data-tab="submit" onclick="showTab('submit')">📝 설문 작성</div>
   <div class="tab" data-tab="view" onclick="showTab('view')">🔍 결과 조회</div>
   <div class="tab" data-tab="comment" onclick="showTab('comment')">💬 처방 작성</div>
+  <div class="tab" data-tab="admin" onclick="showTab('admin')">🛡️ 관리자</div>
 </div>
 
 <!-- 설문 작성 -->
@@ -156,6 +176,23 @@ input:focus { outline: none; border-color: var(--accent); }
   <button class="btn" onclick="submitComment()">처방 등록</button>
 </div>
 <div id="comment-alert"></div>
+</div>
+
+<!-- 관리자 통합 조회 -->
+<div id="tab-admin" class="hidden">
+  <div class="admin-toolbar">
+    <label>관리자 API Key</label>
+    <div class="admin-toolbar-row">
+      <input type="password" id="adminApiKey" placeholder="브라우저에 저장되지 않습니다" autocomplete="off">
+      <button class="btn" onclick="loadAdminDashboard()">전체 자료 조회</button>
+    </div>
+    <div id="admin-search-row" class="hidden" style="margin-top:8px;">
+      <label>에이전트 또는 설문 ID 검색</label>
+      <input type="text" id="adminSearch" placeholder="예: 대구루, 레노버, 설문 ID" oninput="filterAdminDashboard()">
+    </div>
+  </div>
+  <div id="admin-alert"></div>
+  <div id="admin-content"></div>
 </div>
 
 <script>
@@ -547,6 +584,113 @@ async function submitComment() {
   } catch (e) {
     showAlert('comment-alert', `❌ 네트워크 오류: ${e.message}`, 'error');
   }
+}
+
+// --- Admin dashboard ---
+let adminDashboardData = null;
+
+async function loadAdminDashboard() {
+  const keyInput = document.getElementById('adminApiKey');
+  const apiKey = keyInput.value.trim();
+  if (!apiKey) {
+    showAlert('admin-alert', '관리자 API Key를 입력하세요.', 'error');
+    return;
+  }
+  const content = document.getElementById('admin-content');
+  content.innerHTML = '<div class="alert alert-info">전체 자료를 불러오는 중입니다.</div>';
+  showAlert('admin-alert', '', '');
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/dashboard`, {
+      headers: { 'X-API-Key': apiKey },
+    });
+    const data = await res.json().catch(() => ({ error: '응답을 읽을 수 없습니다.' }));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    adminDashboardData = data;
+    document.getElementById('admin-search-row').classList.remove('hidden');
+    renderAdminDashboard(data);
+  } catch (e) {
+    adminDashboardData = null;
+    content.innerHTML = '';
+    showAlert('admin-alert', `조회 실패: ${esc(e.message)}`, 'error');
+  } finally {
+    keyInput.value = '';
+  }
+}
+
+function filterAdminDashboard() {
+  if (!adminDashboardData) return;
+  const query = document.getElementById('adminSearch').value.trim().toLowerCase();
+  renderAdminDashboard(adminDashboardData, query);
+}
+
+function renderAdminDashboard(data, query = '') {
+  const stats = data.stats || {};
+  const surveys = (data.surveys || []).filter((survey) => {
+    if (!query) return true;
+    return `${survey.agentName || ''} ${survey.id || ''}`.toLowerCase().includes(query);
+  });
+  const statItems = [
+    ['설문', stats.surveys || 0], ['처방', stats.comments || 0],
+    ['상담 회차', stats.cycles || 0], ['진행 중', stats.activeCycles || 0],
+    ['실행 과제', stats.actions || 0], ['실행 증거', stats.submittedEvidence || 0],
+    ['주간 점검', stats.checkins || 0], ['고아 회차', stats.orphanCycles || 0],
+  ];
+  let html = `<div class="comment-meta">기준 시각: ${formatDate(data.generatedAt)} · 검색 결과 ${surveys.length}건</div>`;
+  html += `<div class="admin-stats">${statItems.map(([label, value]) => `
+    <div class="stat-card"><span class="stat-value">${Number(value)}</span><span class="stat-label">${label}</span></div>`).join('')}</div>`;
+  if (stats.orphanCycles > 0) {
+    html += `<div class="alert alert-error">삭제된 설문을 참조하는 상담 회차가 ${Number(stats.orphanCycles)}건 있습니다.</div>`;
+  }
+  html += surveys.length ? surveys.map(renderAdminSurvey).join('') : '<div class="alert alert-info">검색 조건에 맞는 설문이 없습니다.</div>';
+  document.getElementById('admin-content').innerHTML = html;
+}
+
+function renderAdminSurvey(survey) {
+  const items = ITEMS.map((item) => {
+    const value = survey.items?.[item.key];
+    if (!value) return '';
+    return `<div class="admin-item"><strong>${esc(item.label)} <span class="badge badge-${esc(value.confidence)}">${esc(value.confidence)}</span></strong>
+      <div>${esc(value.answer)}</div>${value.evidence ? `<div class="comment-meta">근거: ${esc(value.evidence)}</div>` : ''}</div>`;
+  }).join('');
+  const comments = (survey.comments || []).map((comment) => `<div class="comment">
+    <div class="comment-meta"><strong>${esc(comment.analyst)}</strong> · ${formatDate(comment.createdAt)}</div>
+    <div>${esc(comment.overall)}</div>
+    ${(comment.suggestions || []).map((suggestion) => {
+      const label = ITEMS.find((item) => item.key === suggestion.item)?.label || suggestion.item;
+      return `<div class="admin-action"><strong>${esc(label)}</strong><br>${esc(suggestion.comment)}</div>`;
+    }).join('')}</div>`).join('');
+  const cycles = (survey.cycles || []).map(renderAdminCycle).join('');
+  return `<details class="admin-survey"><summary>${esc(survey.agentName)} · ${formatDate(survey.createdAt)}</summary>
+    <div class="admin-body"><div class="comment-meta">설문 ID: ${esc(survey.id)}</div>
+      ${survey.summary ? `<div class="admin-section"><h3>운영 설계도 요약</h3><div class="summary-box">${esc(survey.summary)}</div></div>` : ''}
+      <div class="admin-section"><h3>설문 14개 항목</h3><div class="admin-item-grid">${items}</div></div>
+      <div class="admin-section"><h3>개선 처방 ${survey.comments?.length || 0}건</h3>${comments || '<div class="admin-empty">등록된 처방이 없습니다.</div>'}</div>
+      <div class="admin-section"><h3>상담 회차 ${survey.cycles?.length || 0}건</h3>${cycles || '<div class="admin-empty">등록된 상담 회차가 없습니다.</div>'}</div>
+    </div></details>`;
+}
+
+function renderAdminCycle(cycle) {
+  const actions = (cycle.actions || []).map((action) => {
+    const evidence = (action.evidence || []).map((item) => `<div class="evidence-item">📎 ${esc(item.content)}
+      ${item.url ? ` · <a href="${esc(item.url)}" target="_blank" rel="noopener">증거 링크</a>` : ''}
+      ${item.verified_at ? ` · ✅ ${formatDate(item.verified_at)}` : ' · 검증 대기'}</div>`).join('');
+    return `<div class="admin-action"><strong>${esc(action.title)}</strong>
+      <div class="action-meta"><span class="badge status-badge">${esc(STATUS_LABELS[action.status] || action.status)}</span>
+      <span class="badge priority-${esc(action.priority)}">${esc((action.priority || '').toUpperCase())}</span></div>
+      <div>${esc(action.rule_patch)}</div>
+      ${action.verification_method ? `<div class="comment-meta">검증 기준: ${esc(action.verification_method)}</div>` : ''}
+      ${evidence || '<div class="admin-empty">제출된 증거 없음</div>'}</div>`;
+  }).join('');
+  const checkins = (cycle.checkins || []).map((item) => `<div class="timeline-item"><strong>${formatDate(item.created_at)}</strong><br>
+    ${esc(item.summary)}${item.blockers ? `<br>막힌 점: ${esc(item.blockers)}` : ''}${item.next_step ? `<br>다음 행동: ${esc(item.next_step)}` : ''}</div>`).join('');
+  const reassessment = cycle.reassessment_scores
+    ? Object.entries(cycle.reassessment_scores).map(([key, value]) => `${esc(ITEMS.find((item) => item.key === key)?.label || key)} ${Number(value)}점`).join(' · ')
+    : '미제출';
+  return `<div class="admin-cycle"><div class="cycle-header"><div><strong>${cycle.sequence}회차 · ${esc(cycle.title)}</strong>
+    <div class="comment-meta">${formatDate(cycle.started_at)} ~ ${formatDate(cycle.target_at)} · 진행률 ${Number(cycle.progress || 0)}%</div></div>
+    <span class="badge status-badge">${esc(STATUS_LABELS[cycle.status] || cycle.status)}</span></div>
+    <div class="comment-meta">재평가: ${reassessment}</div>${actions || '<div class="admin-empty">실행 과제 없음</div>'}
+    ${checkins ? `<div class="admin-section"><h3>주간 점검</h3>${checkins}</div>` : ''}</div>`;
 }
 
 // --- XSS escape ---
