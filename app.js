@@ -1133,8 +1133,8 @@
       plan: {
         phases: [
           { name: 'Phase 1 · CLE2 개발 문서와 실행 계약', owner: 'Codex', status: 'done' },
-          { name: 'Phase 2 · creatorflow-solana 저장소와 Pages UI', owner: 'Codex', status: 'in-progress' },
-          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 2 · creatorflow-solana 저장소와 Pages UI', owner: 'Codex', status: 'done' },
+          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'in-progress' },
           { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'pending' },
           { name: 'Phase 5 · USDC delegate와 3단계 지급', owner: 'Codex', status: 'pending' },
           { name: 'Phase 6 · OpenClaw E2E·배포·해커톤 제출', owner: 'Codex', status: 'pending' }
@@ -1142,10 +1142,10 @@
       },
       status: {
         state: 'in-progress',
-        progress: { current: 1, total: 6 },
-        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록'],
-        currentTasks: ['creatorflow-solana 저장소 생성과 프론트엔드 골격 구현'],
-        nextTasks: ['Agent Wallet 기반 자율 등록', 'YouTube API 연동', 'USDC delegate 및 지급', '기존 Pages 하위 경로 배포'],
+        progress: { current: 2, total: 6 },
+        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록', 'creatorflow-solana 저장소·Agent UI·공개 Pages 배포'],
+        currentTasks: ['Agent Wallet challenge 등록과 Cloudflare Worker/D1 구현'],
+        nextTasks: ['협상·감사 상태 머신', 'YouTube API 연동', 'USDC delegate 및 지급'],
         blockers: []
       },
       tests: {
@@ -1155,7 +1155,7 @@
           { name: 'Agent 자율 등록', method: '브라우저 E2E', expected: 'Brand/Creator Agent가 challenge에 서명하고 서로 다른 역할로 등록된다', passed: false },
           { name: 'YouTube 실제 데이터', method: 'API 통합 테스트', expected: '영상 채널, 공개 상태와 조회수를 검증한다', passed: false },
           { name: 'USDC 마일스톤 지급', method: 'Devnet E2E', expected: '0.02/0.03/0.01 USDC 지급과 중복 차단이 Explorer에서 확인된다', passed: false },
-          { name: 'Pages 배포', method: '공개 URL 확인', expected: 'ai-solana-agent/creatorflow 경로에서 UI와 Worker API가 동작한다', passed: false }
+          { name: 'Pages UI 배포', method: '공개 URL과 브라우저 확인', expected: 'ai-solana-agent/creatorflow 경로에서 UI가 오류 없이 동작한다', passed: true }
         ]
       },
       relatedTasks: [

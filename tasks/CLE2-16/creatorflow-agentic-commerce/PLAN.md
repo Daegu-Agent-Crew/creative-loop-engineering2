@@ -15,6 +15,7 @@
 - **입력**: 개발 사양서와 CLE2-16 Issue
 - **출력**: `creatorflow-solana` 저장소, 캠페인/Brand Agent/Creator Agent/감사 로그 화면
 - **완료 조건**: 정적 빌드와 기본 라우팅 테스트 통과
+- **상태**: 완료. 공개 Pages와 Hub 카드 배포, CI와 브라우저 검증 통과
 
 ### Phase 3: Agent 등록·협상·감사 API
 
@@ -22,6 +23,7 @@
 - **입력**: Agent Wallet 공개키, Brand 초대 정책
 - **출력**: Worker/D1, challenge 서명 등록, 역할 권한, 오퍼 상태 머신, audit event
 - **완료 조건**: 두 Agent가 웹에서 등록하고 오퍼를 수락하는 브라우저 E2E 통과
+- **상태**: 진행 중
 
 ### Phase 4: YouTube 실제 데이터 검증
 
