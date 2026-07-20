@@ -6,8 +6,8 @@
 
 ## 진행률
 
-- 전체 Phase: 2/6 완료
-- 현재 Phase: Phase 3 · Agent 등록·협상·감사 API
+- 전체 Phase: 3/6 완료
+- 현재 Phase: Phase 4 · YouTube 실제 데이터 검증
 
 ## 완료된 작업
 - [x] 기존 4개 Solana DApp과 Pages/API 상태 검증 (2026-07-20)
@@ -23,15 +23,20 @@
 - [x] 소스 CI lint/build 통과, commit `0025b6b` (2026-07-20)
 - [x] 기존 Hub의 `creatorflow/` 공개 배포, PR #2와 Pages CI 통과 (2026-07-20)
 - [x] 공개 브라우저 검증: HTTP 200, 콘솔 오류 0, 835ms 로드 (2026-07-20)
+- [x] Wallet challenge, Brand 초대, Creator 공개 등록 Worker/D1 배포 (2026-07-20)
+- [x] 24시간 Agent 세션과 해시 저장, 캠페인·오퍼·수락·거절 API 구현 (2026-07-20)
+- [x] 0.10 USDC 조건 상한과 동시·중복 수락 차단 (2026-07-20)
+- [x] 로컬 D1 E2E: campaign 201 → offer 201 → accept 200 → 중복 accept 409 (2026-07-20)
+- [x] 캠페인 감사 이벤트와 한글 협상 작업대 운영 배포, source PR #3 / Pages PR #4 (2026-07-20)
+- [x] 공개 Pages·Worker 검증: HTTP 200, API 200, 콘솔 오류 0 (2026-07-20)
 
 ## 진행 중인 작업
-- [ ] Wallet challenge 발급·검증 API
-- [ ] Brand 초대와 Creator 공개 등록 권한
-- [ ] Cloudflare Worker/D1 schema와 감사 이벤트
+- [ ] YouTube Data API key와 OAuth Client 준비
+- [ ] 영상 URL에서 video/channel ID 추출과 채널 소유권 확인
+- [ ] 공개 상태와 조회수 스냅샷 저장
 
 ## 다음 작업
-- [ ] 협상·캠페인·마일스톤 상태 머신 구현
-- [ ] YouTube Data API/OAuth 연결
+- [ ] OpenClaw Brand/Creator 실지갑 등록·협상 E2E
 - [ ] USDC approve/delegate/transfer/revoke 구현
 - [ ] OpenClaw 두 Agent E2E와 3분 데모 녹화
 
@@ -54,6 +59,7 @@
 
 | 날짜 | 변경 내용 | 작성자 |
 |---|---|---|
+| 2026-07-20 | Phase 3 완료, Agent 등록·협상·감사 API와 운영 UI 배포 | Codex |
 | 2026-07-20 | Phase 2 완료, CreatorFlow 공개 Pages와 배포 증빙 등록 | Codex |
 | 2026-07-20 | PR #43 머지 완료, 자동 업데이트 | GitHub Actions |
 | 2026-07-20 | PR #43 생성, CLE2-16 상세 화면 검증 | Codex |
