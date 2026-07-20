@@ -1091,7 +1091,7 @@
       slug: 'creatorflow-agentic-commerce',
       title: 'CreatorFlow Agentic Creator Commerce',
       issue: 42,
-      prs: [],
+      prs: [43],
       deliverables: [
         { title: '기존 Solana DApp Hub', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/', description: 'CreatorFlow가 배포될 기존 GitHub Pages 허브' },
         { title: 'CreatorFlow 개발 이슈', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/42', description: 'CLE2-16 범위와 진행 기록' }

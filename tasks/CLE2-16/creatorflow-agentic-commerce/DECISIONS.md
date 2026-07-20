@@ -74,5 +74,6 @@
 ## 참고 링크
 
 - GitHub Issue: #42
+- 관련 PR: #43
 - 관련 태스크: CLE2-13, CLE2-14
 - 관련 문서: [DEVELOPMENT-SPEC.md](./DEVELOPMENT-SPEC.md)
