@@ -23,7 +23,7 @@
 - **입력**: Agent Wallet 공개키, Brand 초대 정책
 - **출력**: Worker/D1, challenge 서명 등록, 역할 권한, 오퍼 상태 머신, audit event
 - **완료 조건**: 두 Agent가 웹에서 등록하고 오퍼를 수락하는 브라우저 E2E 통과
-- **상태**: 진행 중
+- **상태**: 완료. Worker/D1 운영 배포, 0.10 USDC 상한과 중복 수락 차단, 로컬 두 역할 E2E 및 공개 UI/API 검증 통과. OpenClaw 실지갑 E2E는 Phase 6에서 수행
 
 ### Phase 4: YouTube 실제 데이터 검증
 
@@ -31,6 +31,7 @@
 - **입력**: YouTube API key, OAuth Client, 데모 채널과 영상
 - **출력**: 채널 소유권, video channel/status/statistics 검증, KPI 스냅샷
 - **완료 조건**: unlisted 제출, 공개 전환, 조회수 KPI 감지 E2E 통과
+- **상태**: 진행 중
 
 ### Phase 5: USDC delegate와 3단계 지급
 

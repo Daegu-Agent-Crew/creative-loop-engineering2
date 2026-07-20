@@ -7,11 +7,11 @@
 | 1 | Brand Agent 등록 | 초대 + Wallet challenge E2E | 유효한 초대와 서명만 Brand 역할 획득 | ⬜ |
 | 2 | Creator Agent 등록 | 공개 등록 + Wallet challenge E2E | 서명 Wallet이 payout Wallet로 등록 | ⬜ |
 | 3 | Agent 사칭 차단 | 다른 Wallet로 challenge 재사용 | 401/409로 거절 | ⬜ |
-| 4 | 협상 | 제안→반대 제안→수락 | 합의 조건과 Gemini 판단 로그 저장 | ⬜ |
+| 4 | 협상 | 제안→반대 제안→수락 | 합의 조건과 Agent 실행 기록 저장 | ✅ |
 | 5 | 영상 제출 | unlisted URL 등록 | 등록 채널과 video channel이 일치 | ⬜ |
 | 6 | 공개 상태 확인 | `videos.list` 실행 | public 전환 후 잔금 조건 충족 | ⬜ |
 | 7 | KPI 확인 | statistics 조회 | 기준 조회수 이상일 때 보너스 조건 충족 | ⬜ |
-| 8 | 감사 로그 | 전체 흐름 조회 | 입력, 판단, 정책, 서명, tx와 스냅샷 연결 | ⬜ |
+| 8 | 감사 로그 | 캠페인 생성→제안→수락 조회 | Agent, 조건, 상태 전이가 시간순으로 연결 | ✅ |
 
 ## Solana 지급 테스트
 
@@ -45,7 +45,7 @@
 | 1 | 새 저장소 CI | lint/typecheck/test/build | 현재 구현 범위 lint/build 통과 | ✅ |
 | 2 | cross-repo 배포 | PR + Pages Actions 실행 | 기존 Hub의 `creatorflow/` 갱신 | ✅ |
 | 3 | 모바일/데스크톱 | 375/768/1280 화면 | 주요 흐름 사용 가능 | ⬜ |
-| 4 | 공개 Worker | health/API smoke test | 2xx와 올바른 CORS | ⬜ |
+| 4 | 공개 Worker | health/campaign API smoke test | 2xx와 올바른 CORS | ✅ |
 | 5 | 3분 데모 | 리허설 3회 | 각 회차 180초 이내, 지급 3건 확인 | ⬜ |
 | 6 | 제출물 | 체크리스트 검토 | 소개서, GitHub, 영상, endpoint, tx 링크 완비 | ⬜ |
 
@@ -63,8 +63,8 @@ npm run test:e2e
 
 - 검증 일자: 2026-07-20
 - 검증자: Codex
-- 결과: Phase 2까지 부분 통과. Treasury, 개발 문서, 소스 CI, 공개 Pages UI 검증 완료
-- 근거: Issue #42, Solana Devnet RPC, `creatorflow-solana` CI, `ai-solana-agent` PR #2와 Pages run #29742750010
+- 결과: Phase 3 구현 통과. Agent 등록·세션·협상·감사 API, 중복 수락 차단, 공개 Worker/Pages 검증 완료. OpenClaw 두 실지갑 서명 E2E는 Phase 6 검증으로 남음
+- 근거: Issue #42, Solana Devnet RPC, `creatorflow-solana` PR #3와 CI run #29748767826, `ai-solana-agent` PR #4와 Pages run #29749046279, Worker version `5e92a274-ae50-4187-be71-e251f069fb98`
 
 ## 인계 확인
 

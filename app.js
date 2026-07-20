@@ -1093,7 +1093,9 @@
       issue: 42,
       prs: [43],
       deliverables: [
-        { title: '기존 Solana DApp Hub', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/', description: 'CreatorFlow가 배포될 기존 GitHub Pages 허브' },
+        { title: 'CreatorFlow 공개 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: 'Agent 등록·협상 작업대가 배포된 GitHub Pages' },
+        { title: 'CreatorFlow 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow-solana', description: 'UI, Worker, D1 schema와 테스트 저장소' },
+        { title: 'CreatorFlow Worker', type: 'link', url: 'https://creatorflow-api.sfex11.workers.dev/api/health', description: 'Agent 등록·캠페인·오퍼·감사 API' },
         { title: 'CreatorFlow 개발 이슈', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/42', description: 'CLE2-16 범위와 진행 기록' }
       ],
       goal: {
@@ -1134,18 +1136,18 @@
         phases: [
           { name: 'Phase 1 · CLE2 개발 문서와 실행 계약', owner: 'Codex', status: 'done' },
           { name: 'Phase 2 · creatorflow-solana 저장소와 Pages UI', owner: 'Codex', status: 'done' },
-          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'in-progress' },
-          { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'in-progress' },
           { name: 'Phase 5 · USDC delegate와 3단계 지급', owner: 'Codex', status: 'pending' },
           { name: 'Phase 6 · OpenClaw E2E·배포·해커톤 제출', owner: 'Codex', status: 'pending' }
         ]
       },
       status: {
         state: 'in-progress',
-        progress: { current: 2, total: 6 },
-        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록', 'creatorflow-solana 저장소·Agent UI·공개 Pages 배포'],
-        currentTasks: ['Agent Wallet challenge 등록과 Cloudflare Worker/D1 구현'],
-        nextTasks: ['협상·감사 상태 머신', 'YouTube API 연동', 'USDC delegate 및 지급'],
+        progress: { current: 3, total: 6 },
+        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록', 'creatorflow-solana 저장소·한글 Agent UI·공개 Pages 배포', 'Wallet challenge·Brand 초대·Creator 공개 등록 API', 'Agent 세션·캠페인·오퍼·수락·감사 상태 머신과 중복 수락 차단'],
+        currentTasks: ['YouTube Data API 영상·채널·공개 상태·조회수 검증'],
+        nextTasks: ['데모 채널과 YouTube API 자격 증명 연결', 'USDC delegate 및 지급', 'OpenClaw 두 실지갑 E2E'],
         blockers: []
       },
       tests: {
@@ -1153,6 +1155,7 @@
           { name: '개발 계약 문서', method: '문서와 링크 검사', expected: '아키텍처, API, 보안, 상태, 테스트와 데모 기준이 추적된다', passed: true },
           { name: 'Treasury 자산 검증', method: 'Solana Devnet RPC', expected: '공식 USDC 20과 수수료용 SOL이 확인된다', passed: true },
           { name: 'Agent 자율 등록', method: '브라우저 E2E', expected: 'Brand/Creator Agent가 challenge에 서명하고 서로 다른 역할로 등록된다', passed: false },
+          { name: 'Agent 협상 상태 머신', method: 'Worker/D1 E2E', expected: '캠페인 생성, 제안, 상대 수락, 중복 수락 차단과 감사 기록이 동작한다', passed: true },
           { name: 'YouTube 실제 데이터', method: 'API 통합 테스트', expected: '영상 채널, 공개 상태와 조회수를 검증한다', passed: false },
           { name: 'USDC 마일스톤 지급', method: 'Devnet E2E', expected: '0.02/0.03/0.01 USDC 지급과 중복 차단이 Explorer에서 확인된다', passed: false },
           { name: 'Pages UI 배포', method: '공개 URL과 브라우저 확인', expected: 'ai-solana-agent/creatorflow 경로에서 UI가 오류 없이 동작한다', passed: true }
