@@ -31,16 +31,17 @@ jobs:
               return;
             }
 
-            // Collect ALL CLE2-N IDs and PR numbers from ALL commits (fix: was non-global, only first match)
-            const cle2Ids = new Set();
+            // Completion is destructive task state. Require an explicit marker such as
+            // [complete CLE2-16] instead of treating every commit that mentions a task
+            // as proof that all goals and tests passed.
+            const completionIds = new Set();
             let prNumber = null;
 
             for (const commit of commits) {
               const msg = commit.message || '';
 
-              // Fix: use matchAll to catch multiple CLE2-N in a single commit message
-              for (const m of msg.matchAll(/CLE2-(\d+)/ig)) {
-                cle2Ids.add(m[1]);
+              for (const m of msg.matchAll(/\[complete\s+CLE2-(\d+)\]/ig)) {
+                completionIds.add(m[1]);
               }
 
               // Fix: also collect all PR numbers, prefer the last one found
@@ -49,16 +50,15 @@ jobs:
               }
             }
 
-            if (cle2Ids.size === 0) {
-              core.info('No CLE2-ID found in commit messages, skipping.');
+            if (completionIds.size === 0) {
+              core.info('No explicit [complete CLE2-N] marker found, skipping task completion.');
               return;
             }
 
             const today = new Date().toISOString().slice(0, 10);
             const refTag = prNumber ? `PR #${prNumber}` : 'direct commit';
 
-            // Process each CLE2-N ID found (fix: was single ID, now iterates all)
-            for (const cle2Id of cle2Ids) {
+            for (const cle2Id of completionIds) {
               core.info(`Processing CLE2-${cle2Id}, ${refTag}`);
 
               const taskBase = `tasks/CLE2-${cle2Id}`;
