@@ -14,15 +14,15 @@ tasks/
 │   ├── STATUS.md
 │   ├── TESTS.md
 │   └── DECISIONS.md
-├── CLE2-1..12/          ← 기존 요구사항 태스크; 다음 계획 변경 시 DISCOVERY 보강
-└── CLE2-13/
-    └── ai-collaboration-protocol/
+└── CLE2-{ID}/
+    └── {slug}/
         ├── GOAL.md
         ├── DISCOVERY.md
         ├── PLAN.md
         ├── STATUS.md
         ├── TESTS.md
-        └── DECISIONS.md
+        ├── DECISIONS.md
+        └── 필요 시 상세 사양·가이드 문서
 ```
 
 ## 문서 역할

@@ -1084,6 +1084,93 @@
         { title: 'DECISIONS', path: 'tasks/CLE2-13/ai-collaboration-protocol/DECISIONS.md', description: '운영 프로토콜의 판단 근거와 불확실성' },
         { title: 'TESTS', path: 'tasks/CLE2-13/ai-collaboration-protocol/TESTS.md', description: '두 저장소의 완료 및 운영 검증 기준' }
       ]
+    },
+    {
+      id: 'CLE2-16',
+      cle2Id: 'CLE2-16',
+      slug: 'creatorflow-agentic-commerce',
+      title: 'CreatorFlow Agentic Creator Commerce',
+      issue: 42,
+      prs: [43],
+      deliverables: [
+        { title: '기존 Solana DApp Hub', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/', description: 'CreatorFlow가 배포될 기존 GitHub Pages 허브' },
+        { title: 'CreatorFlow 개발 이슈', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/42', description: 'CLE2-16 범위와 진행 기록' }
+      ],
+      goal: {
+        objective: 'OpenClaw Gemini 기반 Brand Agent와 Creator Agent가 웹에서 YouTube 크리에이터 협업을 협상하고, Solana Devnet USDC를 위임 한도 안에서 자동 정산하는 해커톤 MVP를 구축한다.',
+        successCriteria: [
+          '두 OpenClaw Agent가 CreatorFlow 웹페이지에서 지갑 서명으로 등록하고 협상한다',
+          'YouTube 영상의 채널, 공개 상태와 조회수를 실제 API 데이터로 검증한다',
+          '선금 0.02, 잔금 0.03, KPI 보너스 0.01 USDC가 Devnet에서 중복 없이 지급된다',
+          '사용자가 0.10 USDC delegate allowance를 승인하고 언제든 revoke할 수 있다',
+          '새 저장소의 빌드가 기존 ai-solana-agent Pages의 creatorflow 경로에 배포된다',
+          '3분 데모와 온체인 증빙을 포함한 해커톤 제출물이 완성된다'
+        ],
+        scope: {
+          in: ['OpenClaw Gemini Agent 브라우저 작업', 'Agent Wallet 서명 등록', 'Cloudflare Worker/D1', 'YouTube Data API/OAuth', 'Solana Devnet USDC delegate와 3단계 지급', 'cross-repo GitHub Pages 배포'],
+          out: ['Solana Mainnet 지급', 'YouTube 영상 API 업로드', '범용 인플루언서 마켓플레이스', '실제 법률 계약과 세무 처리']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['Treasury에 Circle 공식 Devnet USDC 20과 약 4.956 Devnet SOL이 있다', '공식 Devnet USDC mint와 Treasury Token Account를 확인했다', 'OpenClaw 두 Agent의 두뇌로 Gemini를 사용한다', 'GitHub Pages와 Cloudflare를 서비스 기반으로 사용한다'],
+          knownUnknown: ['OpenClaw의 Solana Wallet 서명 도구 패키징 방식', 'YouTube OAuth Client와 데모 채널 준비 상태', '새 저장소에서 기존 Pages 저장소로 배포할 인증 방식', '실제 Creator Agent 수령 지갑'],
+          unknownKnown: ['기존 OpenClaw 브라우저 자동화 설정과 비밀 저장소 사용 규칙', '해커톤 데모에서 심사위원이 기대하는 Agent 자율성 표현 방식'],
+          unknownUnknown: ['Devnet RPC 또는 YouTube API의 데모 당일 지연', '브라우저 자동화 중 OAuth 또는 지갑 UI 변경', '조회수 갱신 지연과 KPI 스냅샷 시점 차이']
+        },
+        tools: [
+          { name: 'OpenClaw + Gemini', status: 'available', purpose: 'Brand/Creator Agent 추론과 브라우저 작업' },
+          { name: 'GitHub Pages', status: 'available', purpose: '사람과 Agent가 사용하는 정적 UI' },
+          { name: 'Cloudflare Worker/D1', status: 'available', purpose: '공유 상태, 인증 challenge, 정책과 감사 로그' },
+          { name: 'Solana Devnet', status: 'verified', purpose: 'USDC delegate와 지급 증빙' },
+          { name: 'YouTube Data API', status: 'setup-needed', purpose: '채널 소유권, 영상 공개 상태와 조회수 검증' }
+        ],
+        references: ['CreatorFlow 해커톤 기획안', 'Circle USDC contract addresses', 'Solana token delegate docs', 'YouTube Data API videos/channels docs', 'CLE2-14 Solana DApp Trio'],
+        needsDecision: ['Creator Agent 수령 지갑과 YouTube 데모 채널 확정'],
+        assumptions: ['Brand Agent는 초대 등록, Creator Agent는 공개 등록하되 둘 다 Solana Wallet 서명을 사용한다.'],
+        challenge: 'Agent가 UI를 실제 조작하는 모습을 유지하면서도 지급은 재현 가능하고 중복 없이 안전하게 만든다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · CLE2 개발 문서와 실행 계약', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · creatorflow-solana 저장소와 Pages UI', owner: 'Codex', status: 'in-progress' },
+          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 5 · USDC delegate와 3단계 지급', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 6 · OpenClaw E2E·배포·해커톤 제출', owner: 'Codex', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 6 },
+        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록'],
+        currentTasks: ['creatorflow-solana 저장소 생성과 프론트엔드 골격 구현'],
+        nextTasks: ['Agent Wallet 기반 자율 등록', 'YouTube API 연동', 'USDC delegate 및 지급', '기존 Pages 하위 경로 배포'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '개발 계약 문서', method: '문서와 링크 검사', expected: '아키텍처, API, 보안, 상태, 테스트와 데모 기준이 추적된다', passed: true },
+          { name: 'Treasury 자산 검증', method: 'Solana Devnet RPC', expected: '공식 USDC 20과 수수료용 SOL이 확인된다', passed: true },
+          { name: 'Agent 자율 등록', method: '브라우저 E2E', expected: 'Brand/Creator Agent가 challenge에 서명하고 서로 다른 역할로 등록된다', passed: false },
+          { name: 'YouTube 실제 데이터', method: 'API 통합 테스트', expected: '영상 채널, 공개 상태와 조회수를 검증한다', passed: false },
+          { name: 'USDC 마일스톤 지급', method: 'Devnet E2E', expected: '0.02/0.03/0.01 USDC 지급과 중복 차단이 Explorer에서 확인된다', passed: false },
+          { name: 'Pages 배포', method: '공개 URL 확인', expected: 'ai-solana-agent/creatorflow 경로에서 UI와 Worker API가 동작한다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'Unknown, 판단 근거, 사람 승인과 예외 에스컬레이션 규칙을 적용한다.' },
+        { id: 'CLE2-14', relation: 'Solana 선행 PoC', note: 'Phantom, Devnet, Metaplex와 Pages 배포 경험을 재사용한다.' }
+      ],
+      docs: [
+        { title: '개발 사양서', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/DEVELOPMENT-SPEC.md', description: '제품, 아키텍처, 상태 머신, 보안, 배포와 데모 실행 계약' },
+        { title: 'API Reference', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/API-REFERENCE.md', description: 'Cloudflare Worker API와 오류·인증·idempotency 규칙' },
+        { title: 'Agent Onboarding', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/AGENT-ONBOARDING.md', description: 'OpenClaw Agent가 Wallet을 만들고 웹에서 자율 등록하는 방법' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/DISCOVERY.md', description: '확인된 사실, Unknown, 리스크와 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/PLAN.md', description: '저장소 생성부터 해커톤 제출까지 6단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/DECISIONS.md', description: 'YouTube, OpenClaw, Gemini, Pages, Cloudflare, USDC 결정 근거' },
+        { title: 'TESTS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/TESTS.md', description: '기능·보안·온체인·데모 완료 기준' }
+      ]
     }
   ];
 
