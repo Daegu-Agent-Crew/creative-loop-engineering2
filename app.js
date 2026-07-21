@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v11';
+  var DATA_VERSION = 'v12';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -1170,6 +1170,92 @@
         { title: 'PLAN', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/PLAN.md', description: '저장소 생성부터 해커톤 제출까지 6단계 계획' },
         { title: 'DECISIONS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/DECISIONS.md', description: 'YouTube, OpenClaw, Gemini, Pages, Cloudflare, USDC 결정 근거' },
         { title: 'TESTS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/TESTS.md', description: '기능·보안·온체인·데모 완료 기준' }
+      ]
+    },
+    {
+      id: 'CLE2-17',
+      cle2Id: 'CLE2-17',
+      slug: 'creatorflow2',
+      title: 'CreatorFlow2 · Brand AI Creator Pipeline',
+      issue: 46,
+      prs: [],
+      deliverables: [
+        { title: 'CreatorFlow2 Goal Issue', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/46', description: '제품 역할, UX, 지갑 위임과 완료 기준' },
+        { title: 'CreatorFlow 현재 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: 'CreatorFlow2로 재설계할 운영 기준 서비스' },
+        { title: 'CreatorFlow 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow-solana', description: 'UI, Worker, D1과 Solana 지급 구현 저장소' }
+      ],
+      goal: {
+        objective: '브랜드 AI가 여러 YouTube 크리에이터에게 개별 조건과 지급액을 제안하고, 사람 크리에이터의 수락·영상 제출 이후 시스템 검증과 AI 결제 서명으로 Devnet USDC를 안전하게 자동 지급한다.',
+        successCriteria: [
+          '제안·수락·영상 제출·검증·지급의 심플한 다중 크리에이터 파이프라인이 동작한다',
+          '브랜드 AI가 채널·예산 근거로 크리에이터별 다른 금액을 제안한다',
+          '사람 크리에이터가 별도 Agent 등록 없이 제안을 수락하고 YouTube 영상을 제출한다',
+          '시스템이 영상·성과·예산·서명·중복 지급을 검증한다',
+          '브랜드 AI가 delegate allowance 안의 결제에 서명하고 Devnet 거래가 기록된다',
+          '브랜드 지갑이 AI 권한을 revoke하고 새 AI 지갑으로 교체할 수 있다'
+        ],
+        scope: {
+          in: ['OpenClaw Gemini Brand AI', '사람 YouTube 크리에이터', '개별 지급액과 수락', 'YouTube 객관 검증', 'Devnet USDC delegate·AI 서명·revoke', 'Cloudflare Worker/D1', '심플한 파이프라인 UI'],
+          out: ['Creator AI', '반복 협상 채팅', 'Agent ID·Workspace 입력', '범용 마켓플레이스', 'Mainnet·실가치 지급', '세금·법률 계약']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['역할은 브랜드 AI·사람 크리에이터·검증 집행 시스템으로 확정됐다', '파이프라인은 제안·수락·영상 제출·검증·지급이다', '크리에이터별 지급액은 다르며 시스템 hard cap을 적용한다', '브랜드 지갑이 소유권을 유지하고 AI 지갑에는 소액만 delegate한다'],
+          knownUnknown: ['OpenClaw Solana signer와 키 회전 adapter', '크리에이터 점수와 초기 지급액 계산식', 'YouTube API/OAuth 운영 자격 증명', 'SPL delegate와 프로그램 escrow 중 MVP 최종 범위'],
+          unknownKnown: ['CLE2-16 데이터 중 승계할 캠페인과 크리에이터 기록', '기존 OpenClaw Wallet 도구의 raw transaction 서명 지원 범위'],
+          unknownUnknown: ['AI 키 탈취 후 revoke 전 allowance 오용', 'YouTube 지표 지연', '여러 크리에이터 동시 지급 경쟁 조건']
+        },
+        tools: [
+          { name: 'OpenClaw + Gemini', status: 'setup-needed', purpose: '브랜드 판단과 결제 서명' },
+          { name: 'CreatorFlow Worker/D1', status: 'available', purpose: '상태, 정책, idempotency와 감사 로그' },
+          { name: 'YouTube Data API', status: 'setup-needed', purpose: '영상·채널·성과 검증' },
+          { name: 'Solana Devnet', status: 'verified', purpose: 'USDC delegate와 AI 결제 증빙' },
+          { name: 'GitHub Pages', status: 'available', purpose: '파이프라인과 크리에이터 UI' }
+        ],
+        references: ['CLE2-16 CreatorFlow', '13개 크리에이터 관리 서비스 비교', 'Solana Token delegate/revoke 공식 문서', 'CreatorFlow2 pipeline concept'],
+        needsDecision: ['초기 지급액 계산식과 캠페인·일일 총상한'],
+        assumptions: ['해커톤 MVP는 Devnet USDC와 캠페인별 정확한 소액 allowance를 사용한다.'],
+        challenge: 'AI가 실제 결제에 참여하면서도 브랜드 자금 소유권과 시스템 안전 규칙을 유지한다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · Goal·UX·정책 계약', owner: 'Codex', status: 'in-progress' },
+          { name: 'Phase 2 · 데이터 모델과 시스템 정책', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 3 · 심플한 파이프라인 UI', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 4 · 브랜드 AI 판단과 Wallet 위임', owner: 'Codex + OpenClaw', status: 'pending' },
+          { name: 'Phase 5 · YouTube·Solana E2E와 배포', owner: 'Codex', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 0, total: 5 },
+        completedTasks: ['유사 서비스 13개 비교', '브랜드 AI·사람 크리에이터·시스템 역할 확정', '파이프라인 UI 방향 선택', 'AI 지갑 delegate·revoke 원칙 확정', 'CLE2-17 문서·Issue #46·조회 UI 등록'],
+        currentTasks: ['크리에이터별 지급액 계산식과 총상한 확정'],
+        nextTasks: ['CreatorFlow2 데이터 모델 설계', '파이프라인 UI 구현', 'OpenClaw AI 결제 서명 E2E'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '파이프라인 상태', method: 'UI E2E', expected: '각 크리에이터가 정확히 한 단계와 다음 행동을 표시한다', passed: false },
+          { name: '개별 AI 제안', method: '정책 테스트', expected: '서로 다른 금액이 예산 hard cap 안에서 생성된다', passed: false },
+          { name: '사람 크리에이터', method: '브라우저 E2E', expected: '수락과 YouTube 제출만으로 참여한다', passed: false },
+          { name: '객관 검증', method: 'Worker 통합 테스트', expected: '영상·기한·성과·예산 불충족 시 지급하지 않는다', passed: false },
+          { name: 'AI 결제와 위임', method: 'Devnet E2E', expected: '정확한 수신자·금액만 지급되고 초과·중복은 거부된다', passed: false },
+          { name: '키 교체', method: 'Devnet E2E', expected: 'revoke 후 기존 키는 실패하고 새 키만 동작한다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-16', relation: '선행 구현', note: '운영 중인 CreatorFlow 코드·데이터·배포 기반을 재사용하고 역할과 UX를 단순화한다.' },
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'AI 판단 근거, 시스템 검증, 사람 승인과 Unknown을 기록한다.' }
+      ],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-17/creatorflow2/GOAL.md', description: 'CreatorFlow2 목표, 성공 기준과 범위' },
+        { title: 'UI & WORKFLOW', path: 'tasks/CLE2-17/creatorflow2/UI-WORKFLOW.md', description: '선택한 파이프라인 UI와 역할별 화면' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-17/creatorflow2/DISCOVERY.md', description: '경쟁 서비스 조사, Unknown과 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-17/creatorflow2/PLAN.md', description: '정책부터 AI 결제 E2E까지 5단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-17/creatorflow2/DECISIONS.md', description: '역할, 수락·제출, UI와 지갑 위임 결정' },
+        { title: 'TESTS', path: 'tasks/CLE2-17/creatorflow2/TESTS.md', description: '파이프라인, 정책, 보안과 Devnet 완료 기준' }
       ]
     }
   ];
