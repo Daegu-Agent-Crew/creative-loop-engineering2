@@ -38,6 +38,11 @@
 - 확신도: high
 - 사람 승인: delegated to Codex
 
+- 결정: 기존 CreatorFlow는 그대로 유지하고 CreatorFlow2는 별도 저장소, Worker, D1, Pages `/creatorflow2/` 경로로 운영한다.
+- 이유: 새 워크플로우의 실험과 데이터 변경이 기존 서비스에 영향을 주지 않게 한다.
+- 확신도: high
+- 사람 승인: approved
+
 - 결정: 시스템 hard cap은 캠페인당 0.30 USDC, 브랜드 AI 일일 0.10 USDC로 시작한다.
 - 이유: 지급 정책과 온체인 allowance를 작은 테스트 금액으로 일치시킨다.
 - 확신도: high
@@ -58,3 +63,5 @@
 - GitHub Issue: #46
 - 관련 태스크: CLE2-16
 - UI 레퍼런스: `references/creatorflow2-pipeline-concept.png`
+- CreatorFlow2 서비스: <https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow2/>
+- CreatorFlow2 소스: <https://github.com/Daegu-Agent-Crew/creatorflow2-solana>

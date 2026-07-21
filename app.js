@@ -1181,8 +1181,9 @@
       prs: [],
       deliverables: [
         { title: 'CreatorFlow2 Goal Issue', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/46', description: '제품 역할, UX, 지갑 위임과 완료 기준' },
-        { title: 'CreatorFlow 현재 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: 'CreatorFlow2로 재설계할 운영 기준 서비스' },
-        { title: 'CreatorFlow 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow-solana', description: 'UI, Worker, D1과 Solana 지급 구현 저장소' }
+        { title: 'CreatorFlow2 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow2/', description: '기존 CreatorFlow와 분리된 운영 서비스' },
+        { title: 'CreatorFlow2 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow2-solana', description: '별도 UI, Worker, D1과 Solana 지급 구현 저장소' },
+        { title: '기존 CreatorFlow', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: '변경 없이 보존한 기존 서비스' }
       ],
       goal: {
         objective: '브랜드 AI가 여러 YouTube 크리에이터에게 개별 조건과 지급액을 제안하고, 사람 크리에이터의 수락·영상 제출 이후 시스템 검증과 AI 결제 서명으로 Devnet USDC를 안전하게 자동 지급한다.',

@@ -7,7 +7,7 @@
 | 1 | 파이프라인 | UI E2E | 각 크리에이터가 제안·수락·제출·검증·지급 중 정확히 한 상태에 있다 | ✅ |
 | 2 | 개별 제안 | API/정책 테스트 | 브랜드 AI가 예산 상한 안에서 크리에이터별 다른 금액을 제안한다 | ✅ |
 | 3 | 사람 크리에이터 | 브라우저 E2E | 별도 Agent 등록 없이 수락과 YouTube 제출을 완료한다 | ⬜ |
-| 4 | 객관 검증 | Worker 통합 테스트 | 공개 상태·기한·성과·예산 불충족 시 지급 단계로 이동하지 않는다 | ⬜ |
+| 4 | 객관 검증 | Worker 통합 테스트 | 공개 상태·기한·성과·예산 불충족 시 지급 단계로 이동하지 않는다 | ✅ |
 | 5 | AI 결제 서명 | Devnet E2E | OpenClaw AI 지갑 서명으로 정확한 수신자·금액만 지급된다 | ⬜ |
 | 6 | 위임 한도 | 보안 테스트 | allowance 초과, 오수신자, 중복 지급과 재사용 거래가 거부된다 | ✅ |
 | 7 | 키 교체 | Devnet E2E | 기존 delegate revoke 후 이전 키는 실패하고 새 키만 동작한다 | ⬜ |
@@ -24,8 +24,8 @@ lint → typecheck → unit/integration → build → Worker contract → browse
 
 - 검증 일자: 2026-07-22
 - 검증자: Codex
-- 결과: 자동 테스트 23개, lint, React build, Worker typecheck, 공개 초대·파이프라인·키 복구 UI 운영 브라우저 QA 통과. 실제 Phantom 수락·OpenClaw AI 지갑 Devnet E2E는 대기.
-- 근거 링크: CreatorFlow commit `86a9a68`, Pages commit `cd9923c`, CLE2-17 Issue #46
+- 결과: 자동 테스트 26개, lint, React build, Worker typecheck, 분리된 Worker/D1 API와 `/creatorflow2/` 운영 브라우저 QA 통과. 기존 `/creatorflow/` 보존도 확인. 실제 Phantom 수락·OpenClaw AI 지갑 Devnet E2E는 대기.
+- 근거 링크: CreatorFlow2 commit `1a7cd02`, Pages commit `8c3571d`, CLE2-17 Issue #46
 
 ## 인계 확인
 
