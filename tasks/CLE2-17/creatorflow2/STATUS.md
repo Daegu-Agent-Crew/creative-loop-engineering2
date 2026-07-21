@@ -6,8 +6,8 @@
 
 ## 진행률
 
-- 전체 Phase: 0/5 완료
-- 현재 Phase: Phase 1 · Goal·UX·정책 계약
+- 전체 Phase: 4/5 완료
+- 현재 Phase: Phase 5 · OpenClaw 전용 지갑 연결·실거래 데모
 
 ## 완료된 작업
 
@@ -16,33 +16,39 @@
 - [x] 파이프라인 UI 방향 선택 (2026-07-22)
 - [x] AI 지갑의 소액 delegate·revoke 원칙 확정 (2026-07-22)
 - [x] CLE2-17 문서·Issue #46·조회 UI 등록 (2026-07-22)
+- [x] CreatorFlow2 5단계 파이프라인 UI 구현·배포 (2026-07-22)
+- [x] 적합도별 0.01/0.02/0.03/0.05 USDC 지급 정책 구현 (2026-07-22)
+- [x] 캠페인 0.30·AI 일일 0.10 USDC hard cap 구현 (2026-07-22)
+- [x] SPL delegate 승인·거래 검증·revoke 구현 및 D1 반영 (2026-07-22)
+- [x] Worker·Pages 배포와 데스크톱·모바일 브라우저 QA (2026-07-22)
 
 ## 진행 중인 작업
 
-- [ ] 크리에이터별 지급액 계산식과 총상한 확정 — sfex11 + Codex
+- [ ] OpenClaw 브랜드 AI 전용 지갑 등록과 0.10 USDC 위임 — sfex11 + OpenClaw
 
 ## 다음 작업
 
-- [ ] 크리에이터별 지급액 계산식과 상한 확정
-- [ ] CreatorFlow 기존 모델에서 CreatorFlow2 모델로의 변경 설계
-- [ ] 심플한 파이프라인 UI 구현
-- [ ] OpenClaw AI 결제 서명 E2E 구현
+- [ ] 사람 지갑과 다른 OpenClaw 브랜드 AI 전용 지갑 등록
+- [ ] Phantom 브랜드 지갑으로 0.10 USDC allowance 연결
+- [ ] 대구루 영상 제출 서명 완료
+- [ ] OpenClaw AI가 0.03 USDC 지급 서명 후 Worker 확인
 
 ## 블로커
 
-- 없음
+- OpenClaw 브랜드 AI 전용 Solana 공개키가 아직 등록되지 않았다.
 
 ## 사람 결정 필요
 
-- [ ] 초기 지급액 계산식과 캠페인 총예산
+- [ ] OpenClaw에서 사용할 브랜드 AI 전용 Solana 공개키
 
 ## 현재 가정과 불확실성
 
 - 가정: 해커톤 MVP는 Devnet USDC와 캠페인별 정확한 소액 allowance를 사용한다.
-- 불확실성: OpenClaw wallet signer와 YouTube 자격 증명의 실제 운영 연결 상태
+- 불확실성: OpenClaw wallet signer가 SPL delegate 거래를 직접 생성하는 실제 운영 연결 상태
 
 ## 변경 이력
 
 | 날짜 | 변경 내용 | 작성자 |
 |---|---|---|
 | 2026-07-22 | CLE2-17 초기 생성 | Codex |
+| 2026-07-22 | 파이프라인·지급 정책·AI 지갑 위임 구현 및 운영 배포 | Codex |
