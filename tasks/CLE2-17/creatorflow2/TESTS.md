@@ -24,8 +24,8 @@ lint → typecheck → unit/integration → build → Worker contract → browse
 
 - 검증 일자: 2026-07-22
 - 검증자: Codex
-- 결과: 자동 테스트 21개, lint, React build, Worker typecheck, 운영 브라우저 QA 통과. 전용 AI 지갑 Devnet E2E는 대기.
-- 근거 링크: CreatorFlow commit `c69d32b`, Pages commit `a5f8e86`, CLE2-17 Issue #46
+- 결과: 자동 테스트 23개, lint, React build, Worker typecheck, 공개 초대·파이프라인·키 복구 UI 운영 브라우저 QA 통과. 실제 Phantom 수락·OpenClaw AI 지갑 Devnet E2E는 대기.
+- 근거 링크: CreatorFlow commit `86a9a68`, Pages commit `cd9923c`, CLE2-17 Issue #46
 
 ## 인계 확인
 
