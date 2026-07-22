@@ -24,8 +24,8 @@ lint → typecheck → unit/integration → build → Worker contract → browse
 
 - 검증 일자: 2026-07-22
 - 검증자: Codex
-- 결과: 자동 테스트 26개, lint, React build, Worker typecheck, 분리된 Worker/D1 API와 `/creatorflow2/` 운영 브라우저 QA 통과. 기존 `/creatorflow/` 보존도 확인. 실제 Phantom 수락·OpenClaw AI 지갑 Devnet E2E는 대기.
-- 근거 링크: CreatorFlow2 commit `1a7cd02`, Pages commit `8c3571d`, CLE2-17 Issue #46
+- 결과: 자동 테스트 27개, lint, React build, Worker typecheck, 운영 의존성 취약점 0건, Gemini 자동 지급 설정 UI와 분리 Worker/D1 운영 QA 통과. 실제 Phantom allowance·Gemini 판단·Devnet 자동 지급 E2E는 대기.
+- 근거 링크: CreatorFlow2 commit `11e1fa8`, Pages commit `d55ad3a`, CLE2-17 Issue #46
 
 ## 인계 확인
 

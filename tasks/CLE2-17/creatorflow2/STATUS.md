@@ -7,7 +7,7 @@
 ## 진행률
 
 - 전체 Phase: 4/5 완료
-- 현재 Phase: Phase 5 · OpenClaw 전용 지갑 연결·실거래 데모
+- 현재 Phase: Phase 5 · Gemini 자동 지급 예산 승인·실거래 데모
 
 ## 완료된 작업
 
@@ -27,25 +27,29 @@
 - [x] AI 키 분실 시 사람 Phantom 단독 긴급 revoke·새 AI 소유권 이전 구현 (2026-07-22)
 - [x] 기존 CreatorFlow를 보존하고 CreatorFlow2를 별도 GitHub 저장소·Worker·D1·Pages 경로로 분리 (2026-07-22)
 - [x] 제출 기한·최소 조회수 확인 후에만 지급을 허용하는 성과 검증 구현 (2026-07-22)
+- [x] OpenClaw를 제거하고 Gemini API 직접 판단·AI 전용 지갑 자동 서명 구조 구현·배포 (2026-07-22)
+- [x] 관리자 Phantom 1회 승인으로 0.10 USDC allowance와 AI 수수료용 0.01 SOL을 연결하는 UI 구현 (2026-07-22)
 
 ## 진행 중인 작업
 
-- [ ] OpenClaw 브랜드 AI 전용 지갑 등록과 0.10 USDC 위임 — sfex11 + OpenClaw
+- [ ] Gemini Worker secret 연결과 관리자 Phantom 0.10 USDC 예산 승인
 
 ## 다음 작업
 
-- [ ] 사람 지갑과 다른 OpenClaw 브랜드 AI 전용 지갑 등록
-- [ ] Phantom 브랜드 지갑으로 0.10 USDC allowance 연결
+- [x] AI 전용 지급 지갑 생성·Worker secret 저장
+- [ ] Gemini API 키를 Cloudflare Worker secret으로 연결
+- [ ] Phantom 브랜드 지갑으로 0.10 USDC allowance와 0.01 SOL 수수료 연결
 - [ ] 대구루 영상 제출 서명 완료
 - [ ] OpenClaw AI가 0.03 USDC 지급 서명 후 Worker 확인
 
 ## 블로커
 
-- OpenClaw 브랜드 AI 전용 Solana 공개키가 아직 등록되지 않았다.
+- Gemini API 키의 Cloudflare Worker secret 저장에 대한 명시 승인과 Phantom 예산 서명이 필요하다.
 
 ## 사람 결정 필요
 
-- [ ] OpenClaw에서 사용할 브랜드 AI 전용 Solana 공개키
+- [ ] 제공된 Gemini API 키를 Cloudflare Worker secret으로 저장 승인
+- [ ] Phantom에서 Devnet 0.10 USDC allowance + 0.01 SOL 수수료 승인
 
 ## 현재 가정과 불확실성
 
@@ -60,3 +64,4 @@
 | 2026-07-22 | 파이프라인·지급 정책·AI 지갑 위임 구현 및 운영 배포 | Codex |
 | 2026-07-22 | 사람 초대 링크·캠페인 한정 위임·시스템 broadcast·키 복구 배포 | Codex |
 | 2026-07-22 | 기존 CreatorFlow 복원, CreatorFlow2 독립 서비스와 성과 검증 배포 | Codex |
+| 2026-07-22 | Gemini 직접 판단·AI 지갑 자동 지급·5분 재시도 스케줄 배포 | Codex |

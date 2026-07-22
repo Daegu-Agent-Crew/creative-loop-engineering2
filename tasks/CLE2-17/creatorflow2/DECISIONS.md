@@ -7,6 +7,11 @@
 - 확신도: high
 - 사람 승인: approved
 
+- 결정: OpenClaw 런타임 대신 Cloudflare Worker가 Gemini API를 직접 호출하고, 별도 AI Solana 지갑이 사전 승인된 0.10 USDC 범위에서 자동 서명한다.
+- 이유: Agent 등록·세션·Workspace를 제거하면서 AI의 지급 판단과 온체인 결제 참여는 유지한다.
+- 확신도: high
+- 사람 승인: approved
+
 - 결정: 브랜드 AI는 캠페인 생성, 크리에이터 분석, 개별 금액 제안, 콘텐츠 판단과 결제 서명을 담당한다.
 - 이유: AI의 역할을 마케팅 판단과 자금 승인으로 명확히 하고 객관 검증과 집행은 시스템에 분리한다.
 - 확신도: high
