@@ -1176,6 +1176,97 @@
       ]
     },
     {
+      id: 'CLE2-17',
+      cle2Id: 'CLE2-17',
+      slug: 'creatorflow2',
+      title: 'CreatorFlow2 · Brand AI Creator Pipeline',
+      issue: 46,
+      prs: [47],
+      deliverables: [
+        { title: 'CreatorFlow2 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/46', description: '제품 역할, UX, 지갑 위임과 완료 기준' },
+        { title: 'CreatorFlow2 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow2/', description: '기존 CreatorFlow와 분리된 운영 서비스' },
+        { title: 'CreatorFlow2 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow2-solana', description: '별도 UI, Worker, D1과 Solana 지급 구현 저장소' },
+        { title: '기존 CreatorFlow', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: '변경 없이 보존한 기존 서비스' }
+      ],
+      goal: {
+        objective: '브랜드 Gemini AI가 여러 YouTube 크리에이터에게 개별 지급액을 제안하고, 사람 크리에이터의 수락·영상 제출 이후 시스템 검증과 AI 결제 서명으로 Devnet USDC를 안전하게 지급한다.',
+        successCriteria: [
+          '제안·수락·영상 제출·검증·지급의 다중 크리에이터 파이프라인이 동작한다',
+          '브랜드 AI가 채널·예산 근거로 크리에이터별 다른 금액을 제안한다',
+          '사람 크리에이터가 별도 Agent 등록 없이 제안을 수락하고 YouTube 영상을 제출한다',
+          '시스템이 영상·성과·예산·서명·중복 지급을 검증한다',
+          '브랜드 AI가 delegate allowance 안의 결제에 서명하고 Devnet 거래가 기록된다',
+          '브랜드 지갑이 AI 권한을 revoke하고 새 AI 지갑으로 교체할 수 있다'
+        ],
+        scope: {
+          in: ['Gemini Brand AI', '사람 YouTube 크리에이터', '개별 지급액과 수락', 'YouTube 객관 검증', 'Devnet USDC delegate·AI 서명·revoke', 'Cloudflare Worker/D1', '파이프라인 UI'],
+          out: ['Creator AI', '반복 협상 채팅', 'Agent ID·Workspace 입력', '범용 마켓플레이스', 'Mainnet·실가치 지급', '세금·법률 계약']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['역할은 브랜드 AI·사람 크리에이터·검증 집행 시스템으로 확정됐다', '파이프라인은 제안·수락·영상 제출·검증·지급이다', 'CreatorFlow2는 기존 서비스와 저장소·Worker·D1·Pages를 분리했다', 'Gemini API가 판단하고 AI 전용 지갑이 제한 allowance 안에서 자동 서명한다'],
+          knownUnknown: ['Gemini Worker secret 운영 연결', '브랜드 Phantom의 실제 allowance 승인', '실제 영상 제출부터 Devnet 지급까지의 최종 E2E'],
+          unknownKnown: ['운영 데모에 사용할 실제 브랜드 지갑과 영상 제출 순서', 'Cloudflare 운영 secret의 교체·복구 관행'],
+          unknownUnknown: ['Gemini 판단 실패 시 5분 재시도 중 중복 지급 경쟁', 'YouTube 지표 갱신 지연과 지급 판단 시점 불일치']
+        },
+        tools: [
+          { name: 'Gemini API', status: 'setup-needed', purpose: '브랜드 판단과 지급 승인' },
+          { name: 'CreatorFlow2 Worker/D1', status: 'available', purpose: '상태, 정책, idempotency와 감사 로그' },
+          { name: 'YouTube 검증', status: 'available', purpose: '영상·채널·성과 조건 확인' },
+          { name: 'Solana Devnet', status: 'verified', purpose: 'USDC delegate와 AI 지급 증빙' },
+          { name: 'GitHub Pages', status: 'available', purpose: '브랜드와 크리에이터 파이프라인 UI' }
+        ],
+        references: ['CLE2-16 CreatorFlow', 'CreatorFlow2 pipeline concept', 'Solana Token delegate/revoke', 'CreatorFlow2 운영 서비스'],
+        needsDecision: ['Gemini Worker secret 연결과 Phantom Devnet allowance 승인'],
+        assumptions: ['해커톤 MVP는 Devnet USDC와 캠페인별 소액 allowance만 사용한다.'],
+        challenge: 'AI 자동 지급을 실제 거래로 증명하면서도 브랜드 지갑 소유권과 시스템 안전 규칙을 유지한다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · Goal·UX·정책 계약', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · 데이터 모델과 시스템 정책', owner: 'Codex', status: 'done' },
+          { name: 'Phase 3 · 심플한 파이프라인 UI', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · Gemini 판단과 AI Wallet 위임', owner: 'Codex', status: 'done' },
+          { name: 'Phase 5 · 실제 Devnet E2E와 데모', owner: 'Codex + 회장님', status: 'in-progress' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 4, total: 5 },
+        completedTasks: ['CreatorFlow2 요구사항·정책·UI 확정', '별도 저장소·Worker·D1·Pages 배포', '적합도별 지급액과 hard cap 구현', '사람 크리에이터 초대·수락·영상 제출', 'delegate·revoke·거래 재사용 차단', 'Gemini 직접 판단과 AI 전용 지갑 자동 서명 구현'],
+        currentTasks: ['Gemini Worker secret 연결과 관리자 Phantom Devnet 예산 승인'],
+        nextTasks: ['실제 영상 제출', 'Gemini 판단·AI 지갑 지급', 'Explorer와 감사 로그 증빙'],
+        blockers: ['외부 secret 저장과 Phantom Devnet 자산 승인에는 사람 결정이 필요하다']
+      },
+      tests: {
+        items: [
+          { name: '파이프라인', method: 'UI E2E', expected: '각 크리에이터가 정확히 한 단계와 다음 행동을 표시한다', passed: true },
+          { name: '개별 AI 제안', method: 'API/정책 테스트', expected: '적합도별 금액이 예산 hard cap 안에서 생성된다', passed: true },
+          { name: '사람 크리에이터', method: '브라우저 E2E', expected: '수락과 실제 YouTube 제출을 완료한다', passed: false },
+          { name: '객관 검증', method: 'Worker 통합 테스트', expected: '공개 상태·기한·성과·예산 불충족 시 지급하지 않는다', passed: true },
+          { name: 'AI 결제 서명', method: 'Devnet E2E', expected: 'Gemini 판단 후 정확한 수신자·금액만 지급된다', passed: false },
+          { name: '위임 한도', method: '보안 테스트', expected: '초과·오수신·중복 지급과 거래 재사용이 거부된다', passed: true },
+          { name: '키 교체', method: 'Devnet E2E', expected: 'revoke 후 이전 키는 실패하고 새 키만 동작한다', passed: false },
+          { name: '감사 로그', method: 'API/UI 검사', expected: 'AI 판단, 시스템 검증과 tx signature가 순서대로 기록된다', passed: false },
+          { name: '반응형 UI', method: '브라우저 QA', expected: '데스크톱·모바일에서 다음 행동과 상태가 명확하다', passed: true }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-16', relation: '선행 구현', note: 'CreatorFlow 운영 경험을 재사용하되 서비스와 데이터를 분리했다.' },
+        { id: 'CLE2-18', relation: '후속 결제 강화', note: '현재 delegate 구조를 원자적 온체인 에스크로로 확장한다.' },
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'AI 판단 근거, 시스템 검증과 사람 승인 게이트를 기록한다.' }
+      ],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-17/creatorflow2/GOAL.md', description: 'CreatorFlow2 목표, 성공 기준과 범위' },
+        { title: 'UI & WORKFLOW', path: 'tasks/CLE2-17/creatorflow2/UI-WORKFLOW.md', description: '파이프라인 UI와 역할별 화면' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-17/creatorflow2/DISCOVERY.md', description: '경쟁 서비스 조사, Unknown과 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-17/creatorflow2/PLAN.md', description: '정책부터 Gemini 자동 지급 E2E까지 5단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-17/creatorflow2/DECISIONS.md', description: '역할, 지급 정책, 서비스 분리와 Gemini 결정' },
+        { title: 'TESTS', path: 'tasks/CLE2-17/creatorflow2/TESTS.md', description: '파이프라인, 정책, 보안과 Devnet 완료 기준' }
+      ]
+    },
+    {
       id: 'CLE2-19',
       cle2Id: 'CLE2-19',
       slug: 'cle5-development-plan',
