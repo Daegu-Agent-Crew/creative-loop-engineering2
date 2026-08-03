@@ -1,0 +1,2157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CLE5 자기성장형 창작 에이전트 시스템 개발 계획 발표자료">
+  <title>CLE5 개발 계획 | 기억하는 창작 시스템</title>
+  <style>
+    :root {
+      --ink: #171918;
+      --paper: #f5f4ef;
+      --paper-strong: #fffefa;
+      --muted: #6c706c;
+      --line: #d5d5cd;
+      --mint: #5ed6a2;
+      --mint-dark: #176e50;
+      --coral: #ff6b4a;
+      --coral-soft: #ffe0d8;
+      --yellow: #f3c94b;
+      --blue: #5b7cfa;
+      --black: #111312;
+      --white: #ffffff;
+      --slide-w: 1600;
+      --slide-h: 900;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      background: var(--ink);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--ink);
+      font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, a { font: inherit; }
+    button { color: inherit; }
+
+    .deck { width: 100%; }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      background: var(--paper);
+      padding: clamp(28px, 4.2vw, 76px) clamp(28px, 5.8vw, 104px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(18px, 2.5vh, 30px);
+      isolation: isolate;
+    }
+
+    .slide.dark {
+      color: var(--white);
+      background: var(--black);
+    }
+
+    .slide.coral {
+      color: var(--black);
+      background: var(--coral);
+    }
+
+    .slide.mint {
+      color: var(--black);
+      background: var(--mint);
+    }
+
+    .slide::after {
+      content: attr(data-number);
+      position: absolute;
+      right: clamp(28px, 3.8vw, 68px);
+      bottom: clamp(24px, 3.5vh, 42px);
+      color: currentColor;
+      opacity: .38;
+      font-size: 13px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      font-size: 9px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dark .status { color: #aeb5b0; }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 1100px;
+      font-size: clamp(54px, 7.4vw, 118px);
+      line-height: .97;
+      font-weight: 900;
+    }
+
+    h2 {
+      max-width: 1180px;
+      font-size: clamp(40px, 5vw, 78px);
+      line-height: 1.04;
+      font-weight: 900;
+    }
+
+    h3 {
+      font-size: clamp(20px, 1.8vw, 30px);
+      line-height: 1.15;
+      font-weight: 850;
+    }
+
+    .eyebrow {
+      margin-bottom: 15px;
+      color: var(--mint-dark);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .dark .eyebrow { color: var(--mint); }
+
+    .lead {
+      max-width: 900px;
+      color: var(--muted);
+      font-size: clamp(20px, 2vw, 31px);
+      line-height: 1.45;
+      font-weight: 530;
+    }
+
+    .dark .lead { color: #bfc5c0; }
+
+    .accent-coral { color: var(--coral); }
+    .accent-mint { color: var(--mint); }
+    .accent-blue { color: var(--blue); }
+
+    .slide-content {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-right: 44px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dark .footer { color: #8b938d; }
+
+    .source {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hero-layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1.06fr .94fr;
+      gap: clamp(28px, 5vw, 92px);
+      align-items: center;
+    }
+
+    .hero-copy .lead {
+      margin-top: 28px;
+      max-width: 700px;
+    }
+
+    .hero-meta {
+      margin-top: 42px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .label {
+      padding: 9px 13px;
+      border: 1px solid #3f4541;
+      border-radius: 4px;
+      color: #c6ccc7;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .memory-visual {
+      position: relative;
+      min-height: min(68vh, 650px);
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit {
+      position: absolute;
+      border: 1px solid #343a36;
+      border-radius: 50%;
+    }
+
+    .orbit.one { width: 580px; height: 580px; }
+    .orbit.two { width: 410px; height: 410px; border-style: dashed; }
+    .orbit.three { width: 245px; height: 245px; }
+
+    .memory-core {
+      z-index: 2;
+      width: 174px;
+      height: 174px;
+      border-radius: 50%;
+      background: var(--mint);
+      color: var(--black);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 0 0 18px rgba(94, 214, 162, .08);
+    }
+
+    .memory-node {
+      position: absolute;
+      z-index: 3;
+      min-width: 130px;
+      padding: 14px 16px;
+      border: 1px solid #3f4641;
+      background: #191c1a;
+      border-radius: 5px;
+      color: #eef2ef;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .memory-node em {
+      display: block;
+      margin-top: 4px;
+      color: #879089;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 650;
+    }
+
+    .node-a { top: 9%; left: 12%; }
+    .node-b { top: 12%; right: 5%; }
+    .node-c { bottom: 14%; right: 3%; }
+    .node-d { bottom: 8%; left: 7%; }
+    .node-e { top: 43%; left: 0; }
+
+    .big-quote {
+      max-width: 1260px;
+      font-size: clamp(42px, 5.7vw, 92px);
+      line-height: 1.12;
+      font-weight: 900;
+    }
+
+    .problem-grid {
+      margin-top: clamp(36px, 6vh, 72px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+    }
+
+    .problem {
+      padding: 26px 34px 0 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .problem + .problem { padding-left: 34px; }
+    .problem:last-child { border-right: 0; }
+
+    .problem-no {
+      color: var(--coral);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .problem h3 { margin: 10px 0 12px; }
+    .problem p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .boundary {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 40px;
+    }
+
+    .system-half {
+      min-height: 430px;
+      padding: 38px;
+      border: 1px solid var(--line);
+      background: var(--paper-strong);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .system-half.cle5 {
+      border-color: var(--black);
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .system-id {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .cle5 .system-id { color: var(--mint); }
+
+    .system-half h3 {
+      margin-top: 12px;
+      font-size: clamp(32px, 3vw, 50px);
+    }
+
+    .system-half ul {
+      list-style: none;
+      margin: 38px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 18px;
+    }
+
+    .system-half li {
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .cle5 li { border-color: #363b38; }
+
+    .boundary-arrow {
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .growth-loop {
+      margin-top: 46px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .growth-step {
+      position: relative;
+      min-height: 280px;
+      padding: 24px 22px;
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .growth-step::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -22px;
+      z-index: 2;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .growth-step:last-child::after { content: "↺"; right: -8px; }
+
+    .step-id {
+      color: var(--coral);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .growth-step h3 { margin-top: 18px; }
+
+    .growth-step p {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .growth-output {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--mint-dark);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .ui-shell {
+      width: 100%;
+      min-height: 0;
+      height: min(66vh, 610px);
+      border: 1px solid #2f3531;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f8f8f5;
+      color: var(--ink);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .22);
+      display: grid;
+      grid-template-columns: 210px 1fr;
+    }
+
+    .ui-sidebar {
+      padding: 22px 15px;
+      background: #171a18;
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .ui-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 8px 24px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .ui-logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--mint);
+      color: var(--black);
+      font-size: 10px;
+    }
+
+    .ui-nav {
+      display: grid;
+      gap: 5px;
+    }
+
+    .ui-nav button {
+      width: 100%;
+      border: 0;
+      padding: 11px 12px;
+      border-radius: 4px;
+      background: transparent;
+      color: #aeb5af;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .ui-nav button:hover,
+    .ui-nav button.active {
+      color: var(--white);
+      background: #2b302d;
+    }
+
+    .ui-nav .nav-icon {
+      display: inline-grid;
+      width: 22px;
+      color: var(--mint);
+      font-weight: 900;
+    }
+
+    .ui-session {
+      margin-top: auto;
+      padding: 14px 10px 0;
+      border-top: 1px solid #303632;
+      color: #8d958f;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .ui-session strong {
+      display: block;
+      color: #e5e9e6;
+      font-size: 11px;
+    }
+
+    .ui-main {
+      min-width: 0;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .ui-header {
+      min-height: 72px;
+      padding: 16px 24px;
+      border-bottom: 1px solid #deded7;
+      background: var(--paper-strong);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .ui-title {
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .ui-subtitle {
+      margin-top: 3px;
+      color: #777d78;
+      font-size: 11px;
+    }
+
+    .ui-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ui-button {
+      min-height: 34px;
+      padding: 8px 12px;
+      border: 1px solid #c9cbc6;
+      border-radius: 4px;
+      background: var(--paper-strong);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .ui-button.primary {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .ui-button.approve {
+      border-color: var(--mint-dark);
+      background: var(--mint);
+      color: #0b3829;
+    }
+
+    .ui-body {
+      min-height: 0;
+      padding: 20px 24px 24px;
+      overflow: hidden;
+    }
+
+    .ui-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .ui-stack {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .ui-card {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid #d7d8d2;
+      border-radius: 6px;
+      background: var(--paper-strong);
+      overflow: hidden;
+    }
+
+    .ui-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ui-card-title {
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ui-small {
+      color: #7a807b;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 13px;
+      border: 1px solid #e0e0da;
+      border-radius: 4px;
+      background: #f6f6f2;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 7px;
+      color: #747a75;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .pipeline-item {
+      min-height: 82px;
+      padding: 10px;
+      border: 1px solid #d8dad4;
+      border-radius: 4px;
+      background: #f6f6f2;
+    }
+
+    .pipeline-item.active {
+      border-color: var(--coral);
+      background: var(--coral-soft);
+    }
+
+    .pipeline-item.done {
+      border-color: #75c7a5;
+      background: #e5f7ef;
+    }
+
+    .pipeline-id {
+      color: #8a8f8a;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .pipeline-item strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 10px;
+    }
+
+    .activity {
+      display: grid;
+      gap: 7px;
+    }
+
+    .activity-item {
+      display: grid;
+      grid-template-columns: 7px 1fr auto;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e4e4de;
+      font-size: 10px;
+    }
+
+    .activity-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--mint);
+    }
+
+    .activity-item time { color: #8b908c; }
+
+    .decision-card {
+      border-left: 3px solid var(--yellow);
+    }
+
+    .decision-card h4 {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .decision-card p {
+      margin: 9px 0 14px;
+      color: #747a75;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .feedback-layout {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .feedback-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .feedback-item {
+      padding: 12px;
+      border: 1px solid #dcddd7;
+      border-radius: 4px;
+      background: #f7f7f3;
+      cursor: pointer;
+    }
+
+    .feedback-item.active {
+      border-color: var(--coral);
+      background: #fff0ec;
+    }
+
+    .feedback-item strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 11px;
+    }
+
+    .feedback-quote {
+      padding: 17px;
+      border-left: 3px solid var(--coral);
+      background: #fff6f3;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      padding: 7px 9px;
+      border: 1px solid #d4d6d0;
+      border-radius: 999px;
+      background: var(--paper-strong);
+      font-size: 9px;
+      font-weight: 850;
+    }
+
+    .tag.active {
+      border-color: var(--coral);
+      background: var(--coral-soft);
+      color: #84311e;
+    }
+
+    .evidence {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .evidence-box {
+      min-height: 104px;
+      padding: 12px;
+      border: 1px solid #dedfd9;
+      background: #f6f6f2;
+    }
+
+    .evidence-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 10px;
+    }
+
+    .evidence-box p {
+      color: #717772;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .case-layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .case-index {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .case-entry {
+      padding: 12px;
+      border: 1px solid #dcded7;
+      border-radius: 4px;
+      background: #f7f7f3;
+    }
+
+    .case-entry.active {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .case-entry small {
+      display: block;
+      color: #8b918c;
+      font-size: 8px;
+      font-weight: 850;
+    }
+
+    .case-entry strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 10px;
+    }
+
+    .case-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .case-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+
+    .case-panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .case-art {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid #caccc6;
+      background: #d7d6cd;
+    }
+
+    .case-art::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 46%;
+      background: #313532;
+      clip-path: polygon(0 65%, 16% 48%, 31% 70%, 49% 30%, 67% 60%, 82% 36%, 100% 56%, 100% 100%, 0 100%);
+    }
+
+    .case-art .sun {
+      position: absolute;
+      top: 22%;
+      right: 18%;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: var(--coral);
+    }
+
+    .case-art .figure {
+      position: absolute;
+      left: 42%;
+      bottom: 18%;
+      width: 30px;
+      height: 74px;
+      border-radius: 18px 18px 4px 4px;
+      background: #111312;
+    }
+
+    .case-art .shadow {
+      position: absolute;
+      left: 35%;
+      bottom: 9%;
+      width: 130px;
+      height: 18px;
+      background: rgba(0, 0, 0, .44);
+      transform: skewX(-38deg);
+    }
+
+    .case-art .speech {
+      position: absolute;
+      top: 8%;
+      left: 7%;
+      max-width: 160px;
+      padding: 10px;
+      border: 1px solid #777a75;
+      border-radius: 50%;
+      background: #fff;
+      font-size: 8px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .case-art.after {
+      background: #c9d8d0;
+    }
+
+    .case-art.after .sun {
+      opacity: 0;
+    }
+
+    .case-art.after .shadow {
+      left: 22%;
+      width: 210px;
+      background: rgba(18, 21, 19, .7);
+    }
+
+    .case-art.after .speech { display: none; }
+
+    .case-note {
+      padding: 10px;
+      background: #f3f3ef;
+      color: #6f756f;
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .case-layout > .ui-card:last-child {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .principle-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      height: 100%;
+    }
+
+    .principle-column {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #d8dad3;
+      border-radius: 5px;
+      background: #f3f3ef;
+    }
+
+    .principle-column h4 {
+      margin: 0 0 11px;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .count-badge {
+      float: right;
+      min-width: 20px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #dedfd9;
+      text-align: center;
+      font-size: 8px;
+    }
+
+    .principle-ticket {
+      margin-top: 8px;
+      padding: 11px;
+      border: 1px solid #d2d4ce;
+      border-radius: 4px;
+      background: var(--paper-strong);
+      box-shadow: 0 3px 10px rgba(20, 23, 21, .05);
+    }
+
+    .principle-ticket strong {
+      display: block;
+      font-size: 10px;
+    }
+
+    .principle-ticket p {
+      margin-top: 7px;
+      color: #777d78;
+      font-size: 8px;
+      line-height: 1.45;
+    }
+
+    .ticket-meta {
+      margin-top: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      color: #8c918d;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .watch-col { border-top: 3px solid var(--yellow); }
+    .candidate-col { border-top: 3px solid var(--coral); }
+    .promoted-col { border-top: 3px solid var(--mint); }
+    .retired-col { border-top: 3px solid #969c97; }
+
+    .boot-layout {
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .boot-context {
+      padding: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .boot-tabs {
+      display: flex;
+      border-bottom: 1px solid #d9dad4;
+      background: #f4f4f0;
+    }
+
+    .boot-tab {
+      padding: 11px 14px;
+      border: 0;
+      border-right: 1px solid #d9dad4;
+      background: transparent;
+      cursor: pointer;
+      color: #747a75;
+      font-size: 9px;
+      font-weight: 850;
+    }
+
+    .boot-tab.active {
+      background: var(--paper-strong);
+      color: var(--ink);
+    }
+
+    .boot-code {
+      margin: 0;
+      padding: 17px;
+      overflow: hidden;
+      background: #171a18;
+      color: #d7ded9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .boot-code .key { color: var(--mint); }
+    .boot-code .value { color: #ffd990; }
+    .boot-code .comment { color: #7c8780; }
+
+    .agent-split {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .agent-card {
+      padding: 16px;
+      border: 1px solid #d9dad4;
+      border-radius: 5px;
+      background: var(--paper-strong);
+    }
+
+    .agent-card.writer { border-left: 4px solid var(--blue); }
+    .agent-card.critic { border-left: 4px solid var(--coral); }
+
+    .agent-card h4 {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .agent-card ul {
+      margin: 11px 0 0;
+      padding-left: 16px;
+      color: #747a75;
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 42px;
+      align-items: stretch;
+    }
+
+    .architecture-stage {
+      min-height: 330px;
+      padding: 24px;
+      border: 1px solid #3b403d;
+      background: #191c1a;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .architecture-stage:nth-child(2) { border-top: 4px solid var(--blue); }
+    .architecture-stage:nth-child(3) { border-top: 4px solid var(--coral); }
+    .architecture-stage:nth-child(4) { border-top: 4px solid var(--mint); }
+
+    .architecture-stage .stage-no {
+      color: #777f79;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .architecture-stage h3 { margin-top: 15px; }
+
+    .architecture-stage p {
+      margin-top: 16px;
+      color: #aeb5af;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .file-list {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid #343a36;
+      color: #dbe2dd;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
+      margin-top: 36px;
+      align-items: start;
+    }
+
+    .phase-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .phase {
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .phase-no {
+      color: var(--coral);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .phase strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .phase span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .phase.done .phase-no { color: var(--mint-dark); }
+
+    .decision-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .gate {
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--paper-strong);
+    }
+
+    .gate-id {
+      color: var(--coral);
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .gate h3 {
+      margin-top: 9px;
+      font-size: 20px;
+    }
+
+    .gate p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .metric-hero {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 50px;
+    }
+
+    .metric-big {
+      min-height: 260px;
+      padding: 26px;
+      border: 1px solid #3c423e;
+      background: #191c1a;
+    }
+
+    .metric-big strong {
+      display: block;
+      color: var(--mint);
+      font-size: clamp(44px, 4vw, 68px);
+      line-height: 1;
+    }
+
+    .metric-big h3 {
+      margin-top: 24px;
+      font-size: 18px;
+    }
+
+    .metric-big p {
+      margin-top: 10px;
+      color: #9ba39d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .closing {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr .72fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .closing h2 {
+      max-width: 970px;
+      font-size: clamp(50px, 6.2vw, 100px);
+    }
+
+    .next-action {
+      padding: 30px;
+      border: 1px solid rgba(17, 19, 18, .35);
+      background: rgba(255, 255, 255, .38);
+    }
+
+    .next-action small {
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .next-action h3 {
+      margin-top: 15px;
+      font-size: clamp(26px, 2.6vw, 42px);
+    }
+
+    .next-action ol {
+      margin: 25px 0 0;
+      padding-left: 22px;
+      display: grid;
+      gap: 13px;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .deck-controls {
+      position: fixed;
+      z-index: 50;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: grid;
+      gap: 8px;
+    }
+
+    .deck-controls button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 50%;
+      background: rgba(17, 19, 18, .78);
+      color: var(--white);
+      cursor: pointer;
+      font-size: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .deck-controls button:hover { background: var(--coral); }
+
+    .progress {
+      position: fixed;
+      z-index: 55;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 4px;
+      background: var(--coral);
+      transition: width .18s ease;
+    }
+
+    .slide-count {
+      position: fixed;
+      z-index: 55;
+      right: 18px;
+      bottom: 16px;
+      min-width: 64px;
+      padding: 7px 10px;
+      border-radius: 4px;
+      background: rgba(17, 19, 18, .82);
+      color: var(--white);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 850;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 1050px) {
+      .hero-layout,
+      .closing,
+      .roadmap { grid-template-columns: 1fr; }
+      .memory-visual { display: none; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .problem, .problem + .problem {
+        padding: 18px 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .boundary { grid-template-columns: 1fr; gap: 12px; }
+      .boundary-arrow { transform: rotate(90deg); }
+      .growth-loop { grid-template-columns: repeat(3, 1fr); }
+      .ui-shell { grid-template-columns: 150px 1fr; height: min(68vh, 620px); }
+      .metric-hero, .architecture { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      html { scroll-snap-type: none; }
+      .slide {
+        height: auto;
+        min-height: 100svh;
+        overflow: visible;
+        padding: 26px 20px 54px;
+      }
+      .topline .status { display: none; }
+      .lead { font-size: 18px; }
+      .growth-loop,
+      .metric-hero,
+      .architecture { grid-template-columns: 1fr; }
+      .growth-step::after { display: none; }
+      .ui-shell {
+        height: auto;
+        min-height: 680px;
+        grid-template-columns: 1fr;
+      }
+      .ui-sidebar { display: none; }
+      .ui-grid,
+      .feedback-layout,
+      .case-layout,
+      .case-compare,
+      .boot-layout,
+      .principle-board { grid-template-columns: 1fr; }
+      .ui-body { overflow: auto; }
+      .principle-board { overflow: auto; }
+      .deck-controls { display: none; }
+      .slide-count { display: none; }
+      .footer { padding-right: 0; }
+    }
+
+    @media print {
+      html, body { background: var(--white); }
+      .slide {
+        width: 1600px;
+        height: 900px;
+        min-height: 900px;
+        break-after: page;
+      }
+      .deck-controls, .progress, .slide-count { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <div class="slide-count" aria-live="polite">01 / 12</div>
+
+  <nav class="deck-controls" aria-label="슬라이드 탐색">
+    <button type="button" data-action="prev" title="이전 슬라이드" aria-label="이전 슬라이드">↑</button>
+    <button type="button" data-action="next" title="다음 슬라이드" aria-label="다음 슬라이드">↓</button>
+  </nav>
+
+  <main class="deck">
+    <section class="slide dark" id="slide-1" data-number="01">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Creative Loop Engineering</div>
+        <div class="status"><span class="status-dot"></span> CLE2-19 · 개발 계획</div>
+      </div>
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <div class="eyebrow">CLE5 Development Plan</div>
+          <h1>기억하는<br><span class="accent-mint">창작 시스템</span></h1>
+          <p class="lead">피드백이 작품 수정에서 끝나지 않고, 다음 세션의 판단 기준으로 성장하는 창작 에이전트.</p>
+          <div class="hero-meta">
+            <span class="label">Issue #51</span>
+            <span class="label">현재 Phase 2 / 5</span>
+            <span class="label">UI Concept Included</span>
+          </div>
+        </div>
+        <div class="memory-visual" aria-label="외재화된 기억 구조">
+          <div class="orbit one"></div>
+          <div class="orbit two"></div>
+          <div class="orbit three"></div>
+          <div class="memory-core">외재화된<br>기억</div>
+          <div class="memory-node node-a">사례<em>before / after</em></div>
+          <div class="memory-node node-b">피드백<em>tagged evidence</em></div>
+          <div class="memory-node node-c">원칙<em>promote / retire</em></div>
+          <div class="memory-node node-d">자기평가<em>evidence first</em></div>
+          <div class="memory-node node-e">새 세션<em>boot context</em></div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>CLE4의 철학을 계승하고, 경험의 생명주기를 추가한다.</span>
+        <span class="source">기준: CLE2-19 GOAL · PLAN · GROWTH</span>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-2" data-number="02">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Why CLE5</div>
+        <div class="status">문제 정의</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">The Missing Loop</div>
+        <p class="big-quote">“성장은 폴더가 아니라<br><span class="accent-coral">루프</span>여야 한다.”</p>
+        <div class="problem-grid">
+          <div class="problem">
+            <span class="problem-no">01</span>
+            <h3>피드백이 소멸한다</h3>
+            <p>한 작품을 수정한 뒤 다음 세션에서 같은 실패가 반복된다.</p>
+          </div>
+          <div class="problem">
+            <span class="problem-no">02</span>
+            <h3>원칙이 추상적이다</h3>
+            <p>“기교가 보이지 않아야 한다”는 문장만으로는 판정과 재현이 어렵다.</p>
+          </div>
+          <div class="problem">
+            <span class="problem-no">03</span>
+            <h3>기억이 비대해진다</h3>
+            <p>모든 기록을 읽히면 컨텍스트 비용과 과거 사례 과적합이 커진다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>문제의 핵심은 모델 성능이 아니라 경험을 다음 판단으로 연결하는 구조다.</span>
+        <span class="source">DISCOVERY.md · Unknown Map</span>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-3" data-number="03">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Product Boundary</div>
+        <div class="status">CLE4 → CLE5</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">Clear Ownership</div>
+        <h2>철학은 유지하고,<br>경험의 책임을 추가한다.</h2>
+        <div class="boundary">
+          <article class="system-half">
+            <span class="system-id">CLE4 · Creative Core</span>
+            <h3>작품을 만든다</h3>
+            <ul>
+              <li>김환기 철학 6원칙</li>
+              <li>감각 기반 창작 파이프라인</li>
+              <li>에피소드 생성과 작품 수정</li>
+            </ul>
+          </article>
+          <div class="boundary-arrow" aria-hidden="true">→</div>
+          <article class="system-half cle5">
+            <span class="system-id">CLE5 · Growth Layer</span>
+            <h3>판단을 성장시킨다</h3>
+            <ul>
+              <li>피드백과 자기평가의 근거화</li>
+              <li>사례·태그·원칙 생명주기</li>
+              <li>새 세션의 선택적 기억 상속</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+      <div class="footer">
+        <span>모델 자체의 영구 학습은 범위 밖이다. 성장은 Git과 파일에 남는다.</span>
+        <span class="source">GOAL.md · DECISIONS.md</span>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-4" data-number="04">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Growth Loop</div>
+        <div class="status">G1–G5 실행 계약</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">Outer Loop</div>
+        <h2>한 작품의 결과가<br>다음 작품의 기준이 된다.</h2>
+        <div class="growth-loop">
+          <article class="growth-step">
+            <span class="step-id">G1</span>
+            <h3>피드백 태깅</h3>
+            <p>사람 피드백을 원인 태그와 패널 근거로 구조화한다.</p>
+            <div class="growth-output">feedback-tags.yaml</div>
+          </article>
+          <article class="growth-step">
+            <span class="step-id">G2</span>
+            <h3>자기평가</h3>
+            <p>사람 피드백 전에 6원칙별 판단과 불확실성을 기록한다.</p>
+            <div class="growth-output">self-assessment.md</div>
+          </article>
+          <article class="growth-step">
+            <span class="step-id">G3</span>
+            <h3>사례 등록</h3>
+            <p>실패와 수정 결과를 판정 가능한 before/after 쌍으로 남긴다.</p>
+            <div class="growth-output">CASE-xxxx.md</div>
+          </article>
+          <article class="growth-step">
+            <span class="step-id">G4</span>
+            <h3>승격·은퇴</h3>
+            <p>2회 WATCH, 3회 승격 후보, 4회차 미발생 시 은퇴를 심사한다.</p>
+            <div class="growth-output">principles.yaml</div>
+          </article>
+          <article class="growth-step">
+            <span class="step-id">G5</span>
+            <h3>시스템 개정</h3>
+            <p>승인된 판단만 SYSTEM과 체크리스트에 반영하고 버전 기록한다.</p>
+            <div class="growth-output">CHANGELOG.md</div>
+          </article>
+        </div>
+      </div>
+      <div class="footer">
+        <span>자동 판정은 후보를 만들고, 미학적 원칙의 확정은 사람이 승인한다.</span>
+        <span class="source">research/GROWTH.md</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-5" data-number="05">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> UI Concept 01</div>
+        <div class="status"><span class="status-dot"></span> 제안 화면 · Control Room</div>
+      </div>
+      <div class="slide-content">
+        <div class="ui-shell">
+          <aside class="ui-sidebar">
+            <div class="ui-logo"><span class="ui-logo-mark">5</span> CLE5</div>
+            <nav class="ui-nav" aria-label="CLE5 제품 화면">
+              <button type="button" class="active" data-slide-target="5"><span class="nav-icon">⌂</span>Control Room</button>
+              <button type="button" data-slide-target="6"><span class="nav-icon">◎</span>Feedback Inbox</button>
+              <button type="button" data-slide-target="7"><span class="nav-icon">▣</span>Case Library</button>
+              <button type="button" data-slide-target="8"><span class="nav-icon">⇧</span>Principles</button>
+              <button type="button" data-slide-target="9"><span class="nav-icon">◇</span>Session Boot</button>
+            </nav>
+            <div class="ui-session"><strong>EP003 · Growth Cycle</strong>writer v4.1 / critic isolated<br>context 8.4k / 16k</div>
+          </aside>
+          <div class="ui-main">
+            <header class="ui-header">
+              <div>
+                <div class="ui-title">Control Room</div>
+                <div class="ui-subtitle">작품 진행과 성장 증거를 한 화면에서 관리</div>
+              </div>
+              <div class="ui-actions">
+                <button class="ui-button" type="button">Export context</button>
+                <button class="ui-button primary" type="button">Run next step</button>
+              </div>
+            </header>
+            <div class="ui-body">
+              <div class="ui-grid">
+                <div class="ui-stack">
+                  <div class="ui-card">
+                    <div class="ui-card-head">
+                      <div class="ui-card-title">EP003 성장 루프</div>
+                      <div class="ui-small">G3 · 사례 등록 진행 중</div>
+                    </div>
+                    <div class="pipeline">
+                      <div class="pipeline-item done"><span class="pipeline-id">G1</span><strong>피드백<br>태깅</strong></div>
+                      <div class="pipeline-item done"><span class="pipeline-id">G2</span><strong>자기<br>평가</strong></div>
+                      <div class="pipeline-item active"><span class="pipeline-id">G3</span><strong>사례<br>등록</strong></div>
+                      <div class="pipeline-item"><span class="pipeline-id">G4</span><strong>승격<br>심사</strong></div>
+                      <div class="pipeline-item"><span class="pipeline-id">G5</span><strong>시스템<br>개정</strong></div>
+                    </div>
+                  </div>
+                  <div class="ui-card">
+                    <div class="ui-card-head">
+                      <div class="ui-card-title">최근 성장 활동</div>
+                      <div class="ui-small">Git evidence linked</div>
+                    </div>
+                    <div class="activity">
+                      <div class="activity-item"><span class="activity-dot"></span><span>CASE-0008 · 설명과잉 수정본 등록</span><time>12m</time></div>
+                      <div class="activity-item"><span class="activity-dot"></span><span>기교노출 카운트 1 → 2 · WATCH 전환</span><time>28m</time></div>
+                      <div class="activity-item"><span class="activity-dot"></span><span>비평가 결과와 자기평가 간극 18점</span><time>42m</time></div>
+                      <div class="activity-item"><span class="activity-dot"></span><span>EP003 피드백 원본 고정 · commit 4ad7</span><time>1h</time></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ui-stack">
+                  <div class="ui-card">
+                    <div class="ui-card-head">
+                      <div class="ui-card-title">성장 지표</div>
+                      <div class="ui-small">최근 4 episodes</div>
+                    </div>
+                    <div class="metric-row">
+                      <div class="metric"><strong>−31%</strong><span>반복 실패율</span></div>
+                      <div class="metric"><strong>2.1</strong><span>평균 재작업</span></div>
+                      <div class="metric"><strong>8</strong><span>활성 원칙</span></div>
+                    </div>
+                  </div>
+                  <div class="ui-card decision-card">
+                    <h4>사람 승인 필요</h4>
+                    <p>‘설명과잉’을 공식 금지 원칙으로 승격할 근거 사례 3개가 준비되었습니다.</p>
+                    <button class="ui-button approve" type="button">Review promotion</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>UI 목표: 작업 상태가 아니라 “성장 증거와 다음 승인”을 전면에 둔다.</span>
+        <span class="source">CLE5 UI 제안 · 구현 전 프로토타입</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-6" data-number="06">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> UI Concept 02</div>
+        <div class="status"><span class="status-dot"></span> 제안 화면 · Feedback Inbox</div>
+      </div>
+      <div class="slide-content">
+        <div class="ui-shell">
+          <aside class="ui-sidebar">
+            <div class="ui-logo"><span class="ui-logo-mark">5</span> CLE5</div>
+            <nav class="ui-nav" aria-label="CLE5 제품 화면">
+              <button type="button" data-slide-target="5"><span class="nav-icon">⌂</span>Control Room</button>
+              <button type="button" class="active" data-slide-target="6"><span class="nav-icon">◎</span>Feedback Inbox</button>
+              <button type="button" data-slide-target="7"><span class="nav-icon">▣</span>Case Library</button>
+              <button type="button" data-slide-target="8"><span class="nav-icon">⇧</span>Principles</button>
+              <button type="button" data-slide-target="9"><span class="nav-icon">◇</span>Session Boot</button>
+            </nav>
+            <div class="ui-session"><strong>G1 · Feedback tagging</strong>3 items pending<br>human evidence required</div>
+          </aside>
+          <div class="ui-main">
+            <header class="ui-header">
+              <div>
+                <div class="ui-title">Feedback Inbox</div>
+                <div class="ui-subtitle">사람의 언어를 판정 가능한 원인과 근거로 변환</div>
+              </div>
+              <div class="ui-actions">
+                <button class="ui-button" type="button">Save draft</button>
+                <button class="ui-button primary" type="button">Confirm tags</button>
+              </div>
+            </header>
+            <div class="ui-body">
+              <div class="feedback-layout">
+                <div class="ui-card">
+                  <div class="ui-card-head"><div class="ui-card-title">EP003 · 미분류 피드백</div><span class="ui-small">3 pending</span></div>
+                  <div class="feedback-list">
+                    <div class="feedback-item active"><strong>Panel 18</strong><span class="ui-small">“그림이 이미 말하는데 대사가 한 번 더 설명한다.”</span></div>
+                    <div class="feedback-item"><strong>Panel 27</strong><span class="ui-small">“별이 장식처럼 보이고 기억의 감각은 약하다.”</span></div>
+                    <div class="feedback-item"><strong>Panel 31</strong><span class="ui-small">“마지막 침묵은 좋다. 손을 더 대지 않아도 된다.”</span></div>
+                  </div>
+                </div>
+                <div class="ui-card">
+                  <div class="ui-card-head"><div class="ui-card-title">Panel 18 · 원인 판정</div><span class="ui-small">source locked</span></div>
+                  <div class="feedback-quote">“그림이 이미 말하는데 대사가 한 번 더 설명한다.”</div>
+                  <div class="tag-cloud">
+                    <span class="tag active">설명과잉</span>
+                    <span class="tag">기교노출</span>
+                    <span class="tag">감각부재</span>
+                    <span class="tag">그리움부재</span>
+                    <span class="tag">여백실패</span>
+                    <span class="tag">+ 새 태그</span>
+                  </div>
+                  <div class="evidence">
+                    <div class="evidence-box"><strong>판정 근거</strong><p>화면의 긴 그림자가 이별을 이미 전달하지만, 대사가 같은 의미를 직접 반복한다.</p></div>
+                    <div class="evidence-box"><strong>수정 가설</strong><p>대사를 삭제하고 침묵 2초를 유지한다. 인접 패널과 감정 연결만 재검사한다.</p></div>
+                  </div>
+                  <div class="ui-actions" style="margin-top:14px">
+                    <button class="ui-button" type="button">Compare self-review</button>
+                    <button class="ui-button approve" type="button">Add to case queue</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>태그만 남기지 않는다. 패널, 원인, 수정 가설을 함께 고정한다.</span>
+        <span class="source">feedback-tags.yaml · self-assessment-template.md</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-7" data-number="07">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> UI Concept 03</div>
+        <div class="status"><span class="status-dot"></span> 제안 화면 · Case Library</div>
+      </div>
+      <div class="slide-content">
+        <div class="ui-shell">
+          <aside class="ui-sidebar">
+            <div class="ui-logo"><span class="ui-logo-mark">5</span> CLE5</div>
+            <nav class="ui-nav" aria-label="CLE5 제품 화면">
+              <button type="button" data-slide-target="5"><span class="nav-icon">⌂</span>Control Room</button>
+              <button type="button" data-slide-target="6"><span class="nav-icon">◎</span>Feedback Inbox</button>
+              <button type="button" class="active" data-slide-target="7"><span class="nav-icon">▣</span>Case Library</button>
+              <button type="button" data-slide-target="8"><span class="nav-icon">⇧</span>Principles</button>
+              <button type="button" data-slide-target="9"><span class="nav-icon">◇</span>Session Boot</button>
+            </nav>
+            <div class="ui-session"><strong>Representative cases</strong>8 active / 2 archived<br>boot budget 4 cases</div>
+          </aside>
+          <div class="ui-main">
+            <header class="ui-header">
+              <div>
+                <div class="ui-title">Case Library</div>
+                <div class="ui-subtitle">철학을 설명하지 않고, 대조 가능한 판단으로 전승</div>
+              </div>
+              <div class="ui-actions">
+                <button class="ui-button" type="button">Filter: representative</button>
+                <button class="ui-button primary" type="button">New case</button>
+              </div>
+            </header>
+            <div class="ui-body">
+              <div class="case-layout">
+                <div class="ui-card case-index">
+                  <div class="case-entry active"><small>CASE-0001 · 기교노출</small><strong>태양 대신 그림자</strong></div>
+                  <div class="case-entry"><small>CASE-0004 · 설명과잉</small><strong>대사가 장면을 반복함</strong></div>
+                  <div class="case-entry"><small>CASE-0006 · 여백성공</small><strong>빈 의자로 남긴 부재</strong></div>
+                  <div class="case-entry"><small>CASE-0008 · 감각부재</small><strong>별이 장식으로만 남음</strong></div>
+                </div>
+                <div class="ui-card">
+                  <div class="ui-card-head">
+                    <div><div class="ui-card-title">CASE-0001 · 태양 대신 그림자</div><div class="ui-small">대표 사례 · source: blueprint chapter 5</div></div>
+                    <span class="tag active">기교노출</span>
+                  </div>
+                  <div class="case-compare">
+                    <div class="case-panel">
+                      <div class="case-panel-title"><span>Before · 실패</span><span class="accent-coral">직접 설명</span></div>
+                      <div class="case-art">
+                        <span class="sun"></span><span class="figure"></span><span class="shadow"></span>
+                        <span class="speech">“저무는 태양처럼<br>우리도 헤어지는구나.”</span>
+                      </div>
+                      <div class="case-note"><strong>판정:</strong> 상징과 대사가 같은 의미를 중복한다. 기교가 먼저 보인다.</div>
+                    </div>
+                    <div class="case-panel">
+                      <div class="case-panel-title"><span>After · 통과</span><span style="color:var(--mint-dark)">감각으로 전달</span></div>
+                      <div class="case-art after">
+                        <span class="sun"></span><span class="figure"></span><span class="shadow"></span>
+                        <span class="speech"></span>
+                      </div>
+                      <div class="case-note"><strong>판정:</strong> 태양과 설명을 지우고, 길어진 그림자만 남겨 이별을 체감하게 한다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>좋은 사례는 프롬프트 예시가 아니라 “판정 근거를 가진 대조쌍”이다.</span>
+        <span class="source">CASE-0001 · CASE-template.md</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-8" data-number="08">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> UI Concept 04</div>
+        <div class="status"><span class="status-dot"></span> 제안 화면 · Principle Lifecycle</div>
+      </div>
+      <div class="slide-content">
+        <div class="ui-shell">
+          <aside class="ui-sidebar">
+            <div class="ui-logo"><span class="ui-logo-mark">5</span> CLE5</div>
+            <nav class="ui-nav" aria-label="CLE5 제품 화면">
+              <button type="button" data-slide-target="5"><span class="nav-icon">⌂</span>Control Room</button>
+              <button type="button" data-slide-target="6"><span class="nav-icon">◎</span>Feedback Inbox</button>
+              <button type="button" data-slide-target="7"><span class="nav-icon">▣</span>Case Library</button>
+              <button type="button" class="active" data-slide-target="8"><span class="nav-icon">⇧</span>Principles</button>
+              <button type="button" data-slide-target="9"><span class="nav-icon">◇</span>Session Boot</button>
+            </nav>
+            <div class="ui-session"><strong>System v4.1 candidate</strong>8 active principles<br>1 approval pending</div>
+          </aside>
+          <div class="ui-main">
+            <header class="ui-header">
+              <div>
+                <div class="ui-title">Principle Lifecycle</div>
+                <div class="ui-subtitle">카운트는 자동화하고, 미학적 판단은 근거와 승인으로 확정</div>
+              </div>
+              <div class="ui-actions">
+                <button class="ui-button" type="button">Thresholds: 2 / 3 / 4</button>
+                <button class="ui-button primary" type="button">Review changes</button>
+              </div>
+            </header>
+            <div class="ui-body">
+              <div class="principle-board">
+                <section class="principle-column"><h4>Active <span class="count-badge">6</span></h4>
+                  <div class="principle-ticket"><strong>감정 이름을 쓰지 않는다</strong><p>몸, 거리, 사물의 변화로 감정을 전달한다.</p><div class="ticket-meta"><span>v4.0</span><span>6 cases</span></div></div>
+                  <div class="principle-ticket"><strong>빈 공간도 사건이다</strong><p>여백이 부재와 시간을 작동시키는지 확인한다.</p><div class="ticket-meta"><span>v4.0</span><span>4 cases</span></div></div>
+                </section>
+                <section class="principle-column watch-col"><h4>Watch <span class="count-badge">2</span></h4>
+                  <div class="principle-ticket"><strong>기교노출</strong><p>상징이 의미보다 먼저 보인 사례가 2회 발생했다.</p><div class="ticket-meta"><span>2 / 3</span><span>CASE-0001, 07</span></div></div>
+                  <div class="principle-ticket"><strong>별의 장식화</strong><p>별이 관계의 기억 없이 배경 장식으로 사용됐다.</p><div class="ticket-meta"><span>2 / 3</span><span>CASE-0006, 08</span></div></div>
+                </section>
+                <section class="principle-column candidate-col"><h4>Promotion <span class="count-badge">1</span></h4>
+                  <div class="principle-ticket"><strong>화면이 말한 것을 대사가 반복하는가?</strong><p>설명과잉 사례 3개와 수정본이 준비됨. 사람 승인 대기.</p><div class="ticket-meta"><span>3 / 3</span><span>Review →</span></div></div>
+                </section>
+                <section class="principle-column retired-col"><h4>Retirement <span class="count-badge">1</span></h4>
+                  <div class="principle-ticket"><strong>색채 수 제한</strong><p>4개 에피소드 연속 미발생. 상위 원칙과 통합 검토.</p><div class="ticket-meta"><span>0 / 4</span><span>Merge?</span></div></div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>원칙은 쌓이기만 하지 않는다. 관찰, 승격, 통합, 은퇴의 생명주기를 가진다.</span>
+        <span class="source">GROWTH.md G4 · DECISIONS.md</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-9" data-number="09">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> UI Concept 05</div>
+        <div class="status"><span class="status-dot"></span> 제안 화면 · Session Boot</div>
+      </div>
+      <div class="slide-content">
+        <div class="ui-shell">
+          <aside class="ui-sidebar">
+            <div class="ui-logo"><span class="ui-logo-mark">5</span> CLE5</div>
+            <nav class="ui-nav" aria-label="CLE5 제품 화면">
+              <button type="button" data-slide-target="5"><span class="nav-icon">⌂</span>Control Room</button>
+              <button type="button" data-slide-target="6"><span class="nav-icon">◎</span>Feedback Inbox</button>
+              <button type="button" data-slide-target="7"><span class="nav-icon">▣</span>Case Library</button>
+              <button type="button" data-slide-target="8"><span class="nav-icon">⇧</span>Principles</button>
+              <button type="button" class="active" data-slide-target="9"><span class="nav-icon">◇</span>Session Boot</button>
+            </nav>
+            <div class="ui-session"><strong>Context budget</strong>8.4k selected / 16k max<br>4 representative cases</div>
+          </aside>
+          <div class="ui-main">
+            <header class="ui-header">
+              <div>
+                <div class="ui-title">Session Boot</div>
+                <div class="ui-subtitle">새 세션에 필요한 기억만 조립하고 작가와 비평가를 분리</div>
+              </div>
+              <div class="ui-actions">
+                <button class="ui-button" type="button">Preview tokens</button>
+                <button class="ui-button primary" type="button">Start session</button>
+              </div>
+            </header>
+            <div class="ui-body">
+              <div class="boot-layout">
+                <div class="ui-card boot-context">
+                  <div class="boot-tabs">
+                    <button class="boot-tab active" type="button">Selected context</button>
+                    <button class="boot-tab" type="button">Excluded</button>
+                    <button class="boot-tab" type="button">Provenance</button>
+                  </div>
+                  <pre class="boot-code"><span class="comment"># CLE5 boot-context / EP004</span>
+<span class="key">philosophy:</span> <span class="value">SYSTEM.md v4.1</span>
+<span class="key">active_principles:</span> <span class="value">8</span>
+<span class="key">watch_items:</span>
+  - <span class="value">기교노출</span>       <span class="comment"># 2 cases</span>
+  - <span class="value">별의 장식화</span>   <span class="comment"># 2 cases</span>
+<span class="key">representative_cases:</span>
+  - <span class="value">CASE-0001</span>     <span class="comment"># 기교노출</span>
+  - <span class="value">CASE-0004</span>     <span class="comment"># 설명과잉</span>
+  - <span class="value">CASE-0006</span>     <span class="comment"># 여백성공</span>
+  - <span class="value">CASE-0008</span>     <span class="comment"># 감각부재</span>
+<span class="key">previous_gap:</span> <span class="value">18 / 100</span>
+<span class="key">human_gates:</span> <span class="value">[concept, promotion, release]</span>
+
+<span class="comment"># Full archive excluded from boot context.</span></pre>
+                </div>
+                <div class="agent-split">
+                  <article class="agent-card writer">
+                    <h4>Writer Agent · 창작</h4>
+                    <ul>
+                      <li>철학, 현재 에피소드, 활성 원칙을 읽음</li>
+                      <li>대표 사례는 참고하되 복제하지 않음</li>
+                      <li>설계 의도와 선택 근거를 별도 기록</li>
+                    </ul>
+                  </article>
+                  <article class="agent-card critic">
+                    <h4>Critic Agent · 독립 판정</h4>
+                    <ul>
+                      <li>작가의 설계 의도와 내부 추론은 보지 않음</li>
+                      <li>결과물, 사례, 판정 기준만 읽음</li>
+                      <li>불확실성과 근거 패널을 함께 반환</li>
+                    </ul>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>전체 기억을 주입하지 않는다. 현재 위험과 대표 사례만 예산 안에서 상속한다.</span>
+        <span class="source">DISCOVERY.md · GROWTH.md 부팅 시퀀스</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-10" data-number="10">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> System Design</div>
+        <div class="status">파일이 곧 제품의 기억</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">Auditable by Design</div>
+        <h2>판단이 파일로 남고,<br>Git이 성장의 이력이 된다.</h2>
+        <div class="architecture">
+          <article class="architecture-stage">
+            <span class="stage-no">01 · INPUT</span>
+            <h3>창작 결과</h3>
+            <p>CLE4 산출물과 사람 피드백을 원본 그대로 고정한다.</p>
+            <div class="file-list">episodes/EPxxx/<br>feedback/raw/<br>artifacts/</div>
+          </article>
+          <article class="architecture-stage">
+            <span class="stage-no">02 · EVIDENCE</span>
+            <h3>경험 구조화</h3>
+            <p>태그, 자기평가, 비평가 결과와 사례를 연결한다.</p>
+            <div class="file-list">feedback-tags.yaml<br>assessments/<br>case-library/</div>
+          </article>
+          <article class="architecture-stage">
+            <span class="stage-no">03 · POLICY</span>
+            <h3>원칙 생명주기</h3>
+            <p>WATCH, 승격 후보, 승인, 은퇴 상태를 검증한다.</p>
+            <div class="file-list">principles.yaml<br>approvals/<br>CHANGELOG.md</div>
+          </article>
+          <article class="architecture-stage">
+            <span class="stage-no">04 · INHERIT</span>
+            <h3>세대 상속</h3>
+            <p>다음 세션에 필요한 기억만 선택해 부팅 컨텍스트를 만든다.</p>
+            <div class="file-list">SYSTEM.md<br>boot-context.json<br>metrics.json</div>
+          </article>
+        </div>
+      </div>
+      <div class="footer">
+        <span>모든 승격과 은퇴는 사례, 결정, 사람 승인, 커밋으로 역추적 가능해야 한다.</span>
+        <span class="source">GOAL.md · TESTS.md</span>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-11" data-number="11">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Delivery Plan</div>
+        <div class="status"><span class="status-dot"></span> 현재 Phase 2 / 5</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">Roadmap & Human Gates</div>
+        <h2>5단계로 구현하고,<br>세 번 사람이 결정한다.</h2>
+        <div class="roadmap">
+          <div class="phase-list">
+            <div class="phase done"><span class="phase-no">01</span><strong>기준선·자료 정리</strong><span>완료</span></div>
+            <div class="phase"><span class="phase-no">02</span><strong>실행 계약·데이터 모델</strong><span>1일</span></div>
+            <div class="phase"><span class="phase-no">03</span><strong>Growth Runner·검증기</strong><span>2일</span></div>
+            <div class="phase"><span class="phase-no">04</span><strong>작가/비평가 분리·시범</strong><span>1–2일</span></div>
+            <div class="phase"><span class="phase-no">05</span><strong>측정·개정·확장 결정</strong><span>1일</span></div>
+          </div>
+          <div class="decision-stack">
+            <article class="gate"><span class="gate-id">GATE 0 · NOW</span><h3>시스템 경계</h3><p>독립 CLE5 저장소로 만들지, CLE4 메이저 개정으로 운영할지 승인.</p></article>
+            <article class="gate"><span class="gate-id">GATE 1 · PILOT</span><h3>첫 시범 에피소드</h3><p>원본·수정본·피드백 출처가 확인된 한 에피소드를 선택.</p></article>
+            <article class="gate"><span class="gate-id">GATE 2 · POLICY</span><h3>원칙 승격</h3><p>사례 3개와 판정 가능한 문구를 검토한 뒤 SYSTEM 반영 승인.</p></article>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span>계획상 총 5.5–6.5일. 현재는 구현 전 데이터 모델 확정 단계다.</span>
+        <span class="source">PLAN.md · STATUS.md</span>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-12" data-number="12">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Definition of Growth</div>
+        <div class="status">성공 기준</div>
+      </div>
+      <div class="slide-content">
+        <div class="eyebrow">Measured, Not Claimed</div>
+        <h2>“성장했다”를<br>네 가지 숫자로 증명한다.</h2>
+        <div class="metric-hero">
+          <article class="metric-big"><strong>↓</strong><h3>반복 실패율</h3><p>같은 태그가 다음 에피소드에서 다시 발생하는 비율.</p></article>
+          <article class="metric-big"><strong>Δ</strong><h3>판단 간극</h3><p>자기평가, 독립 비평, 사람 피드백 사이의 차이.</p></article>
+          <article class="metric-big"><strong>↺</strong><h3>재작업 횟수</h3><p>승인 가능한 결과까지 필요한 수정 루프의 수.</p></article>
+          <article class="metric-big"><strong>≤10</strong><h3>원칙 크기</h3><p>활성 체크리스트가 비대해지지 않는지 함께 관측.</p></article>
+        </div>
+      </div>
+      <div class="footer">
+        <span>기억이 많아지는 것이 성장 아니다. 실패는 줄고, 좋은 판단은 재현되어야 한다.</span>
+        <span class="source">GOAL.md · TESTS.md</span>
+      </div>
+    </section>
+
+    <section class="slide mint" id="slide-13" data-number="13">
+      <div class="topline">
+        <div class="brand"><span class="brand-mark">5</span> Next Move</div>
+        <div class="status" style="color:#1f503e">CLE2-19 · Issue #51</div>
+      </div>
+      <div class="closing">
+        <div>
+          <div class="eyebrow" style="color:#164d39">From Memory Folder to Growth System</div>
+          <h2>다음 작품은<br>이전 작품보다<br>덜 잊어야 한다.</h2>
+        </div>
+        <aside class="next-action">
+          <small>Immediate execution</small>
+          <h3>Phase 2 완료 조건</h3>
+          <ol>
+            <li>CLE5 저장소 경계 승인</li>
+            <li>tag / case / assessment / principle schema 확정</li>
+            <li>첫 시범 에피소드와 승인 자료 선택</li>
+            <li>Growth Runner 구현 착수</li>
+          </ol>
+        </aside>
+      </div>
+      <div class="footer" style="color:#225d47">
+        <span>CLE5 · 자기성장형 창작 에이전트 시스템</span>
+        <span class="source">Creative Loop Engineering</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll(".slide")];
+      const progress = document.querySelector(".progress");
+      const count = document.querySelector(".slide-count");
+      let activeIndex = 0;
+
+      function goTo(index) {
+        activeIndex = Math.max(0, Math.min(slides.length - 1, index));
+        slides[activeIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function updateActive() {
+        const viewportCenter = window.scrollY + window.innerHeight / 2;
+        let closest = 0;
+        let distance = Infinity;
+        slides.forEach((slide, index) => {
+          const center = slide.offsetTop + slide.offsetHeight / 2;
+          const currentDistance = Math.abs(center - viewportCenter);
+          if (currentDistance < distance) {
+            distance = currentDistance;
+            closest = index;
+          }
+        });
+        activeIndex = closest;
+        const current = String(activeIndex + 1).padStart(2, "0");
+        const total = String(slides.length).padStart(2, "0");
+        count.textContent = `${current} / ${total}`;
+        progress.style.width = `${((activeIndex + 1) / slides.length) * 100}%`;
+      }
+
+      document.querySelector('[data-action="prev"]').addEventListener("click", () => goTo(activeIndex - 1));
+      document.querySelector('[data-action="next"]').addEventListener("click", () => goTo(activeIndex + 1));
+
+      document.querySelectorAll("[data-slide-target]").forEach((button) => {
+        button.addEventListener("click", () => goTo(Number(button.dataset.slideTarget) - 1));
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (["ArrowDown", "PageDown", " ", "ArrowRight"].includes(event.key)) {
+          event.preventDefault();
+          goTo(activeIndex + 1);
+        }
+        if (["ArrowUp", "PageUp", "ArrowLeft"].includes(event.key)) {
+          event.preventDefault();
+          goTo(activeIndex - 1);
+        }
+        if (event.key === "Home") goTo(0);
+        if (event.key === "End") goTo(slides.length - 1);
+      });
+
+      let ticking = false;
+      window.addEventListener("scroll", () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateActive();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      updateActive();
+    })();
+  </script>
+</body>
+</html>
