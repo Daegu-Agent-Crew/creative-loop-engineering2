@@ -1174,6 +1174,93 @@
         { title: 'DECISIONS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/DECISIONS.md', description: 'YouTube, OpenClaw, Gemini, Pages, Cloudflare, USDC 결정 근거' },
         { title: 'TESTS', path: 'tasks/CLE2-16/creatorflow-agentic-commerce/TESTS.md', description: '기능·보안·온체인·데모 완료 기준' }
       ]
+    },
+    {
+      id: 'CLE2-19',
+      cle2Id: 'CLE2-19',
+      slug: 'cle5-development-plan',
+      title: 'CLE5 · 자기성장형 창작 에이전트',
+      issue: 51,
+      prs: [],
+      deliverables: [
+        { title: 'CLE5 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/51', description: '개발 범위, 완료 기준과 진행 타임라인' },
+        { title: 'Growth Loop 원본', type: 'file', url: 'tasks/CLE2-19/cle5-development-plan/research/GROWTH.md', description: 'G1~G5, 승격/은퇴와 세대 상속 설계' },
+        { title: '사례 라이브러리', type: 'file', url: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 Before/After 사례와 재현 조건' }
+      ],
+      goal: {
+        objective: 'CLE4의 감각 기반 창작 철학을 계승하고 피드백, 자기평가, 사례와 원칙 개정이 다음 세션에 상속되는 CLE5 개발 계약을 수립한다.',
+        successCriteria: [
+          'CLE4와 CLE5의 경계 및 마이그레이션 원칙이 문서화된다',
+          'G1~G5 Growth Loop와 데이터 형식이 정의된다',
+          '작가/비평가 분리 및 사람 승인 지점이 정의된다',
+          '새 세션 부팅 시 이전 경험과 WATCH 항목을 상속한다',
+          'CASE-0001을 포함한 한 번의 성장 루프를 재현한다',
+          '반복 실패율, 피드백 간극, 재작업과 체크리스트 크기를 관측한다'
+        ],
+        scope: {
+          in: ['CLE5 시스템 경계', '파일 기반 memory', 'feedback tag와 case library', '원칙 승격/은퇴', '작가/비평가 분리', '부팅 컨텍스트', '한 에피소드 시범 운영'],
+          out: ['모델 파인튜닝', 'CLE4 전체 일괄 변환', '전체 에피소드 제작', '완전 무인 미학 승인', '웹 UI 즉시 완성']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['CLE4는 감각 기반 철학과 창작 파이프라인을 선행 기준으로 가진다', '모델 자체는 프로젝트 경험을 세션 간 영구 학습하지 않는다', 'CASE-0001과 기교노출 1회가 초기 데이터로 있다'],
+          knownUnknown: ['CLE5 독립 저장소 여부', 'CLE4 원본 blueprint의 공식 Git 경로', '2/3/4회 임계값의 운영 적합성', '비평가 모델과 비용 상한', '첫 시범 에피소드'],
+          unknownKnown: ['회장님의 실제 품질 우선순위', 'CLE4의 암묵적 프롬프트와 승인 관행', '사례 자산 보관 규칙'],
+          unknownUnknown: ['사례 과적합으로 새 표현을 막는 위험', '피드백 양에 따른 태그 카운트 왜곡', '작가와 비평가의 공통 사례 동조', '철학의 체크리스트화']
+        },
+        tools: [
+          { name: 'GitHub/CLE2', status: 'available', purpose: '요구사항, 결정, PR 추적' },
+          { name: '로컬 파일/Node.js', status: 'available', purpose: '데이터 모델과 검증기' },
+          { name: 'CLE4 원본 자료', status: 'partial', purpose: '철학과 파이프라인 기준선' },
+          { name: '별도 비평가 모델', status: 'setup-needed', purpose: '작가 의도와 분리된 결과 검수' }
+        ],
+        references: ['CLE2-9 CLE4 문서', 'CLE2-13 운영 프로토콜', 'CLE5 GROWTH.md', 'feedback-tags.yaml', 'CASE-0001'],
+        needsDecision: ['CLE5 저장소 경계, 첫 시범 에피소드와 원칙 승격 승인 방식'],
+        assumptions: ['CLE5는 CLE4를 삭제하지 않고 출처를 기록한 선택적 마이그레이션으로 시작한다.'],
+        challenge: '기억은 축적하되 대표 사례, WATCH와 은퇴 규칙으로 부팅 컨텍스트와 체크리스트 크기를 제한한다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 요구사항 기준선과 자료 정리', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · 실행 계약과 데이터 모델', owner: 'Codex', status: 'in-progress' },
+          { name: 'Phase 3 · Growth Loop 실행기와 검증기', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 4 · 작가/비평가 분리 및 시범 운영', owner: 'Codex + 회장님', status: 'pending' },
+          { name: 'Phase 5 · 측정, 개정과 확장 결정', owner: 'Codex + 회장님', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 5 },
+        completedTasks: ['Growth Loop 자료 6개 검토', 'CLE2-9의 CLE3/CLE4 혼재 확인', 'Issue #51 등록', '표준 문서와 research 자료 구성'],
+        currentTasks: ['CLE5 저장소 경계와 실행 데이터 모델 구체화'],
+        nextTasks: ['tag/case/assessment/principle schema', 'Growth Loop 실행기', '첫 시범 E2E'],
+        blockers: ['CLE5 저장소 경계와 첫 시범 에피소드의 사람 결정 필요']
+      },
+      tests: {
+        items: [
+          { name: '요구사항과 문서', method: 'GitHub/파일 검사', expected: 'Issue #51과 표준 6개 문서가 연결된다', passed: true },
+          { name: '입력 자료 보존', method: 'diff 검사', expected: '제공된 6개 자료가 research 아래 보존된다', passed: true },
+          { name: 'Growth Loop 상태 전이', method: '자동 테스트', expected: 'G1~G5와 승격/은퇴가 재현된다', passed: false },
+          { name: '작가/비평가 분리', method: '시범 실행', expected: '비평가는 결과물과 사례만으로 판정한다', passed: false },
+          { name: '세대 상속', method: '새 세션 시범', expected: 'WATCH와 대표 사례를 정확히 상속한다', passed: false },
+          { name: '성장 루프 E2E', method: '시범 에피소드', expected: '자기평가부터 시스템 개정까지 추적된다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-9', relation: '선행 창작 시스템', note: 'CLE4의 감각 기반 철학과 파이프라인을 계승한다.' },
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'Unknown, 판단 근거와 사람 승인 게이트를 적용한다.' }
+      ],
+      docs: [
+        { title: 'DISCOVERY', path: 'tasks/CLE2-19/cle5-development-plan/DISCOVERY.md', description: '확인된 사실, Unknown, 도구와 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-19/cle5-development-plan/PLAN.md', description: '기준선부터 시범 운영과 확장 결정까지 5단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-19/cle5-development-plan/DECISIONS.md', description: 'CLE5 분리, 성장 책임, 승격 승인과 원본 보존 결정' },
+        { title: 'TESTS', path: 'tasks/CLE2-19/cle5-development-plan/TESTS.md', description: '상태 전이, 세대 상속과 성장 증거 검증 기준' },
+        { title: 'Growth Loop', path: 'tasks/CLE2-19/cle5-development-plan/research/GROWTH.md', description: '제공된 G1~G5 성장 루프 원본' },
+        { title: 'Feedback Tags', path: 'tasks/CLE2-19/cle5-development-plan/research/feedback-tags.yaml', description: '태그 정의, 카운트와 승격 상태 원본' },
+        { title: 'Self Assessment', path: 'tasks/CLE2-19/cle5-development-plan/research/self-assessment-template.md', description: '패널 근거 기반 자기평가 원본' },
+        { title: 'Case Library', path: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 사례 인덱스와 CASE-0001' }
+      ]
     }
   ];
 
