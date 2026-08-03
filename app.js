@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v12';
+  var DATA_VERSION = 'v11';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -1093,7 +1093,9 @@
       issue: 42,
       prs: [43],
       deliverables: [
-        { title: '기존 Solana DApp Hub', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/', description: 'CreatorFlow가 배포될 기존 GitHub Pages 허브' },
+        { title: 'CreatorFlow 공개 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: 'Agent 등록·협상 작업대가 배포된 GitHub Pages' },
+        { title: 'CreatorFlow 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow-solana', description: 'UI, Worker, D1 schema와 테스트 저장소' },
+        { title: 'CreatorFlow Worker', type: 'link', url: 'https://creatorflow-api.sfex11.workers.dev/api/health', description: 'Agent 등록·캠페인·오퍼·감사 API' },
         { title: 'CreatorFlow 개발 이슈', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/42', description: 'CLE2-16 범위와 진행 기록' }
       ],
       goal: {
@@ -1134,18 +1136,18 @@
         phases: [
           { name: 'Phase 1 · CLE2 개발 문서와 실행 계약', owner: 'Codex', status: 'done' },
           { name: 'Phase 2 · creatorflow-solana 저장소와 Pages UI', owner: 'Codex', status: 'done' },
-          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'in-progress' },
-          { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 3 · Agent 등록·협상·감사 API', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · YouTube 실제 데이터 검증', owner: 'Codex', status: 'in-progress' },
           { name: 'Phase 5 · USDC delegate와 3단계 지급', owner: 'Codex', status: 'pending' },
           { name: 'Phase 6 · OpenClaw E2E·배포·해커톤 제출', owner: 'Codex', status: 'pending' }
         ]
       },
       status: {
         state: 'in-progress',
-        progress: { current: 2, total: 6 },
-        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록', 'creatorflow-solana 저장소·Agent UI·공개 Pages 배포'],
-        currentTasks: ['Agent Wallet challenge 등록과 Cloudflare Worker/D1 구현'],
-        nextTasks: ['협상·감사 상태 머신', 'YouTube API 연동', 'USDC delegate 및 지급'],
+        progress: { current: 3, total: 6 },
+        completedTasks: ['해커톤 공식 기준과 기존 4개 DApp 검증', 'YouTube 중심 MVP로 범위 변경', 'Treasury Devnet USDC 20과 공식 mint 확인', 'OpenClaw Gemini·GitHub Pages·Cloudflare 아키텍처 확정', 'CLE2-16 Issue와 개발 문서 등록', 'creatorflow-solana 저장소·한글 Agent UI·공개 Pages 배포', 'Wallet challenge·Brand 초대·Creator 공개 등록 API', 'Agent 세션·캠페인·오퍼·수락·감사 상태 머신과 중복 수락 차단'],
+        currentTasks: ['YouTube Data API 영상·채널·공개 상태·조회수 검증'],
+        nextTasks: ['데모 채널과 YouTube API 자격 증명 연결', 'USDC delegate 및 지급', 'OpenClaw 두 실지갑 E2E'],
         blockers: []
       },
       tests: {
@@ -1153,6 +1155,7 @@
           { name: '개발 계약 문서', method: '문서와 링크 검사', expected: '아키텍처, API, 보안, 상태, 테스트와 데모 기준이 추적된다', passed: true },
           { name: 'Treasury 자산 검증', method: 'Solana Devnet RPC', expected: '공식 USDC 20과 수수료용 SOL이 확인된다', passed: true },
           { name: 'Agent 자율 등록', method: '브라우저 E2E', expected: 'Brand/Creator Agent가 challenge에 서명하고 서로 다른 역할로 등록된다', passed: false },
+          { name: 'Agent 협상 상태 머신', method: 'Worker/D1 E2E', expected: '캠페인 생성, 제안, 상대 수락, 중복 수락 차단과 감사 기록이 동작한다', passed: true },
           { name: 'YouTube 실제 데이터', method: 'API 통합 테스트', expected: '영상 채널, 공개 상태와 조회수를 검증한다', passed: false },
           { name: 'USDC 마일스톤 지급', method: 'Devnet E2E', expected: '0.02/0.03/0.01 USDC 지급과 중복 차단이 Explorer에서 확인된다', passed: false },
           { name: 'Pages UI 배포', method: '공개 URL과 브라우저 확인', expected: 'ai-solana-agent/creatorflow 경로에서 UI가 오류 없이 동작한다', passed: true }
@@ -1178,17 +1181,17 @@
       slug: 'creatorflow2',
       title: 'CreatorFlow2 · Brand AI Creator Pipeline',
       issue: 46,
-      prs: [],
+      prs: [47],
       deliverables: [
-        { title: 'CreatorFlow2 Goal Issue', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/46', description: '제품 역할, UX, 지갑 위임과 완료 기준' },
+        { title: 'CreatorFlow2 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/46', description: '제품 역할, UX, 지갑 위임과 완료 기준' },
         { title: 'CreatorFlow2 서비스', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow2/', description: '기존 CreatorFlow와 분리된 운영 서비스' },
         { title: 'CreatorFlow2 소스', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creatorflow2-solana', description: '별도 UI, Worker, D1과 Solana 지급 구현 저장소' },
         { title: '기존 CreatorFlow', type: 'link', url: 'https://daegu-agent-crew.github.io/ai-solana-agent/creatorflow/', description: '변경 없이 보존한 기존 서비스' }
       ],
       goal: {
-        objective: '브랜드 AI가 여러 YouTube 크리에이터에게 개별 조건과 지급액을 제안하고, 사람 크리에이터의 수락·영상 제출 이후 시스템 검증과 AI 결제 서명으로 Devnet USDC를 안전하게 자동 지급한다.',
+        objective: '브랜드 Gemini AI가 여러 YouTube 크리에이터에게 개별 지급액을 제안하고, 사람 크리에이터의 수락·영상 제출 이후 시스템 검증과 AI 결제 서명으로 Devnet USDC를 안전하게 지급한다.',
         successCriteria: [
-          '제안·수락·영상 제출·검증·지급의 심플한 다중 크리에이터 파이프라인이 동작한다',
+          '제안·수락·영상 제출·검증·지급의 다중 크리에이터 파이프라인이 동작한다',
           '브랜드 AI가 채널·예산 근거로 크리에이터별 다른 금액을 제안한다',
           '사람 크리에이터가 별도 Agent 등록 없이 제안을 수락하고 YouTube 영상을 제출한다',
           '시스템이 영상·성과·예산·서명·중복 지급을 검증한다',
@@ -1196,67 +1199,158 @@
           '브랜드 지갑이 AI 권한을 revoke하고 새 AI 지갑으로 교체할 수 있다'
         ],
         scope: {
-          in: ['OpenClaw Gemini Brand AI', '사람 YouTube 크리에이터', '개별 지급액과 수락', 'YouTube 객관 검증', 'Devnet USDC delegate·AI 서명·revoke', 'Cloudflare Worker/D1', '심플한 파이프라인 UI'],
+          in: ['Gemini Brand AI', '사람 YouTube 크리에이터', '개별 지급액과 수락', 'YouTube 객관 검증', 'Devnet USDC delegate·AI 서명·revoke', 'Cloudflare Worker/D1', '파이프라인 UI'],
           out: ['Creator AI', '반복 협상 채팅', 'Agent ID·Workspace 입력', '범용 마켓플레이스', 'Mainnet·실가치 지급', '세금·법률 계약']
         }
       },
       discovery: {
         unknowns: {
-          knownKnown: ['역할은 브랜드 AI·사람 크리에이터·검증 집행 시스템으로 확정됐다', '파이프라인은 제안·수락·영상 제출·검증·지급이다', '크리에이터별 지급액은 다르며 시스템 hard cap을 적용한다', '브랜드 지갑이 소유권을 유지하고 AI 지갑에는 소액만 delegate한다'],
-          knownUnknown: ['OpenClaw Solana signer와 키 회전 adapter', '크리에이터 점수와 초기 지급액 계산식', 'YouTube API/OAuth 운영 자격 증명', 'SPL delegate와 프로그램 escrow 중 MVP 최종 범위'],
-          unknownKnown: ['CLE2-16 데이터 중 승계할 캠페인과 크리에이터 기록', '기존 OpenClaw Wallet 도구의 raw transaction 서명 지원 범위'],
-          unknownUnknown: ['AI 키 탈취 후 revoke 전 allowance 오용', 'YouTube 지표 지연', '여러 크리에이터 동시 지급 경쟁 조건']
+          knownKnown: ['역할은 브랜드 AI·사람 크리에이터·검증 집행 시스템으로 확정됐다', '파이프라인은 제안·수락·영상 제출·검증·지급이다', 'CreatorFlow2는 기존 서비스와 저장소·Worker·D1·Pages를 분리했다', 'Gemini API가 판단하고 AI 전용 지갑이 제한 allowance 안에서 자동 서명한다'],
+          knownUnknown: ['Gemini Worker secret 운영 연결', '브랜드 Phantom의 실제 allowance 승인', '실제 영상 제출부터 Devnet 지급까지의 최종 E2E'],
+          unknownKnown: ['운영 데모에 사용할 실제 브랜드 지갑과 영상 제출 순서', 'Cloudflare 운영 secret의 교체·복구 관행'],
+          unknownUnknown: ['Gemini 판단 실패 시 5분 재시도 중 중복 지급 경쟁', 'YouTube 지표 갱신 지연과 지급 판단 시점 불일치']
         },
         tools: [
-          { name: 'OpenClaw + Gemini', status: 'setup-needed', purpose: '브랜드 판단과 결제 서명' },
-          { name: 'CreatorFlow Worker/D1', status: 'available', purpose: '상태, 정책, idempotency와 감사 로그' },
-          { name: 'YouTube Data API', status: 'setup-needed', purpose: '영상·채널·성과 검증' },
-          { name: 'Solana Devnet', status: 'verified', purpose: 'USDC delegate와 AI 결제 증빙' },
-          { name: 'GitHub Pages', status: 'available', purpose: '파이프라인과 크리에이터 UI' }
+          { name: 'Gemini API', status: 'setup-needed', purpose: '브랜드 판단과 지급 승인' },
+          { name: 'CreatorFlow2 Worker/D1', status: 'available', purpose: '상태, 정책, idempotency와 감사 로그' },
+          { name: 'YouTube 검증', status: 'available', purpose: '영상·채널·성과 조건 확인' },
+          { name: 'Solana Devnet', status: 'verified', purpose: 'USDC delegate와 AI 지급 증빙' },
+          { name: 'GitHub Pages', status: 'available', purpose: '브랜드와 크리에이터 파이프라인 UI' }
         ],
-        references: ['CLE2-16 CreatorFlow', '13개 크리에이터 관리 서비스 비교', 'Solana Token delegate/revoke 공식 문서', 'CreatorFlow2 pipeline concept'],
-        needsDecision: ['초기 지급액 계산식과 캠페인·일일 총상한'],
-        assumptions: ['해커톤 MVP는 Devnet USDC와 캠페인별 정확한 소액 allowance를 사용한다.'],
-        challenge: 'AI가 실제 결제에 참여하면서도 브랜드 자금 소유권과 시스템 안전 규칙을 유지한다.'
+        references: ['CLE2-16 CreatorFlow', 'CreatorFlow2 pipeline concept', 'Solana Token delegate/revoke', 'CreatorFlow2 운영 서비스'],
+        needsDecision: ['Gemini Worker secret 연결과 Phantom Devnet allowance 승인'],
+        assumptions: ['해커톤 MVP는 Devnet USDC와 캠페인별 소액 allowance만 사용한다.'],
+        challenge: 'AI 자동 지급을 실제 거래로 증명하면서도 브랜드 지갑 소유권과 시스템 안전 규칙을 유지한다.'
       },
       plan: {
         phases: [
-          { name: 'Phase 1 · Goal·UX·정책 계약', owner: 'Codex', status: 'in-progress' },
-          { name: 'Phase 2 · 데이터 모델과 시스템 정책', owner: 'Codex', status: 'pending' },
-          { name: 'Phase 3 · 심플한 파이프라인 UI', owner: 'Codex', status: 'pending' },
-          { name: 'Phase 4 · 브랜드 AI 판단과 Wallet 위임', owner: 'Codex + OpenClaw', status: 'pending' },
-          { name: 'Phase 5 · YouTube·Solana E2E와 배포', owner: 'Codex', status: 'pending' }
+          { name: 'Phase 1 · Goal·UX·정책 계약', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · 데이터 모델과 시스템 정책', owner: 'Codex', status: 'done' },
+          { name: 'Phase 3 · 심플한 파이프라인 UI', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · Gemini 판단과 AI Wallet 위임', owner: 'Codex', status: 'done' },
+          { name: 'Phase 5 · 실제 Devnet E2E와 데모', owner: 'Codex + 회장님', status: 'in-progress' }
         ]
       },
       status: {
         state: 'in-progress',
-        progress: { current: 0, total: 5 },
-        completedTasks: ['유사 서비스 13개 비교', '브랜드 AI·사람 크리에이터·시스템 역할 확정', '파이프라인 UI 방향 선택', 'AI 지갑 delegate·revoke 원칙 확정', 'CLE2-17 문서·Issue #46·조회 UI 등록'],
-        currentTasks: ['크리에이터별 지급액 계산식과 총상한 확정'],
-        nextTasks: ['CreatorFlow2 데이터 모델 설계', '파이프라인 UI 구현', 'OpenClaw AI 결제 서명 E2E'],
-        blockers: []
+        progress: { current: 4, total: 5 },
+        completedTasks: ['CreatorFlow2 요구사항·정책·UI 확정', '별도 저장소·Worker·D1·Pages 배포', '적합도별 지급액과 hard cap 구현', '사람 크리에이터 초대·수락·영상 제출', 'delegate·revoke·거래 재사용 차단', 'Gemini 직접 판단과 AI 전용 지갑 자동 서명 구현'],
+        currentTasks: ['Gemini Worker secret 연결과 관리자 Phantom Devnet 예산 승인'],
+        nextTasks: ['실제 영상 제출', 'Gemini 판단·AI 지갑 지급', 'Explorer와 감사 로그 증빙'],
+        blockers: ['외부 secret 저장과 Phantom Devnet 자산 승인에는 사람 결정이 필요하다']
       },
       tests: {
         items: [
-          { name: '파이프라인 상태', method: 'UI E2E', expected: '각 크리에이터가 정확히 한 단계와 다음 행동을 표시한다', passed: false },
-          { name: '개별 AI 제안', method: '정책 테스트', expected: '서로 다른 금액이 예산 hard cap 안에서 생성된다', passed: false },
-          { name: '사람 크리에이터', method: '브라우저 E2E', expected: '수락과 YouTube 제출만으로 참여한다', passed: false },
-          { name: '객관 검증', method: 'Worker 통합 테스트', expected: '영상·기한·성과·예산 불충족 시 지급하지 않는다', passed: false },
-          { name: 'AI 결제와 위임', method: 'Devnet E2E', expected: '정확한 수신자·금액만 지급되고 초과·중복은 거부된다', passed: false },
-          { name: '키 교체', method: 'Devnet E2E', expected: 'revoke 후 기존 키는 실패하고 새 키만 동작한다', passed: false }
+          { name: '파이프라인', method: 'UI E2E', expected: '각 크리에이터가 정확히 한 단계와 다음 행동을 표시한다', passed: true },
+          { name: '개별 AI 제안', method: 'API/정책 테스트', expected: '적합도별 금액이 예산 hard cap 안에서 생성된다', passed: true },
+          { name: '사람 크리에이터', method: '브라우저 E2E', expected: '수락과 실제 YouTube 제출을 완료한다', passed: false },
+          { name: '객관 검증', method: 'Worker 통합 테스트', expected: '공개 상태·기한·성과·예산 불충족 시 지급하지 않는다', passed: true },
+          { name: 'AI 결제 서명', method: 'Devnet E2E', expected: 'Gemini 판단 후 정확한 수신자·금액만 지급된다', passed: false },
+          { name: '위임 한도', method: '보안 테스트', expected: '초과·오수신·중복 지급과 거래 재사용이 거부된다', passed: true },
+          { name: '키 교체', method: 'Devnet E2E', expected: 'revoke 후 이전 키는 실패하고 새 키만 동작한다', passed: false },
+          { name: '감사 로그', method: 'API/UI 검사', expected: 'AI 판단, 시스템 검증과 tx signature가 순서대로 기록된다', passed: false },
+          { name: '반응형 UI', method: '브라우저 QA', expected: '데스크톱·모바일에서 다음 행동과 상태가 명확하다', passed: true }
         ]
       },
       relatedTasks: [
-        { id: 'CLE2-16', relation: '선행 구현', note: '운영 중인 CreatorFlow 코드·데이터·배포 기반을 재사용하고 역할과 UX를 단순화한다.' },
-        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'AI 판단 근거, 시스템 검증, 사람 승인과 Unknown을 기록한다.' }
+        { id: 'CLE2-16', relation: '선행 구현', note: 'CreatorFlow 운영 경험을 재사용하되 서비스와 데이터를 분리했다.' },
+        { id: 'CLE2-18', relation: '후속 결제 강화', note: '현재 delegate 구조를 원자적 온체인 에스크로로 확장한다.' },
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'AI 판단 근거, 시스템 검증과 사람 승인 게이트를 기록한다.' }
       ],
       docs: [
         { title: 'GOAL', path: 'tasks/CLE2-17/creatorflow2/GOAL.md', description: 'CreatorFlow2 목표, 성공 기준과 범위' },
-        { title: 'UI & WORKFLOW', path: 'tasks/CLE2-17/creatorflow2/UI-WORKFLOW.md', description: '선택한 파이프라인 UI와 역할별 화면' },
+        { title: 'UI & WORKFLOW', path: 'tasks/CLE2-17/creatorflow2/UI-WORKFLOW.md', description: '파이프라인 UI와 역할별 화면' },
         { title: 'DISCOVERY', path: 'tasks/CLE2-17/creatorflow2/DISCOVERY.md', description: '경쟁 서비스 조사, Unknown과 실행 전 판단' },
-        { title: 'PLAN', path: 'tasks/CLE2-17/creatorflow2/PLAN.md', description: '정책부터 AI 결제 E2E까지 5단계 계획' },
-        { title: 'DECISIONS', path: 'tasks/CLE2-17/creatorflow2/DECISIONS.md', description: '역할, 수락·제출, UI와 지갑 위임 결정' },
+        { title: 'PLAN', path: 'tasks/CLE2-17/creatorflow2/PLAN.md', description: '정책부터 Gemini 자동 지급 E2E까지 5단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-17/creatorflow2/DECISIONS.md', description: '역할, 지급 정책, 서비스 분리와 Gemini 결정' },
         { title: 'TESTS', path: 'tasks/CLE2-17/creatorflow2/TESTS.md', description: '파이프라인, 정책, 보안과 Devnet 완료 기준' }
+      ]
+    },
+    {
+      id: 'CLE2-19',
+      cle2Id: 'CLE2-19',
+      slug: 'cle5-development-plan',
+      title: 'CLE5 · 자기성장형 창작 에이전트',
+      issue: 51,
+      prs: [],
+      deliverables: [
+        { title: 'CLE5 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/51', description: '개발 범위, 완료 기준과 진행 타임라인' },
+        { title: 'Growth Loop 원본', type: 'file', url: 'tasks/CLE2-19/cle5-development-plan/research/GROWTH.md', description: 'G1~G5, 승격/은퇴와 세대 상속 설계' },
+        { title: '사례 라이브러리', type: 'file', url: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 Before/After 사례와 재현 조건' }
+      ],
+      goal: {
+        objective: 'CLE4의 감각 기반 창작 철학을 계승하고 피드백, 자기평가, 사례와 원칙 개정이 다음 세션에 상속되는 CLE5 개발 계약을 수립한다.',
+        successCriteria: [
+          'CLE4와 CLE5의 경계 및 마이그레이션 원칙이 문서화된다',
+          'G1~G5 Growth Loop와 데이터 형식이 정의된다',
+          '작가/비평가 분리 및 사람 승인 지점이 정의된다',
+          '새 세션 부팅 시 이전 경험과 WATCH 항목을 상속한다',
+          'CASE-0001을 포함한 한 번의 성장 루프를 재현한다',
+          '반복 실패율, 피드백 간극, 재작업과 체크리스트 크기를 관측한다'
+        ],
+        scope: {
+          in: ['CLE5 시스템 경계', '파일 기반 memory', 'feedback tag와 case library', '원칙 승격/은퇴', '작가/비평가 분리', '부팅 컨텍스트', '한 에피소드 시범 운영'],
+          out: ['모델 파인튜닝', 'CLE4 전체 일괄 변환', '전체 에피소드 제작', '완전 무인 미학 승인', '웹 UI 즉시 완성']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['CLE4는 감각 기반 철학과 창작 파이프라인을 선행 기준으로 가진다', '모델 자체는 프로젝트 경험을 세션 간 영구 학습하지 않는다', 'CASE-0001과 기교노출 1회가 초기 데이터로 있다'],
+          knownUnknown: ['CLE5 독립 저장소 여부', 'CLE4 원본 blueprint의 공식 Git 경로', '2/3/4회 임계값의 운영 적합성', '비평가 모델과 비용 상한', '첫 시범 에피소드'],
+          unknownKnown: ['회장님의 실제 품질 우선순위', 'CLE4의 암묵적 프롬프트와 승인 관행', '사례 자산 보관 규칙'],
+          unknownUnknown: ['사례 과적합으로 새 표현을 막는 위험', '피드백 양에 따른 태그 카운트 왜곡', '작가와 비평가의 공통 사례 동조', '철학의 체크리스트화']
+        },
+        tools: [
+          { name: 'GitHub/CLE2', status: 'available', purpose: '요구사항, 결정, PR 추적' },
+          { name: '로컬 파일/Node.js', status: 'available', purpose: '데이터 모델과 검증기' },
+          { name: 'CLE4 원본 자료', status: 'partial', purpose: '철학과 파이프라인 기준선' },
+          { name: '별도 비평가 모델', status: 'setup-needed', purpose: '작가 의도와 분리된 결과 검수' }
+        ],
+        references: ['CLE2-9 CLE4 문서', 'CLE2-13 운영 프로토콜', 'CLE5 GROWTH.md', 'feedback-tags.yaml', 'CASE-0001'],
+        needsDecision: ['CLE5 저장소 경계, 첫 시범 에피소드와 원칙 승격 승인 방식'],
+        assumptions: ['CLE5는 CLE4를 삭제하지 않고 출처를 기록한 선택적 마이그레이션으로 시작한다.'],
+        challenge: '기억은 축적하되 대표 사례, WATCH와 은퇴 규칙으로 부팅 컨텍스트와 체크리스트 크기를 제한한다.'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 요구사항 기준선과 자료 정리', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · 실행 계약과 데이터 모델', owner: 'Codex', status: 'in-progress' },
+          { name: 'Phase 3 · Growth Loop 실행기와 검증기', owner: 'Codex', status: 'pending' },
+          { name: 'Phase 4 · 작가/비평가 분리 및 시범 운영', owner: 'Codex + 회장님', status: 'pending' },
+          { name: 'Phase 5 · 측정, 개정과 확장 결정', owner: 'Codex + 회장님', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 1, total: 5 },
+        completedTasks: ['Growth Loop 자료 6개 검토', 'CLE2-9의 CLE3/CLE4 혼재 확인', 'Issue #51 등록', '표준 문서와 research 자료 구성'],
+        currentTasks: ['CLE5 저장소 경계와 실행 데이터 모델 구체화'],
+        nextTasks: ['tag/case/assessment/principle schema', 'Growth Loop 실행기', '첫 시범 E2E'],
+        blockers: ['CLE5 저장소 경계와 첫 시범 에피소드의 사람 결정 필요']
+      },
+      tests: {
+        items: [
+          { name: '요구사항과 문서', method: 'GitHub/파일 검사', expected: 'Issue #51과 표준 6개 문서가 연결된다', passed: true },
+          { name: '입력 자료 보존', method: 'diff 검사', expected: '제공된 6개 자료가 research 아래 보존된다', passed: true },
+          { name: 'Growth Loop 상태 전이', method: '자동 테스트', expected: 'G1~G5와 승격/은퇴가 재현된다', passed: false },
+          { name: '작가/비평가 분리', method: '시범 실행', expected: '비평가는 결과물과 사례만으로 판정한다', passed: false },
+          { name: '세대 상속', method: '새 세션 시범', expected: 'WATCH와 대표 사례를 정확히 상속한다', passed: false },
+          { name: '성장 루프 E2E', method: '시범 에피소드', expected: '자기평가부터 시스템 개정까지 추적된다', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-9', relation: '선행 창작 시스템', note: 'CLE4의 감각 기반 철학과 파이프라인을 계승한다.' },
+        { id: 'CLE2-13', relation: '운영 프로토콜', note: 'Unknown, 판단 근거와 사람 승인 게이트를 적용한다.' }
+      ],
+      docs: [
+        { title: 'DISCOVERY', path: 'tasks/CLE2-19/cle5-development-plan/DISCOVERY.md', description: '확인된 사실, Unknown, 도구와 실행 전 판단' },
+        { title: 'PLAN', path: 'tasks/CLE2-19/cle5-development-plan/PLAN.md', description: '기준선부터 시범 운영과 확장 결정까지 5단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-19/cle5-development-plan/DECISIONS.md', description: 'CLE5 분리, 성장 책임, 승격 승인과 원본 보존 결정' },
+        { title: 'TESTS', path: 'tasks/CLE2-19/cle5-development-plan/TESTS.md', description: '상태 전이, 세대 상속과 성장 증거 검증 기준' },
+        { title: 'Growth Loop', path: 'tasks/CLE2-19/cle5-development-plan/research/GROWTH.md', description: '제공된 G1~G5 성장 루프 원본' },
+        { title: 'Feedback Tags', path: 'tasks/CLE2-19/cle5-development-plan/research/feedback-tags.yaml', description: '태그 정의, 카운트와 승격 상태 원본' },
+        { title: 'Self Assessment', path: 'tasks/CLE2-19/cle5-development-plan/research/self-assessment-template.md', description: '패널 근거 기반 자기평가 원본' },
+        { title: 'Case Library', path: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 사례 인덱스와 CASE-0001' }
       ]
     }
   ];

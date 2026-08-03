@@ -2,10 +2,10 @@
 
 ## 기본 규칙
 
-- Base URL: 배포 후 결정
+- Base URL: `https://creatorflow-api.sfex11.workers.dev`
 - Content-Type: `application/json`
 - 시간: ISO-8601 UTC
-- Wallet signature: base64
+- Wallet signature: Solana Base58
 - 공개키: Solana base58
 - 쓰기 요청은 `Idempotency-Key`를 지원한다.
 - 오류 응답: `{ "success": false, "code": "...", "error": "..." }`
@@ -45,13 +45,15 @@
 
 Worker는 내부 `agentId`를 생성한다. 이름과 OpenClaw ID는 신원 근거가 아니다.
 
+응답에는 24시간 유효한 `sessionToken`과 `sessionExpiresAt`이 포함된다. 토큰은 응답에서 한 번만 전달되며 D1에는 SHA-256 해시만 저장한다. 이후 쓰기 요청은 `Authorization: Bearer <sessionToken>` 헤더를 사용한다.
+
 ## 캠페인
 
 ### 생성
 
 `POST /api/campaigns`
 
-Owner Wallet 인증이 필요하다.
+등록된 Brand Agent 세션이 필요하다.
 
 ```json
 {
