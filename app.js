@@ -1352,6 +1352,94 @@
         { title: 'Self Assessment', path: 'tasks/CLE2-19/cle5-development-plan/research/self-assessment-template.md', description: '패널 근거 기반 자기평가 원본' },
         { title: 'Case Library', path: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 사례 인덱스와 CASE-0001' }
       ]
+    },
+    {
+      id: 'CLE2-20',
+      cle2Id: 'CLE2-20',
+      slug: 'convergence-loop-system',
+      title: 'CLE3 수렴 루프 시스템 — Generator-Evaluator 마이크로 루프',
+      issue: 54,
+      prs: [55, 56],
+      deliverables: [
+        { title: 'CLE2-20 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54', description: '수렴 루프 시스템 5개 개선축과 우선순위' },
+        { title: 'sfex11 재기준화 코멘트', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54#issuecomment-3083457760', description: '실체 대조 검토 및 구현 순서 수정 제안' },
+        { title: 'CLE3 리포', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering3', description: 'creative-loop-engineering3 — 실제 CLE3 자산, 스크립트, 문서' }
+      ],
+      goal: {
+        objective: 'CLE3 파이프라인에 Search → Evaluate → Converge 폐루프를 내장하여 Phase 4의 패널 품질과 완료율을 획기적으로 개선한다.',
+        successCriteria: [
+          '비교·선택 데이터 스키마 설계 및 구현',
+          'A/B/C Evaluator + 절대 품질 게이트 구현 (both_bad/tie 포함)',
+          'run-panel-jobs.js 확장 — --variants, 실제 imagegen 호출, 레퍼런스 이미지 전달',
+          '선호 메모리 & 레퍼런스 체인 작동 (GPT Image 2 이미지 입력 활용)',
+          '단일 패널 end-to-end 검증 — 후보 2× 최대 2회, 사람 블라인드 선호 비교',
+          'p8-1 생성 + EP001 오버레이 완료율 향상 (현재 17/49)'
+        ],
+        scope: {
+          in: ['비교·선택 스키마 (신규)', 'Evaluator + 절대 게이트 (기존 루브릭 개편)', 'run-panel-jobs.js 확장 (기존 개편)', 'preference-memory.json (신규)', 'p8-1 생성 + EP001 오버레이'],
+          out: ['CLE3 Phase 1~3 구조 변경', '새 에피소드 창작', '이미지 생성 모델 교체']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['EP001 48/49 패널 이미지 존재 (p8-1 누락), 오버레이 17/49', 'EP002 30/57 패널 이미지 존재', 'run-panel-jobs.js(172라인), evaluation-rubric.md(v2), IMAGE-WORKFLOW.md, AI-COLLABORATION-PROTOCOL.md 모두 존재', 'GPT Image 2 이미지 입력/편집 지원', '화풍: 닥터슬럼프풍 (Akira Toriyama)'],
+          knownUnknown: ['state.json 17/49와 실제 48개 이미지의 정확한 의미 차이 (overlay 기준 추정)', 'panels/generated/ 9개 파일의 성격 (후보? 중복?)'],
+          unknownKnown: ['이전 생성→평가 워크플로우의 세부 절차', 'panels.json의 generation_status와 실제 파일의 동기화 상태'],
+          unknownUnknown: ['A/B 평가가 오히려 품질을 역행시킬 위험', '후보 생성 비용 폭증 가능성']
+        },
+        tools: [
+          { name: 'CLE3 리포 (creative-loop-engineering3)', status: 'available', purpose: 'CLE3 에셋, 스크립트, 문서' },
+          { name: 'gpt-image-2 API', status: 'available', purpose: '패널 이미지 생성' },
+          { name: 'CLE2 Pages', status: 'available', purpose: '태스크 대시보드' }
+        ],
+        references: ['이슈 #54', 'evaluation-rubric.md', 'IMAGE-WORKFLOW.md', 'AI-COLLABORATION-PROTOCOL.md', 'sfex11 재기준화 코멘트'],
+        needsDecision: ['p8-1 재생성 승인', '대표 패널 3개 선정'],
+        assumptions: ['state.json 17/49 = overlay_complete 기준 (generated는 48/49)', 'GPT Image 2 이미지 입력으로 레퍼런스 체인 구현 가능'],
+        challenge: '절대 게이트 없는 A/B 평가는 모두 불량일 때 덜 나쁜 것을 선택하여 preference memory를 오염시킨다'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 0 · 기준선 확정 및 문서 보완', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 1 · 비교·선택 데이터 스키마', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · A/B/C Evaluator + 절대 게이트', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · Panel Runner (후보 생성 실행기)', owner: '대구루', status: 'pending' },
+          { name: 'Phase 4 · 선호 메모리 & 레퍼런스 체인', owner: '대구루', status: 'pending' },
+          { name: 'Phase 5 · 단일 패널 end-to-end 검증', owner: '대구루 + 회장님', status: 'pending' },
+          { name: 'Phase 6 · EP001 확대 적용', owner: '대구루', status: 'pending' },
+          { name: 'Phase 7 · 회고 + 캘리브레이션 (중장기)', owner: '대구루 + 회장님', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 0, total: 7 },
+        completedTasks: ['요구사항 분석 (5개 개선축)', '이슈 #54 생성', 'GOAL/PLAN/STATUS/TESTS 작성 (PR #55)', '1차 자산 대조 (잘못된 리포 → 정정)', '2차 자산 대조 (CLE3 리포 정확)', 'DISCOVERY/DECISIONS 정정 작성', 'GOAL 재기준화'],
+        currentTasks: ['PLAN/TESTS 재구조화', 'CLE2 Pages TASKS_DATA 등록'],
+        nextTasks: ['p8-1 재생성', '대표 패널 3개 선정', '비교 스키마 설계'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: '비교 스키마 검증', method: 'JSON Schema', expected: '스키마 위반 없음', passed: false },
+          { name: 'Evaluator both_bad', method: '단위 테스트', expected: 'both_bad → 재생성 트리거', passed: false },
+          { name: 'run-panel-jobs.js --variants 2', method: '통합 테스트', expected: '2개 후보 PNG + 메타데이터', passed: false },
+          { name: '단일 패널 E2E', method: '수동 검증', expected: '후보 2× 2회 → 선택→승인', passed: false },
+          { name: '사람 블라인드 선호 비교', method: '수동', expected: 'AI-사람 일치율 ≥ 60%', passed: false },
+          { name: 'p8-1 생성 + 오버레이 확대', method: '전수 검증', expected: 'EP001 49/49 generated + 오버레이 향상', passed: false },
+          { name: '기존 기능 회귀', method: '회귀 테스트', expected: '--dry-run 등 기존 기능 정상', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-9', relation: '선행 CLE3 시스템', note: '삼체 만화 창작 시스템의 원본 구조' },
+        { id: 'CLE2-19', relation: 'CLE5 성장 루프', note: '선호 회고와 캘리브레이션이 CLE5와 연동 가능' }
+      ],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-20/convergence-loop-system/GOAL.md', description: '수렴 루프 목표, 실제 자산 기준선, 7개 DoD' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-20/convergence-loop-system/DISCOVERY.md', description: '실제 자산 대조, Unknown Map, 숨겨진 전제' },
+        { title: 'PLAN', path: 'tasks/CLE2-20/convergence-loop-system/PLAN.md', description: 'Evaluator 우선 8단계 실행 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-20/convergence-loop-system/DECISIONS.md', description: 'D-001~D-007 의사결정 기록' },
+        { title: 'STATUS', path: 'tasks/CLE2-20/convergence-loop-system/STATUS.md', description: '현재 진행 상황과 블로커' },
+        { title: 'TESTS', path: 'tasks/CLE2-20/convergence-loop-system/TESTS.md', description: '기능/확장/비기능 검증 기준' }
+      ]
     }
   ];
 

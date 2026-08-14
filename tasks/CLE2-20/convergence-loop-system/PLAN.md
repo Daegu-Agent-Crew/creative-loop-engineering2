@@ -1,86 +1,95 @@
 # PLAN — CLE3 수렴 루프 시스템 도입
 
-## 실행 계획
+## 실행 계획 (재구조화 — sfex11 코멘트 + CLE3 실체 반영)
 
-### Phase 1: 선호 메모리 & 레퍼런스 체인 (P1)
+> 기존 파일들이 존재하므로 "신규 작성"이 아닌 "개편"이 기준. 단, 비교 스키마 등 신규 파일은 추가.
+
+### Phase 0: 기준선 확정 및 문서 보완 (P0)
 - **담당**: 대구루
-- **입력**: 기존 episodes/*/approvals/gates.json, 승인된 패널 이미지
-- **출력**: preference-memory.json 스키마, 레퍼런스 체인 로직, EP001/EP002 적용
 - **세부 작업**:
-  - [ ] preference-memory.json JSON Schema 작성 (캐릭터별/장면별/스타일 앵커)
-  - [ ] 기존 승인 패널에서 스타일 앵커 추출 스크립트
-  - [ ] 패널 생성 프롬프트에 레퍼런스 이미지 자동 주입 로직
-  - [ ] IMAGE-WORKFLOW.md [B] 캐릭터 시트 / [D] 컷 연출 섹션에 레퍼런스 체인 통합
+  - [x] 실제 자산 대조 — CLE3 리포(creative-loop-engineering3) 기준
+  - [x] DISCOVERY.md 정정 작성
+  - [x] DECISIONS.md 정정 작성 (D-001~D-008)
+  - [x] GOAL/STATUS 재기준화
+  - [ ] CLE2 Pages TASKS_DATA 등록
+- **예상 시간**: 0.5일 (잔류 항목)
+
+### Phase 1: 비교·선택 데이터 스키마 (P1)
+- **담당**: 대구루
+- **출력**: `schemas/candidates-schema.json`, `schemas/comparison-result-schema.json` (신규)
+- **세부 작업**:
+  - [ ] 후보 메타데이터 스키마 (panel_id, variant_id, prompt, params, seed, created_at)
+  - [ ] 비교 결과 스키마 (candidates[], winner, reasoning, absolute_scores, verdict: better/worse/tie/both_bad)
+  - [ ] 루프 이터레이션 로깅 스키마
+- **예상 시간**: 0.5일
+
+### Phase 2: A/B/C Evaluator + 절대 게이트 (P2)
+- **담당**: 대구루
+- **입력**: P1 스키마, 기존 `evaluation-rubric.md` (50점 만점, 40점 통과)
+- **출력**: `evaluation-rubric.md` 개정, evaluator 로직
+- **세부 작업**:
+  - [ ] 기존 루브릭 분석 — 닥터슬럼프풍 50점 체계 파악
+  - [ ] 비교 평가 축 정의: 캐릭터 일관성, 구도, 감정 연출, 화풍 일관성, 장면 연속성 (Phase 4)
+  - [ ] 절대 품질 게이트 정의 (기존 40점 기준 유지)
+  - [ ] A/B 비교 로직: better/worse/tie/both_bad 판정
+  - [ ] Phase 5 분리: 대사·가독성 평가를 Phase 5로 이관
+- **예상 시간**: 1.5일
+
+### Phase 3: run-panel-jobs.js 확장 (P3)
+- **담당**: 대구루
+- **입력**: P1 스키마, P2 Evaluator, 기존 `scripts/run-panel-jobs.js` (172라인)
+- **출력**: 개편된 `run-panel-jobs.js`, `IMAGE-WORKFLOW.md` 개정
+- **세부 작업**:
+  - [ ] `--variants N` 옵션 추가 (패널당 N개 변형 생성)
+  - [ ] GPT Image 2 이미지 입력으로 레퍼런스 전달 (기존 `references_used` → 실제 첨부로 승격)
+  - [ ] 후보 파일 저장 (`tmp/candidates/` 또는 `panels/generated/` 확장)
+  - [ ] Evaluator 호출 → 결과 수집
+  - [ ] 선택본 승격: 후보 → `panels/assets/`
+  - [ ] IMAGE-WORKFLOW.md 개정 — 마이크로 루프 D→E→F→G 사이클 추가
 - **예상 시간**: 2일
 
-### Phase 2: Phase 4 마이크로 루프 (P2)
+### Phase 4: 선호 메모리 & 레퍼런스 체인 (P4)
 - **담당**: 대구루
-- **입력**: P1 산출물 (레퍼런스 체인), 기존 run-panel-jobs.js
-- **출력**: 마이크로 루프 패널 생성 스크립트, EP001 Act 3 잔여 패널
+- **입력**: P3에서 승격된 패널
+- **출력**: `schemas/preference-memory.json`, 레퍼런스 체인 로직
 - **세부 작업**:
-  - [ ] run-panel-jobs.js 개편: 패널당 N변형 생성 → 비교 → 진단 → 재생성 사이클
-  - [ ] 변형 생성 전략 수립 (스타일 파라미터 변동, 카메라 앵글 변동, 색감 변동)
-  - [ ] 자동 진단 로직: "왜 A가 B보다 나은가" → 다음 생성 프롬프트에 반영
-  - [ ] 루프 종료 조건 정의 (품질 임계값 or 최대 반복 횟수)
-  - [ ] EP001 Act 3 (pages 10-16) 잔여 32패널 생성으로 검증
-- **예상 시간**: 3일
+  - [ ] preference-memory.json 스키마 (캐릭터별/장면별/스타일 앵커)
+  - [ ] 승인 패널에서 스타일 앵커 자동 등록
+  - [ ] GPT Image 2 이미지 입력으로 레퍼런스 자동 주입 (D-008)
+  - [ ] "Example > Description" 원칙 적용
+- **예상 시간**: 1.5일
 
-### Phase 3: 비교평가 루브릭 개정 (P3)
-- **담당**: 대구루
-- **입력**: 기존 evaluation-rubric.md, P2 마이크로 루프 로깅 데이터
-- **출력**: 개정된 evaluation-rubric.md (A/B 비교 방식), 비교 평가 스크립트
+### Phase 5: 단일 패널 end-to-end 검증 (P5)
+- **담당**: 대구루 + 회장님 (블라인드 선호 평가)
 - **세부 작업**:
-  - [ ] 절대평가(50점) → 비교평가(A/B/C 선택) 방식으로 루브릭 재설계
-  - [ ] 비교 기준 체크리스트 구축 (스타일 일관성, 캐릭터 일관성, 감정 연출, 구도, 한글 렌더링)
-  - [ ] 비교 결과 로깅 포맷 정의 → preference-memory.json과 연동
-  - [ ] Phase 5(QA) 평가 로직에 비교평가 통합
-- **예상 시간**: 2일
+  - [ ] 대표 패널 3개 선정 (단인물, 다인물, 풀페이지/고난도)
+  - [ ] 후보 2× 최대 2회 end-to-end 실행
+  - [ ] 회장님 블라인드 선호 평가
+  - [ ] 일치율 및 품질 개선 정도 측정
+- **예상 시간**: 1일
 
-### Phase 4: 목표 공동 진화 메커니즘 (P4)
+### Phase 6: `p8-1` 생성 + EP001 확대 적용 (P6)
 - **담당**: 대구루
-- **입력**: 과거 rollback 이력, P1~P3 선호 데이터 누적
-- **출력**: discovery/context.json 선호 회고 스키마, AI-COLLABORATION-PROTOCOL.md 개정
+- **세부 작업**:
+  - [ ] `p8-1` 재생성 (유일한 missing)
+  - [ ] EP001 오버레이 완료율 향상 (현재 17/49)
+  - [ ] 승인 패널 5~10개 단위 체크포인트
+- **예상 시간**: 2~3일
+
+### Phase 7: 목표 공동 진화 + 캘리브레이션 (P7, 중장기)
+- **담당**: 대구루 + 회장님
 - **세부 작업**:
   - [ ] preference-retrospective.json 스키마 설계
-  - [ ] 에피소드 완료 후 자동 선호 회고 생성 로직
-  - [ ] Phase 0.5 discovery 단계에 선호 이력 주입
-  - [ ] rollback 이력 → 구조적 학습 데이터 변환
-  - [ ] AI-COLLABORATION-PROTOCOL.md에 "선호 회고" 섹션 추가
-- **예상 시간**: 2일
-
-### Phase 5: Evaluator 캘리브레이션 (P5)
-- **담당**: 대구루 + 회장님(샘플링 점검)
-- **입력**: P3 비교평가 데이터, AI 평가 결과
-- **출력**: calibration-log.json, 캘리브레이션 프로세스 문서
-- **세부 작업**:
-  - [ ] calibration-log.json 스키마 설계 (사람 vs AI 평가 비교)
-  - [ ] 캘리브레이션 샘플링 프로세스 정의 (에피소드당 5패널 무작위)
-  - [ ] AI 평가 편향 감지 로직 (사람 평가와의 일치율 추적)
-  - [ ] evaluation-rubric.md Phase 5 섹션에 캘리브레이션 스텝 추가
-  - [ ] 대시보드: 편향 추이 시각화 (선택)
-- **예상 시간**: 2일
+  - [ ] rollback 이력 → 구조적 학습 데이터 변환 (수채화→닥터슬럼프풍 등)
+  - [ ] calibration-log.json — 사람 vs AI 평가 일치율 추적
+- **예상 시간**: 3일
 
 ## 의존성
-- P2는 P1 완료에 의존 (레퍼런스 체인이 마이크로 루프의 입력)
-- P3는 P2 로깅 데이터에 부분 의존
-- P4, P5는 P1~P3 데이터 누적 후 의미 있음 (중장기)
-
-## 도구 및 접근
-| 도구/데이터 | 목적 | 접근 상태 | 대안 |
-|---|---|---|---|
-| CLE3 저장소 (로컬) | 코드/스키마 수정 | available | — |
-| gpt-image-2 (Codex) | 변형 패널 생성 | available | — |
-| GitHub API | PR/이슈 관리 | available | — |
-| 기존 승인 패널 이미지 | 레퍼런스 체인 입력 | available (EP001/EP002) | — |
-
-## 사람 승인 게이트
-| 게이트 | 승인 대상 | 승인자 | 기준 |
-|---|---|---|---|
-| 루브릭 승인 | 개정된 evaluation-rubric.md | 회장님 | 비교평가 방식 타당성 |
-| 루프 파라미터 | 마이크로 루프 종료 조건 | 회장님 | 품질/시간 트레이드오프 |
-| 캘리브레이션 결과 | 편향 점검 보고서 | 회장님 | AI 평가 신뢰성 |
+```
+P0 → P1 → P2 → P3 → P4 → P5 → P6 → P7(중장기)
+```
 
 ## 리스크
-- **변형 생성 비용**: 패널당 2~3변형 = 이미지 생성량 2~3배. EP001 잔여 32패널 × 3 = 96회 생성
-- **AI Evaluator 편향**: 자기 생성물 선호 가능 → P5 캘리브레이션으로 완충
-- **루브릭 전환 저항**: 기존 절대평가 데이터와의 호환성 → 마이그레이션 스크립트 필요
+- **변형 생성 비용**: 패널당 2~3후보 × 2~3회. P5에서 효과 검증 후 확대.
+- **기존 워크플로우 호환성**: run-panel-jobs.js 개편 시 기존 기능이 깨지지 않도록 주의.
+- **state.json 동기화**: 생성된 이미지(48/49)와 state.json(17/49)의 기준 차이를 명확히 해야 함.
