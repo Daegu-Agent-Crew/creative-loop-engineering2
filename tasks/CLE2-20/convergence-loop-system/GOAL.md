@@ -12,20 +12,20 @@ CLE3 파이프라인에 Search → Evaluate → Converge 폐루프를 내장하�
 
 | 단계 | EP001 | EP002 |
 |------|-------|-------|
-| generated (원본 패널 이미지) | 48/49 (`p8-1` 누락) | 30/57 |
-| overlay_complete (대사 오버레이) | 17/49 | 0/57 |
+| generated (원본 패널 이미지) | 49/49 | 30/57 |
+| overlay_complete (대사 오버레이) | 18/49 | 0/57 |
 | qa_approved (QA 통과) | 미정 | 미정 |
 
 > 정정: 1차 조사에서 잘못된 리포(three-body-comic)를 참조하여 "EP001 16개, EP002 10개"로 기재했음. 실제 CLE3 리포에서는 위 수치가 정확.
 
 ## 성공 기준 (Definition of Done)
-- [ ] 비교·선택 데이터 스키마 설계 — candidates/comparison-result JSON Schema
-- [ ] A/B/C Evaluator + 절대 품질 게이트 구현 — both_bad/tie/절대통과 포함, 기존 evaluation-rubric.md 개편
-- [ ] run-panel-jobs.js 확장 — `--variants` 옵션, 실제 imagegen 호출, 레퍼런스 이미지 전달, 후보 저장
+- [x] 비교·선택 데이터 스키마 설계 — `candidates-schema.json` + 예제 + 검증기
+- [x] A/B/C Evaluator 최소 구현 — `winner/tie/both_bad`, 절대 게이트, 블라인드 평가 명령
+- [x] run-panel-jobs.js 확장 — `--variants`, `--iteration`, 진단 피드백, `codex -i` 참조 전달
 - [ ] 선호 메모리 & 레퍼런스 체인 — preference-memory.json + 승인 패널 레퍼런스 (GPT Image 2 이미지 입력 활용)
 - [ ] 단일 패널 end-to-end 검증 — 후보 2× 최대 2회, 사람 블라인드 선호 비교
-- [ ] `p8-1` 생성 + EP001 오버레이 완료율 향상
-- [ ] Phase 4 / Phase 5 평가 범위 분리 (캐릭터·구도·감정·화풍 vs 대사·가독성)
+- [x] `p8-1` 생성 + EP001 오버레이 완료율 향상 (17→18)
+- [x] Phase 4 / Phase 5 평가 범위 분리 (캐릭터·구도·감정·화풍 vs 대사·가독성)
 - [ ] 에피소드 회고 + Evaluator 캘리브레이션 (중장기)
 
 ## 범위

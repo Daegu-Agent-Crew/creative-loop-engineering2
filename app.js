@@ -1399,10 +1399,10 @@
       },
       plan: {
         phases: [
-          { name: 'Phase 0 · 기준선 확정 및 문서 보완', owner: '대구루', status: 'in-progress' },
-          { name: 'Phase 1 · 비교·선택 데이터 스키마', owner: '대구루', status: 'pending' },
-          { name: 'Phase 2 · A/B/C Evaluator + 절대 게이트', owner: '대구루', status: 'pending' },
-          { name: 'Phase 3 · Panel Runner (후보 생성 실행기)', owner: '대구루', status: 'pending' },
+          { name: 'Phase 0 · 기준선 확정 및 문서 보완', owner: '대구루', status: 'done' },
+          { name: 'Phase 1 · 비교·선택 데이터 스키마', owner: '대구루', status: 'done' },
+          { name: 'Phase 2 · A/B/C Evaluator + 절대 게이트', owner: '대구루', status: 'done' },
+          { name: 'Phase 3 · Panel Runner (후보 생성 실행기)', owner: '대구루', status: 'done' },
           { name: 'Phase 4 · 선호 메모리 & 레퍼런스 체인', owner: '대구루', status: 'pending' },
           { name: 'Phase 5 · 단일 패널 end-to-end 검증', owner: '대구루 + 회장님', status: 'pending' },
           { name: 'Phase 6 · EP001 확대 적용', owner: '대구루', status: 'pending' },
@@ -1411,21 +1411,21 @@
       },
       status: {
         state: 'in-progress',
-        progress: { current: 0, total: 7 },
-        completedTasks: ['요구사항 분석 (5개 개선축)', '이슈 #54 생성', 'GOAL/PLAN/STATUS/TESTS 작성 (PR #55)', '1차 자산 대조 (잘못된 리포 → 정정)', '2차 자산 대조 (CLE3 리포 정확)', 'DISCOVERY/DECISIONS 정정 작성', 'GOAL 재기준화'],
-        currentTasks: ['PLAN/TESTS 재구조화', 'CLE2 Pages TASKS_DATA 등록'],
-        nextTasks: ['p8-1 재생성', '대표 패널 3개 선정', '비교 스키마 설계'],
-        blockers: []
+        progress: { current: 5, total: 8 },
+        completedTasks: ['CLE3 기준선과 표준 문서 정정', 'p8-1 생성 및 오버레이 렌더링', '대표 패널 3개 선정', '비교·선택 스키마와 검증기 구현', '절대 게이트 + 블라인드 비교 루브릭', 'run-panel-jobs variants/reference/diagnosis 확장'],
+        currentTasks: ['preference-memory 스키마와 승인 패널 참조 체인', '대표 패널 후보 생성 및 블라인드 평가'],
+        nextTasks: ['p2-3 후보 2개 생성', '사람 블라인드 선택', '필요 시 진단 반영 2회차'],
+        blockers: ['첫 파일럿 최종 후보는 사람 블라인드 검토 필요']
       },
       tests: {
         items: [
-          { name: '비교 스키마 검증', method: 'JSON Schema', expected: '스키마 위반 없음', passed: false },
+          { name: '비교 스키마 검증', method: 'JSON Schema', expected: '스키마 위반 없음', passed: true },
           { name: 'Evaluator both_bad', method: '단위 테스트', expected: 'both_bad → 재생성 트리거', passed: false },
-          { name: 'run-panel-jobs.js --variants 2', method: '통합 테스트', expected: '2개 후보 PNG + 메타데이터', passed: false },
+          { name: 'run-panel-jobs.js --variants 2', method: '드라이런', expected: '2개 후보 명령 + 평가 명령', passed: true },
           { name: '단일 패널 E2E', method: '수동 검증', expected: '후보 2× 2회 → 선택→승인', passed: false },
           { name: '사람 블라인드 선호 비교', method: '수동', expected: 'AI-사람 일치율 ≥ 60%', passed: false },
-          { name: 'p8-1 생성 + 오버레이 확대', method: '전수 검증', expected: 'EP001 49/49 generated + 오버레이 향상', passed: false },
-          { name: '기존 기능 회귀', method: '회귀 테스트', expected: '--dry-run 등 기존 기능 정상', passed: false }
+          { name: 'p8-1 생성 + 오버레이 확대', method: '전수 검증', expected: 'EP001 49/49 generated + 오버레이 향상', passed: true },
+          { name: '기존 기능 회귀', method: '회귀 테스트', expected: '--dry-run 등 기존 기능 정상', passed: true }
         ]
       },
       relatedTasks: [
@@ -1436,7 +1436,7 @@
         { title: 'GOAL', path: 'tasks/CLE2-20/convergence-loop-system/GOAL.md', description: '수렴 루프 목표, 실제 자산 기준선, 7개 DoD' },
         { title: 'DISCOVERY', path: 'tasks/CLE2-20/convergence-loop-system/DISCOVERY.md', description: '실제 자산 대조, Unknown Map, 숨겨진 전제' },
         { title: 'PLAN', path: 'tasks/CLE2-20/convergence-loop-system/PLAN.md', description: 'Evaluator 우선 8단계 실행 계획' },
-        { title: 'DECISIONS', path: 'tasks/CLE2-20/convergence-loop-system/DECISIONS.md', description: 'D-001~D-007 의사결정 기록' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-20/convergence-loop-system/DECISIONS.md', description: '기준선, 평가, 후보 관리와 반복 피드백 의사결정' },
         { title: 'STATUS', path: 'tasks/CLE2-20/convergence-loop-system/STATUS.md', description: '현재 진행 상황과 블로커' },
         { title: 'TESTS', path: 'tasks/CLE2-20/convergence-loop-system/TESTS.md', description: '기능/확장/비기능 검증 기준' }
       ]

@@ -8,14 +8,14 @@
 
 | 항목 | EP001 | EP002 | 비고 |
 |------|-------|-------|------|
-| 패널 이미지 (`panels/assets/`) | 49개(중복 포함) → 48개 (`p8-1` 누락) | 30개 | `panels.json` 기준 49/57패널 |
-| `generation_status` | 48 generated, 1 missing (`p8-1`) | 30 generated | |
-| 최종 오버레이 (`panels/final/`) | 17개 (SVG) | 0개 | |
+| 패널 이미지 (`panels/assets/`) | 49/49 (`p8-1` 생성 완료) | 30개 | `panels.json` 기준 49/57패널 |
+| `generation_status` | 49 generated | 30 generated | |
+| 최종 오버레이 (`panels/final/`) | 18개 (SVG) | 0개 | `p8-1` 자막 후처리 포함 |
 | `panels.json` 총 패널 수 | 49 | 57 | `storyboard.json` 기반 |
 | `generation-jobs.json` | 16개 잡 | 있음 | 페이지 단위 큐 |
 
 ### EP001 상세
-- `panels/assets/`: 패널별 PNG 파일 (48개, `p8-1`만 누락)
+- `panels/assets/`: 패널별 PNG 파일 (49개 패널 모두 존재)
 - `panels/generated/`: 9개 (page 10-12 영역, 신규 생성분)
 - `panels/final/`: 17개 SVG (대사 오버레이 완료된 최종본)
 - `state.json`: phase4 active, "17/49 패널 생성. Act 3(pages 10-16) 0%"
@@ -56,7 +56,7 @@
 ## Unknown Map
 
 ### 알고 있는 것
-- EP001: 48/49 패널 이미지 존재 (`p8-1`만 missing)
+- EP001: 49/49 패널 이미지 존재 (`p8-1` 2026-08-14 생성)
 - EP002: 30/57 패널 이미지 존재
 - state.json의 "17/49"은 최종 승인/오버레이 기준 (이미지 생성 자체는 거의 완료)
 - run-panel-jobs.js는 planner이고 실제 생성은 codex exec로 수행
@@ -71,7 +71,7 @@
 
 | # | 결정 사항 | 이유 | 상태 |
 |---|----------|------|------|
-| 1 | `p8-1` 누락 원인 및 재생성 여부 | 유일한 missing 패널 | 즉시 가능 |
+| 1 | `p8-1` 누락 원인 및 재생성 여부 | 유일한 missing 패널 | 해결됨 |
 | 2 | state.json 진행률 기준 재정의 | 17/49 vs 48/49의 의미 차이 | 확인 필요 |
 
 ## 레퍼런스
