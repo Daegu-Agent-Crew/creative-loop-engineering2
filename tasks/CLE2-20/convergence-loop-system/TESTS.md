@@ -5,31 +5,48 @@
 ### 기능 테스트
 | # | 테스트 항목 | 방법 | 기대 결과 | 통과 |
 |---|------------|------|-----------|------|
-| 1 | preference-memory.json 스키마 검증 | JSON Schema로 에피소드 데이터 검증 | 스키마 위반 없음 | ⬜ |
-| 2 | 레퍼런스 체인 주입 | 패널 생성 시 레퍼런스 이미지 자동 포함 확인 | 생성 프롬프트에 레퍼런스 경로 포함 | ⬜ |
-| 3 | 마이크로 루프 사이클 | 패널 1개에 대해 3변형 생성 → 비교 → 진단 → 재생성 | 3회 반복 후 품질 향상 로깅 | ⬜ |
-| 4 | 비교평가 루브릭 | A/B 패널 비교 평가 실행 | 비교 결과 + 선택 이유 기록 | ⬜ |
-| 5 | 선호 회고 생성 | 에피소드 완료 후 회고 자동 생성 | preference-retrospective.json 작성됨 | ⬜ |
-| 6 | 캘리브레이션 로그 | 사람 샘플링 평가 vs AI 평가 비교 | calibration-log.json 작성됨 | ⬜ |
-| 7 | EP001 완료율 | 마이크로 루프로 EP001 잔여 패널 생성 | 49/49 패널 완료 | ⬜ |
+| 1 | 비교·선택 스키마 검증 | JSON Schema로 후보/평가 데이터 검증 | 스키마 위반 없음 | ⬜ |
+| 2 | A/B/C Evaluator — both_bad 케이스 | 품질 낮은 후보 2개 입력 | `both_bad` 반환 → 재생성 트리거 | ⬜ |
+| 3 | A/B/C Evaluator — 절대 게이트 | 품질 높은 후보 입력 | 절대 기준 통과 + A/B 선택 반환 | ⬜ |
+| 4 | Panel Runner — 후보 2개 생성 | 단일 패널에 대해 2변형 생성 | 2개 PNG 파일 저장 + 메타데이터 기록 | ⬜ |
+| 5 | Panel Runner — 레퍼런스 이미지 주입 | 생성 시 참조 이미지 경로 포함 | 생성 요청에 참조 이미지 명시됨 | ⬜ |
+| 6 | 선호 메모리 — 승인 패널 등록 | QA 통과 패널을 preference-memory에 기록 | preference-memory.json 갱신됨 | ⬜ |
+| 7 | 선호 메모리 → 다음 생성 반영 | preference-memory 기반 레퍼런스 자동 선택 | 다음 패널 생성 시 참조됨 | ⬜ |
+| 8 | 단일 패널 end-to-end | 대표 패널 1개에 후보 2× 최대 2회 | 생성→평가→선택→승인 완료 | ⬜ |
+| 9 | 사람 블라인드 선호 비교 | AI 선택 vs 사람 선택 비교 | 일치율 ≥ 60% (첫 검증 기준) | ⬜ |
+| 10 | 에피소드 회고 생성 | 에피소드 완료 후 회고 자동 생성 | preference-retrospective.json 작성됨 | ⬜ |
+| 11 | 캘리브레이션 로그 | 사람 샘플링 평가 vs AI 평가 비교 | calibration-log.json 작성됨 | ⬜ |
+
+### 단계별 확장 검증
+| # | 테스트 항목 | 방법 | 기대 결과 | 통과 |
+|---|------------|------|-----------|------|
+| E1 | EP001 단인물 패널 | 후보 2× 2회 | 품질 수렴 확인 | ⬜ |
+| E2 | EP001 다인물 패널 | 후보 2× 2회 | 품질 수렴 확인 | ⬜ |
+| E3 | EP001 풀페이지/고난도 | 후보 2× 3회 | 품질 수렴 확인 또는 사람 개입 | ⬜ |
+| E4 | EP001 잔여 패널 확대 | E1~E3 통과 후 전체 적용 | 49/49 생성 | ⬜ |
+| E5 | EP002 확대 | EP001 검증 후 EP002 적용 | 정규 경로(`episodes/`)에 저장 | ⬜ |
 
 ### 비기능 테스트
 | # | 테스트 항목 | 방법 | 기대 결과 | 통과 |
 |---|------------|------|-----------|------|
-| 1 | 생성 시간 | 패널당 3변형 생성 시간 측정 | 단일 생성 대비 ≤ 3.5배 | ⬜ |
-| 2 | 스키마 호환성 | 기존 episodes 데이터와 새 스키마 충돌 확인 | 기존 데이터 손상 없음 | ⬜ |
-| 3 | 루프 종료 안정성 | 최대 반복 도달 시 강제 종료 확인 | 무한 루프 없음 | ⬜ |
+| N1 | 생성 시간 | 패널당 2후보 생성 시간 측정 | 단일 생성 대비 ≤ 2.5배 | ⬜ |
+| N2 | 스키마 호환성 | 기존 episodes 데이터와 새 스키마 충돌 확인 | 기존 데이터 손상 없음 | ⬜ |
+| N3 | 루프 종료 안정성 | 최대 반복 도달 시 강제 종료 | 무한 루프 없음 | ⬜ |
+| N4 | 비용 추적 | 패널당 생성 횟수 로깅 | 예산(128~288회) 범위 내 유지 | ⬜ |
 
-### 자동화 테스트 (해당 시)
+### 자동화 테스트 (계획)
 ```bash
 # 스키마 검증
-node scripts/validate-episode-governance.js --episode EP001
+node scripts/validate-comparison-schema.js --episode EP001 --panel p37
 
-# 마이크로 루프 드라이런
-node scripts/run-panel-jobs.js --episode EP001 --dry-run --max-jobs 3 --variants 3
+# Evaluator 단위 테스트
+node scripts/test-evaluator.js --fixture tests/fixtures/panel-pair.json
 
-# 비교평가 로깅 검증
-node scripts/validate-evaluation-logs.js --episode EP001
+# Panel Runner 드라이런
+node scripts/panel-runner.js --episode EP001 --panel p37 --variants 2 --max-iterations 2 --dry-run
+
+# end-to-end 검증
+node scripts/panel-runner.js --episode EP001 --panel p37 --variants 2 --max-iterations 2
 ```
 
 ## 검증 결과
@@ -38,11 +55,13 @@ node scripts/validate-evaluation-logs.js --episode EP001
 - **결과**: 대기
 - **근거 링크**: —
 
-## 인수 확인 (Quiz Me)
-- 마이크로 루프의 종료 조건은 무엇인가? (품질 임계값 OR 최대 반복 횟수)
-- 선호 메모리가 다음 에피소드에 어떻게 전달되는가? (preference-retrospective.json → Phase 0.5 discovery)
-- Evaluator 편향은 어떻게 감지하는가? (사람 샘플링 평가와 AI 평가의 일치율 추적)
+## 대표 패널 선정 기준 (E1~E3)
+| 유형 | 선정 기준 | 후보 패널 (제안) |
+|------|----------|----------------|
+| 단인물 | 1명 캐릭터, 감정 표현 중심 | EP001 p37 "왜?" 또는 미생성 패널 |
+| 다인물 | 2+ 캐릭터 상호작용 | 미생성 패널 중 다인 장면 |
+| 풀페이지/고난도 | 복잡한 배경, 파노라마, 또는 고난도 구도 | 미생성 패널 중 풀페이지 |
 
 ## 비고
-- P1(선호 메모리) 완료 후 EP001 EP002 기존 데이터로 즉시 검증 가능
-- P2(마이크로 루프)는 EP001 Act 3를 실제 대상으로 검증
+- 검증은 EP001 기준으로 먼저 수행, 통과 후 EP002 확대
+- 패널 선정은 현재 스토리보드와 대조하여 회장님과 확정 필요

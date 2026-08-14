@@ -1352,6 +1352,92 @@
         { title: 'Self Assessment', path: 'tasks/CLE2-19/cle5-development-plan/research/self-assessment-template.md', description: '패널 근거 기반 자기평가 원본' },
         { title: 'Case Library', path: 'tasks/CLE2-19/cle5-development-plan/research/case-library/INDEX.md', description: '대표 사례 인덱스와 CASE-0001' }
       ]
+    },
+    {
+      id: 'CLE2-20',
+      cle2Id: 'CLE2-20',
+      slug: 'convergence-loop-system',
+      title: 'CLE3 수렴 루프 시스템 — Generator-Evaluator 마이크로 루프',
+      issue: 54,
+      prs: [55],
+      deliverables: [
+        { title: 'CLE2-20 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54', description: '수렴 루프 시스템 5개 개선축과 우선순위' },
+        { title: 'sfex11 재기준화 코멘트', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54#issuecomment-3083457760', description: '실체 대조 검토 및 구현 순서 수정 제안' }
+      ],
+      goal: {
+        objective: 'CLE3 파이프라인에 Search → Evaluate → Converge 폐루프를 내장하여 Phase 4의 패널 품질과 완료율을 획기적으로 개선한다.',
+        successCriteria: [
+          '비교·선택 데이터 스키마 설계 및 구현',
+          'A/B/C Evaluator + 절대 품질 게이트 구현 (both_bad/tie 포함)',
+          'Panel Runner 구현 — 실제 imagegen 호출, 참조 전달, 후보 저장, 결과 수집',
+          '선호 메모리 & 레퍼런스 체인 작동',
+          '단일 패널 end-to-end 검증 — 후보 2× 최대 2회, 사람 블라인드 선호 비교',
+          'EP001 패널 생성률 49/49 달성'
+        ],
+        scope: {
+          in: ['비교·선택 스키마', 'Evaluator + 절대 게이트', 'Panel Runner 신규 구현', 'preference-memory.json', 'EP001 잔여 패널 생성'],
+          out: ['CLE3 Phase 1~3 구조 변경', '새 에피소드 창작', '이미지 생성 모델 교체']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['EP001 16패널, EP002 10패널(비정규 경로) 존재', 'gpt-image-2 + codex exec 방식 사용', '수채화풍(s1) 적용 중'],
+          knownUnknown: ['gpt-image-2 img2img 지원 여부', 'run-panel-jobs.js 등 핵심 스크립트가 존재하지 않음', '총 패널 수(49/57) 출처'],
+          unknownKnown: ['이전 생성→평가 워크플로우의 실제 절차 (문서화 안 됨)', '오버레이 워크플로우 기록 없음'],
+          unknownUnknown: ['A/B 평가가 오히려 품질을 역행시킬 위험', '후보 생성 비용 폭증 가능성']
+        },
+        tools: [
+          { name: 'three-body-comic repo', status: 'available', purpose: 'CLE3 에셋, 스크립트, 문서' },
+          { name: 'gpt-image-2 API', status: 'available', purpose: '패널 이미지 생성' },
+          { name: 'CLE2 Pages', status: 'available', purpose: '태스크 대시보드' }
+        ],
+        references: ['이슈 #54', 'IMAGE-GENERATION-GUIDE.md', 'prompt-guide-v2.md', 'sfex11 재기준화 코멘트'],
+        needsDecision: ['EP002 패널 경로 정규화', '총 패널 수 확정', 'image_generate 툴 사용 허용 여부'],
+        assumptions: ['gpt-image-2로 세로 1024×1536 변형 생성이 가능하다'],
+        challenge: '절대 게이트 없는 A/B 평가는 모두 불량일 때 덜 나쁜 것을 선택하여 preference memory를 오염시킨다'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 0 · 기준선 확정 및 문서 보완', owner: '대구루', status: 'in-progress' },
+          { name: 'Phase 1 · 비교·선택 데이터 스키마', owner: '대구루', status: 'pending' },
+          { name: 'Phase 2 · A/B/C Evaluator + 절대 게이트', owner: '대구루', status: 'pending' },
+          { name: 'Phase 3 · Panel Runner (후보 생성 실행기)', owner: '대구루', status: 'pending' },
+          { name: 'Phase 4 · 선호 메모리 & 레퍼런스 체인', owner: '대구루', status: 'pending' },
+          { name: 'Phase 5 · 단일 패널 end-to-end 검증', owner: '대구루 + 회장님', status: 'pending' },
+          { name: 'Phase 6 · EP001 확대 적용', owner: '대구루', status: 'pending' },
+          { name: 'Phase 7 · 회고 + 캘리브레이션 (중장기)', owner: '대구루 + 회장님', status: 'pending' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 0, total: 7 },
+        completedTasks: ['요구사항 분석 (5개 개선축)', '이슈 #54 생성', 'GOAL/PLAN/STATUS/TESTS 작성 (PR #55)', '실제 자산 대조', 'DISCOVERY/DECISIONS 작성', 'GOAL 재기준화'],
+        currentTasks: ['PLAN 재구조화', 'CLE2 Pages TASKS_DATA 등록'],
+        nextTasks: ['대표 패널 3개 선정', '비교 스키마 설계', 'Evaluator 최소 구현'],
+        blockers: ['gpt-image-2 img2img 지원 여부 미확정', '총 패널 수 출처 미확인']
+      },
+      tests: {
+        items: [
+          { name: '비교 스키마 검증', method: 'JSON Schema', expected: '스키마 위반 없음', passed: false },
+          { name: 'Evaluator both_bad', method: '단위 테스트', expected: 'both_bad → 재생성 트리거', passed: false },
+          { name: 'Panel Runner 후보 2개 생성', method: '통합 테스트', expected: '2개 PNG + 메타데이터', passed: false },
+          { name: '단일 패널 E2E', method: '수동 검증', expected: '후보 2× 2회 → 선택→승인', passed: false },
+          { name: '사람 블라인드 선호 비교', method: '수동', expected: 'AI-사람 일치율 ≥ 60%', passed: false },
+          { name: 'EP001 49/49', method: '전수 검증', expected: '49패널 생성 완료', passed: false }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-9', relation: '선행 CLE3 시스템', note: '삼체 만화 창작 시스템의 원본 구조' },
+        { id: 'CLE2-19', relation: 'CLE5 성장 루프', note: '선호 회고와 캘리브레이션이 CLE5와 연동 가능' }
+      ],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-20/convergence-loop-system/GOAL.md', description: '수렴 루프 목표, 실제 자산 기준선, 7개 DoD' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-20/convergence-loop-system/DISCOVERY.md', description: '실제 자산 대조, Unknown Map, 숨겨진 전제' },
+        { title: 'PLAN', path: 'tasks/CLE2-20/convergence-loop-system/PLAN.md', description: 'Evaluator 우선 8단계 실행 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-20/convergence-loop-system/DECISIONS.md', description: 'D-001~D-007 의사결정 기록' },
+        { title: 'STATUS', path: 'tasks/CLE2-20/convergence-loop-system/STATUS.md', description: '현재 진행 상황과 블로커' },
+        { title: 'TESTS', path: 'tasks/CLE2-20/convergence-loop-system/TESTS.md', description: '기능/확장/비기능 검증 기준' }
+      ]
     }
   ];
 

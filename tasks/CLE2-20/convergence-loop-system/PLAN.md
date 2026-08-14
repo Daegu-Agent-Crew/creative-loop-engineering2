@@ -1,86 +1,111 @@
 # PLAN — CLE3 수렴 루프 시스템 도입
 
-## 실행 계획
+## 실행 계획 (재구조화 — sfex11 코멘트 반영)
 
-### Phase 1: 선호 메모리 & 레퍼런스 체인 (P1)
+> 원안 대비 변경: Evaluator를 루프보다 먼저 구현. "개편"이 아닌 "신규 작성"으로 명확화.
+
+### Phase 0: 기준선 확정 및 문서 보완 (P0)
 - **담당**: 대구루
-- **입력**: 기존 episodes/*/approvals/gates.json, 승인된 패널 이미지
-- **출력**: preference-memory.json 스키마, 레퍼런스 체인 로직, EP001/EP002 적용
 - **세부 작업**:
-  - [ ] preference-memory.json JSON Schema 작성 (캐릭터별/장면별/스타일 앵커)
-  - [ ] 기존 승인 패널에서 스타일 앵커 추출 스크립트
-  - [ ] 패널 생성 프롬프트에 레퍼런스 이미지 자동 주입 로직
-  - [ ] IMAGE-WORKFLOW.md [B] 캐릭터 시트 / [D] 컷 연출 섹션에 레퍼런스 체인 통합
+  - [x] 실제 자산 대조 (EP001 16개, EP002 10개 비정규 경로)
+  - [x] DISCOVERY.md 작성
+  - [x] DECISIONS.md 작성
+  - [x] GOAL/STATUS/TESTS 재기준화
+  - [ ] CLE2 Pages TASKS_DATA 등록
+  - [ ] 총 패널 수 확정 (storyboard.md 확인)
+  - [ ] gpt-image-2 API img2img 지원 여부 확인
+- **예상 시간**: 0.5일 (잔류 항목)
+
+### Phase 1: 비교·선택 데이터 스키마 (P1)
+- **담당**: 대구루
+- **입력**: 없음 (신규 설계)
+- **출력**: candidates.json, comparison-result.json JSON Schema
+- **세부 작업**:
+  - [ ] 후보 메타데이터 스키마 (panel_id, variant_id, prompt, params, seed, created_at)
+  - [ ] 비교 결과 스키마 (candidates[], winner, reasoning, absolute_scores, verdict: better/worse/tie/both_bad)
+  - [ ] 루프 이터레이션 로깅 스키마 (iteration, prompts_used, evaluator_result, action_taken)
+- **예상 시간**: 0.5일
+
+### Phase 2: A/B/C Evaluator + 절대 게이트 (P2)
+- **담당**: 대구루
+- **입력**: P1 스키마, 기존 `docs/IMAGE-GENERATION-GUIDE.md` 캐릭터 기준
+- **출력**: evaluator 모듈, evaluation-rubric.md (신규)
+- **세부 작업**:
+  - [ ] 평가 축 정의: 캐릭터 일관성, 구도, 감정 연출, 화풍 일관성, 장면 연속성 (Phase 4)
+  - [ ] 절대 품질 게이트 정의 (각 축 최소 기준)
+  - [ ] A/B 비교 로직: 후보 쌍에 대해 better/worse/tie/both_bad 판정
+  - [ ] 선택 이유 텍스트 생성 (다음 생성에 반영 가능한 형태)
+  - [ ] evaluation-rubric.md 작성 — Phase 4(캐릭터·구도·감정·화풍) / Phase 5(대사·가독성) 분리
+- **예상 시간**: 1.5일
+
+### Phase 3: Panel Runner — 후보 생성 실행기 (P3)
+- **담당**: 대구루
+- **입력**: P1 스키마, P2 Evaluator
+- **출력**: panel-runner.js (신규), IMAGE-WORKFLOW.md (신규)
+- **세부 작업**:
+  - [ ] Panel Runner 인터페이스 정의: `generate(panel_id, prompt, variants, references) → candidates[]`
+  - [ ] 실제 imagegen 호출 (gpt-image-2 또는 codex exec 방식)
+  - [ ] 참조 이미지 전달 로직 (P-1 결정에 따라 방식 확정)
+  - [ ] 후보 파일 저장 (`tmp/candidates/{episode}/{panel}/`)
+  - [ ] Evaluator 호출 → 결과 수집
+  - [ ] 선택본 승격: `tmp/candidates/` → `episodes/*/panels/`
+  - [ ] IMAGE-WORKFLOW.md 작성 — 마이크로 루프 D→E→F→G 사이클 문서화
 - **예상 시간**: 2일
 
-### Phase 2: Phase 4 마이크로 루프 (P2)
+### Phase 4: 선호 메모리 & 레퍼런스 체인 (P4)
 - **담당**: 대구루
-- **입력**: P1 산출물 (레퍼런스 체인), 기존 run-panel-jobs.js
-- **출력**: 마이크로 루프 패널 생성 스크립트, EP001 Act 3 잔여 패널
+- **입력**: P3에서 승격된 패널
+- **출력**: preference-memory.json, 레퍼런스 체인 로직
 - **세부 작업**:
-  - [ ] run-panel-jobs.js 개편: 패널당 N변형 생성 → 비교 → 진단 → 재생성 사이클
-  - [ ] 변형 생성 전략 수립 (스타일 파라미터 변동, 카메라 앵글 변동, 색감 변동)
-  - [ ] 자동 진단 로직: "왜 A가 B보다 나은가" → 다음 생성 프롬프트에 반영
-  - [ ] 루프 종료 조건 정의 (품질 임계값 or 최대 반복 횟수)
-  - [ ] EP001 Act 3 (pages 10-16) 잔여 32패널 생성으로 검증
-- **예상 시간**: 3일
+  - [ ] preference-memory.json 스키마 (캐릭터별/장면별/스타일 앵커)
+  - [ ] 승인 패널에서 스타일 앵커 자동 등록
+  - [ ] 다음 패널 생성 시 레퍼런스 자동 주입 (Panel Runner와 연동)
+  - [ ] "Example > Description" 원칙 — 텍스트 프롬프트 보강이 아닌 이미지 참조 우선
+- **예상 시간**: 1.5일
 
-### Phase 3: 비교평가 루브릭 개정 (P3)
-- **담당**: 대구루
-- **입력**: 기존 evaluation-rubric.md, P2 마이크로 루프 로깅 데이터
-- **출력**: 개정된 evaluation-rubric.md (A/B 비교 방식), 비교 평가 스크립트
+### Phase 5: 단일 패널 end-to-end 검증 (P5)
+- **담당**: 대구루 + 회장님 (블라인드 선호 평가)
+- **입력**: P1~P4 완성, 대표 패널 3개
+- **출력**: 검증 결과 보고서
 - **세부 작업**:
-  - [ ] 절대평가(50점) → 비교평가(A/B/C 선택) 방식으로 루브릭 재설계
-  - [ ] 비교 기준 체크리스트 구축 (스타일 일관성, 캐릭터 일관성, 감정 연출, 구도, 한글 렌더링)
-  - [ ] 비교 결과 로깅 포맷 정의 → preference-memory.json과 연동
-  - [ ] Phase 5(QA) 평가 로직에 비교평가 통합
-- **예상 시간**: 2일
+  - [ ] 대표 패널 3개 선정 (단인물, 다인물, 풀페이지/고난도)
+  - [ ] 각 패널에 대해 후보 2× 최대 2회 end-to-end 실행
+  - [ ] 회장님 블라인드 선호 평가 (AI가 선택한 것과 비교)
+  - [ ] 일치율 및 품질 개선 정도 측정
+  - [ ] 통과 시 EP001 잔여 패널로 확대
+- **예상 시간**: 1일
 
-### Phase 4: 목표 공동 진화 메커니즘 (P4)
+### Phase 6: EP001 확대 적용 (P6)
 - **담당**: 대구루
-- **입력**: 과거 rollback 이력, P1~P3 선호 데이터 누적
-- **출력**: discovery/context.json 선호 회고 스키마, AI-COLLABORATION-PROTOCOL.md 개정
+- **세부 작업**:
+  - [ ] EP001 잔여 패널 (49 - 16 = 33개)에 수렴 루프 적용
+  - [ ] 승인 패널 5~10개 단위 체크포인트 + push
+  - [ ] 패널당 평균 생성 횟수, 품질 추이 추적
+- **예상 시간**: 3~5일 (패널 품질에 따라 변동)
+
+### Phase 7: 목표 공동 진화 + 캘리브레이션 (P7, 중장기)
+- **담당**: 대구루 + 회장님
 - **세부 작업**:
   - [ ] preference-retrospective.json 스키마 설계
-  - [ ] 에피소드 완료 후 자동 선호 회고 생성 로직
-  - [ ] Phase 0.5 discovery 단계에 선호 이력 주입
+  - [ ] 에피소드 완료 후 선호 회고 자동 생성
   - [ ] rollback 이력 → 구조적 학습 데이터 변환
-  - [ ] AI-COLLABORATION-PROTOCOL.md에 "선호 회고" 섹션 추가
-- **예상 시간**: 2일
-
-### Phase 5: Evaluator 캘리브레이션 (P5)
-- **담당**: 대구루 + 회장님(샘플링 점검)
-- **입력**: P3 비교평가 데이터, AI 평가 결과
-- **출력**: calibration-log.json, 캘리브레이션 프로세스 문서
-- **세부 작업**:
-  - [ ] calibration-log.json 스키마 설계 (사람 vs AI 평가 비교)
-  - [ ] 캘리브레이션 샘플링 프로세스 정의 (에피소드당 5패널 무작위)
-  - [ ] AI 평가 편향 감지 로직 (사람 평가와의 일치율 추적)
-  - [ ] evaluation-rubric.md Phase 5 섹션에 캘리브레이션 스텝 추가
-  - [ ] 대시보드: 편향 추이 시각화 (선택)
-- **예상 시간**: 2일
+  - [ ] calibration-log.json — 사람 vs AI 평가 일치율 추적
+  - [ ] 캘리브레이션 샘플링 프로세스 (에피소드당 5패널 무작위)
+- **예상 시간**: 3일
 
 ## 의존성
-- P2는 P1 완료에 의존 (레퍼런스 체인이 마이크로 루프의 입력)
-- P3는 P2 로깅 데이터에 부분 의존
-- P4, P5는 P1~P3 데이터 누적 후 의미 있음 (중장기)
-
-## 도구 및 접근
-| 도구/데이터 | 목적 | 접근 상태 | 대안 |
-|---|---|---|---|
-| CLE3 저장소 (로컬) | 코드/스키마 수정 | available | — |
-| gpt-image-2 (Codex) | 변형 패널 생성 | available | — |
-| GitHub API | PR/이슈 관리 | available | — |
-| 기존 승인 패널 이미지 | 레퍼런스 체인 입력 | available (EP001/EP002) | — |
-
-## 사람 승인 게이트
-| 게이트 | 승인 대상 | 승인자 | 기준 |
-|---|---|---|---|
-| 루브릭 승인 | 개정된 evaluation-rubric.md | 회장님 | 비교평가 방식 타당성 |
-| 루프 파라미터 | 마이크로 루프 종료 조건 | 회장님 | 품질/시간 트레이드오프 |
-| 캘리브레이션 결과 | 편향 점검 보고서 | 회장님 | AI 평가 신뢰성 |
+```
+P0 → P1 → P2 → P3 → P4 → P5 → P6
+                                    ↘
+                                      P7 (중장기)
+```
+- P2는 P1 스키마에 의존
+- P3는 P2 Evaluator에 의존 (루프 종료 조건)
+- P4는 P3 승격 패널에 의존
+- P5는 P1~P4 모두 완료 후 실행
+- P7은 P5~P6 데이터 누적 후 의미 있음
 
 ## 리스크
-- **변형 생성 비용**: 패널당 2~3변형 = 이미지 생성량 2~3배. EP001 잔여 32패널 × 3 = 96회 생성
-- **AI Evaluator 편향**: 자기 생성물 선호 가능 → P5 캘리브레이션으로 완충
-- **루브릭 전환 저항**: 기존 절대평가 데이터와의 호환성 → 마이그레이션 스크립트 필요
+- **변형 생성 비용**: 잔여 33패널 × 2후보 × 2회 = 132회 최소 (실패 시 최대 297회). P5에서 효과 검증 후 확대.
+- **gpt-image-2 레퍼런스 입력 미지원**: img2img가 안 되면 텍스트 프롬프트 기반으로 회귀 (P-1).
+- **"신규 작성" 작업량**: run-panel-jobs.js, evaluation-rubric.md, IMAGE-WORKFLOW.md 모두 처음부터 만들어야 함.
