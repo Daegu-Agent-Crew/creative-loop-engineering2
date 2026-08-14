@@ -1359,41 +1359,42 @@
       slug: 'convergence-loop-system',
       title: 'CLE3 수렴 루프 시스템 — Generator-Evaluator 마이크로 루프',
       issue: 54,
-      prs: [55],
+      prs: [55, 56],
       deliverables: [
         { title: 'CLE2-20 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54', description: '수렴 루프 시스템 5개 개선축과 우선순위' },
-        { title: 'sfex11 재기준화 코멘트', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54#issuecomment-3083457760', description: '실체 대조 검토 및 구현 순서 수정 제안' }
+        { title: 'sfex11 재기준화 코멘트', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/54#issuecomment-3083457760', description: '실체 대조 검토 및 구현 순서 수정 제안' },
+        { title: 'CLE3 리포', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering3', description: 'creative-loop-engineering3 — 실제 CLE3 자산, 스크립트, 문서' }
       ],
       goal: {
         objective: 'CLE3 파이프라인에 Search → Evaluate → Converge 폐루프를 내장하여 Phase 4의 패널 품질과 완료율을 획기적으로 개선한다.',
         successCriteria: [
           '비교·선택 데이터 스키마 설계 및 구현',
           'A/B/C Evaluator + 절대 품질 게이트 구현 (both_bad/tie 포함)',
-          'Panel Runner 구현 — 실제 imagegen 호출, 참조 전달, 후보 저장, 결과 수집',
-          '선호 메모리 & 레퍼런스 체인 작동',
+          'run-panel-jobs.js 확장 — --variants, 실제 imagegen 호출, 레퍼런스 이미지 전달',
+          '선호 메모리 & 레퍼런스 체인 작동 (GPT Image 2 이미지 입력 활용)',
           '단일 패널 end-to-end 검증 — 후보 2× 최대 2회, 사람 블라인드 선호 비교',
-          'EP001 패널 생성률 49/49 달성'
+          'p8-1 생성 + EP001 오버레이 완료율 향상 (현재 17/49)'
         ],
         scope: {
-          in: ['비교·선택 스키마', 'Evaluator + 절대 게이트', 'Panel Runner 신규 구현', 'preference-memory.json', 'EP001 잔여 패널 생성'],
+          in: ['비교·선택 스키마 (신규)', 'Evaluator + 절대 게이트 (기존 루브릭 개편)', 'run-panel-jobs.js 확장 (기존 개편)', 'preference-memory.json (신규)', 'p8-1 생성 + EP001 오버레이'],
           out: ['CLE3 Phase 1~3 구조 변경', '새 에피소드 창작', '이미지 생성 모델 교체']
         }
       },
       discovery: {
         unknowns: {
-          knownKnown: ['EP001 16패널, EP002 10패널(비정규 경로) 존재', 'gpt-image-2 + codex exec 방식 사용', '수채화풍(s1) 적용 중'],
-          knownUnknown: ['gpt-image-2 img2img 지원 여부', 'run-panel-jobs.js 등 핵심 스크립트가 존재하지 않음', '총 패널 수(49/57) 출처'],
-          unknownKnown: ['이전 생성→평가 워크플로우의 실제 절차 (문서화 안 됨)', '오버레이 워크플로우 기록 없음'],
+          knownKnown: ['EP001 48/49 패널 이미지 존재 (p8-1 누락), 오버레이 17/49', 'EP002 30/57 패널 이미지 존재', 'run-panel-jobs.js(172라인), evaluation-rubric.md(v2), IMAGE-WORKFLOW.md, AI-COLLABORATION-PROTOCOL.md 모두 존재', 'GPT Image 2 이미지 입력/편집 지원', '화풍: 닥터슬럼프풍 (Akira Toriyama)'],
+          knownUnknown: ['state.json 17/49와 실제 48개 이미지의 정확한 의미 차이 (overlay 기준 추정)', 'panels/generated/ 9개 파일의 성격 (후보? 중복?)'],
+          unknownKnown: ['이전 생성→평가 워크플로우의 세부 절차', 'panels.json의 generation_status와 실제 파일의 동기화 상태'],
           unknownUnknown: ['A/B 평가가 오히려 품질을 역행시킬 위험', '후보 생성 비용 폭증 가능성']
         },
         tools: [
-          { name: 'three-body-comic repo', status: 'available', purpose: 'CLE3 에셋, 스크립트, 문서' },
+          { name: 'CLE3 리포 (creative-loop-engineering3)', status: 'available', purpose: 'CLE3 에셋, 스크립트, 문서' },
           { name: 'gpt-image-2 API', status: 'available', purpose: '패널 이미지 생성' },
           { name: 'CLE2 Pages', status: 'available', purpose: '태스크 대시보드' }
         ],
-        references: ['이슈 #54', 'IMAGE-GENERATION-GUIDE.md', 'prompt-guide-v2.md', 'sfex11 재기준화 코멘트'],
-        needsDecision: ['EP002 패널 경로 정규화', '총 패널 수 확정', 'image_generate 툴 사용 허용 여부'],
-        assumptions: ['gpt-image-2로 세로 1024×1536 변형 생성이 가능하다'],
+        references: ['이슈 #54', 'evaluation-rubric.md', 'IMAGE-WORKFLOW.md', 'AI-COLLABORATION-PROTOCOL.md', 'sfex11 재기준화 코멘트'],
+        needsDecision: ['p8-1 재생성 승인', '대표 패널 3개 선정'],
+        assumptions: ['state.json 17/49 = overlay_complete 기준 (generated는 48/49)', 'GPT Image 2 이미지 입력으로 레퍼런스 체인 구현 가능'],
         challenge: '절대 게이트 없는 A/B 평가는 모두 불량일 때 덜 나쁜 것을 선택하여 preference memory를 오염시킨다'
       },
       plan: {
@@ -1411,19 +1412,20 @@
       status: {
         state: 'in-progress',
         progress: { current: 0, total: 7 },
-        completedTasks: ['요구사항 분석 (5개 개선축)', '이슈 #54 생성', 'GOAL/PLAN/STATUS/TESTS 작성 (PR #55)', '실제 자산 대조', 'DISCOVERY/DECISIONS 작성', 'GOAL 재기준화'],
-        currentTasks: ['PLAN 재구조화', 'CLE2 Pages TASKS_DATA 등록'],
-        nextTasks: ['대표 패널 3개 선정', '비교 스키마 설계', 'Evaluator 최소 구현'],
-        blockers: ['gpt-image-2 img2img 지원 여부 미확정', '총 패널 수 출처 미확인']
+        completedTasks: ['요구사항 분석 (5개 개선축)', '이슈 #54 생성', 'GOAL/PLAN/STATUS/TESTS 작성 (PR #55)', '1차 자산 대조 (잘못된 리포 → 정정)', '2차 자산 대조 (CLE3 리포 정확)', 'DISCOVERY/DECISIONS 정정 작성', 'GOAL 재기준화'],
+        currentTasks: ['PLAN/TESTS 재구조화', 'CLE2 Pages TASKS_DATA 등록'],
+        nextTasks: ['p8-1 재생성', '대표 패널 3개 선정', '비교 스키마 설계'],
+        blockers: []
       },
       tests: {
         items: [
           { name: '비교 스키마 검증', method: 'JSON Schema', expected: '스키마 위반 없음', passed: false },
           { name: 'Evaluator both_bad', method: '단위 테스트', expected: 'both_bad → 재생성 트리거', passed: false },
-          { name: 'Panel Runner 후보 2개 생성', method: '통합 테스트', expected: '2개 PNG + 메타데이터', passed: false },
+          { name: 'run-panel-jobs.js --variants 2', method: '통합 테스트', expected: '2개 후보 PNG + 메타데이터', passed: false },
           { name: '단일 패널 E2E', method: '수동 검증', expected: '후보 2× 2회 → 선택→승인', passed: false },
           { name: '사람 블라인드 선호 비교', method: '수동', expected: 'AI-사람 일치율 ≥ 60%', passed: false },
-          { name: 'EP001 49/49', method: '전수 검증', expected: '49패널 생성 완료', passed: false }
+          { name: 'p8-1 생성 + 오버레이 확대', method: '전수 검증', expected: 'EP001 49/49 generated + 오버레이 향상', passed: false },
+          { name: '기존 기능 회귀', method: '회귀 테스트', expected: '--dry-run 등 기존 기능 정상', passed: false }
         ]
       },
       relatedTasks: [

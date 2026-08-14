@@ -7,15 +7,15 @@
 |---|------------|------|-----------|------|
 | 1 | 비교·선택 스키마 검증 | JSON Schema로 후보/평가 데이터 검증 | 스키마 위반 없음 | ⬜ |
 | 2 | A/B/C Evaluator — both_bad 케이스 | 품질 낮은 후보 2개 입력 | `both_bad` 반환 → 재생성 트리거 | ⬜ |
-| 3 | A/B/C Evaluator — 절대 게이트 | 품질 높은 후보 입력 | 절대 기준 통과 + A/B 선택 반환 | ⬜ |
-| 4 | Panel Runner — 후보 2개 생성 | 단일 패널에 대해 2변형 생성 | 2개 PNG 파일 저장 + 메타데이터 기록 | ⬜ |
-| 5 | Panel Runner — 레퍼런스 이미지 주입 | 생성 시 참조 이미지 경로 포함 | 생성 요청에 참조 이미지 명시됨 | ⬜ |
+| 3 | A/B/C Evaluator — 절대 게이트 | 품질 높은 후보 입력 | 기존 40점 기준 통과 + A/B 선택 반환 | ⬜ |
+| 4 | run-panel-jobs.js `--variants` | 단일 패널에 대해 `--variants 2` 실행 | 2개 후보 파일 저장 + 메타데이터 기록 | ⬜ |
+| 5 | 레퍼런스 이미지 주입 | 생성 시 GPT Image 2 이미지 입력으로 참조 | 생성 요청에 참조 이미지 전달됨 | ⬜ |
 | 6 | 선호 메모리 — 승인 패널 등록 | QA 통과 패널을 preference-memory에 기록 | preference-memory.json 갱신됨 | ⬜ |
 | 7 | 선호 메모리 → 다음 생성 반영 | preference-memory 기반 레퍼런스 자동 선택 | 다음 패널 생성 시 참조됨 | ⬜ |
 | 8 | 단일 패널 end-to-end | 대표 패널 1개에 후보 2× 최대 2회 | 생성→평가→선택→승인 완료 | ⬜ |
 | 9 | 사람 블라인드 선호 비교 | AI 선택 vs 사람 선택 비교 | 일치율 ≥ 60% (첫 검증 기준) | ⬜ |
-| 10 | 에피소드 회고 생성 | 에피소드 완료 후 회고 자동 생성 | preference-retrospective.json 작성됨 | ⬜ |
-| 11 | 캘리브레이션 로그 | 사람 샘플링 평가 vs AI 평가 비교 | calibration-log.json 작성됨 | ⬜ |
+| 10 | `p8-1` 재생성 | 수렴 루프로 `p8-1` 생성 | 이미지 파일 + panels.json 갱신 | ⬜ |
+| 11 | 기존 기능 회귀 | 개편 후 기존 `--dry-run` 등 정상 동작 | 기존 기능 손상 없음 | ⬜ |
 
 ### 단계별 확장 검증
 | # | 테스트 항목 | 방법 | 기대 결과 | 통과 |
@@ -23,45 +23,40 @@
 | E1 | EP001 단인물 패널 | 후보 2× 2회 | 품질 수렴 확인 | ⬜ |
 | E2 | EP001 다인물 패널 | 후보 2× 2회 | 품질 수렴 확인 | ⬜ |
 | E3 | EP001 풀페이지/고난도 | 후보 2× 3회 | 품질 수렴 확인 또는 사람 개입 | ⬜ |
-| E4 | EP001 잔여 패널 확대 | E1~E3 통과 후 전체 적용 | 49/49 생성 | ⬜ |
-| E5 | EP002 확대 | EP001 검증 후 EP002 적용 | 정규 경로(`episodes/`)에 저장 | ⬜ |
+| E4 | EP001 오버레이 확대 | 기존 17개에서 추가 완료 | 오버레이 완료율 향상 | ⬜ |
+| E5 | EP002 확대 | EP001 검증 후 EP002 적용 | EP002 30→49+ 패널 | ⬜ |
 
 ### 비기능 테스트
 | # | 테스트 항목 | 방법 | 기대 결과 | 통과 |
 |---|------------|------|-----------|------|
 | N1 | 생성 시간 | 패널당 2후보 생성 시간 측정 | 단일 생성 대비 ≤ 2.5배 | ⬜ |
-| N2 | 스키마 호환성 | 기존 episodes 데이터와 새 스키마 충돌 확인 | 기존 데이터 손상 없음 | ⬜ |
+| N2 | 기존 데이터 호환성 | 개편 후 기존 panels.json, state.json 정상 | 기존 데이터 손상 없음 | ⬜ |
 | N3 | 루프 종료 안정성 | 최대 반복 도달 시 강제 종료 | 무한 루프 없음 | ⬜ |
-| N4 | 비용 추적 | 패널당 생성 횟수 로깅 | 예산(128~288회) 범위 내 유지 | ⬜ |
+| N4 | 비용 추적 | 패널당 생성 횟수 로깅 | 예산 범위 내 유지 | ⬜ |
 
 ### 자동화 테스트 (계획)
 ```bash
 # 스키마 검증
-node scripts/validate-comparison-schema.js --episode EP001 --panel p37
+node scripts/validate-comparison-schema.js --episode EP001 --panel p8-1
 
 # Evaluator 단위 테스트
 node scripts/test-evaluator.js --fixture tests/fixtures/panel-pair.json
 
-# Panel Runner 드라이런
-node scripts/panel-runner.js --episode EP001 --panel p37 --variants 2 --max-iterations 2 --dry-run
+# run-panel-jobs.js 회귀 테스트
+node scripts/run-panel-jobs.js --episode EP001 --dry-run --max-jobs 3
 
-# end-to-end 검증
-node scripts/panel-runner.js --episode EP001 --panel p37 --variants 2 --max-iterations 2
+# 수렴 루프 드라이런
+node scripts/run-panel-jobs.js --episode EP001 --panel p8-1 --variants 2 --max-iterations 2 --dry-run
 ```
 
 ## 검증 결과
 - **검증 일자**: (미실행)
 - **검증자**: —
 - **결과**: 대기
-- **근거 링크**: —
 
 ## 대표 패널 선정 기준 (E1~E3)
 | 유형 | 선정 기준 | 후보 패널 (제안) |
 |------|----------|----------------|
-| 단인물 | 1명 캐릭터, 감정 표현 중심 | EP001 p37 "왜?" 또는 미생성 패널 |
-| 다인물 | 2+ 캐릭터 상호작용 | 미생성 패널 중 다인 장면 |
-| 풀페이지/고난도 | 복잡한 배경, 파노라마, 또는 고난도 구도 | 미생성 패널 중 풀페이지 |
-
-## 비고
-- 검증은 EP001 기준으로 먼저 수행, 통과 후 EP002 확대
-- 패널 선정은 현재 스토리보드와 대조하여 회장님과 확정 필요
+| 단인물 | 1명 캐릭터, 감정 표현 중심 | 검토 중 |
+| 다인물 | 2+ 캐릭터 상호작용 | 검토 중 |
+| 풀페이지/고난도 | 복잡한 배경, 파노라마 | 검토 중 |
