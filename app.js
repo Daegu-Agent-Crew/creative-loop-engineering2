@@ -120,7 +120,7 @@
       slug: 'team-memory',
       title: 'team-memory 활성화',
       issue: 1,
-      prs: [],
+      prs: [60],
       deliverables: [],
       goal: {
         objective: 'team-memory를 실제 팀 작업 흐름에 연결하고 기록, 위키, 자동화 파이프라인이 일관되게 동작하도록 활성화한다.',
@@ -1494,14 +1494,14 @@
           { name: 'Phase 3 · 산출물과 Agent Handoff', owner: 'Codex', status: 'done' },
           { name: 'Phase 4 · 수렴, QA와 승인 기억', owner: 'Codex + 회장님', status: 'done' },
           { name: 'Phase 5 · 발행과 세로 뷰어', owner: 'Codex', status: 'done' },
-          { name: 'Phase 6 · 검증과 배포', owner: 'Codex', status: 'in-progress' }
+          { name: 'Phase 6 · 검증과 배포', owner: 'Codex', status: 'done' }
         ]
       },
       status: {
-        state: 'in-progress',
+        state: 'completed',
         progress: { current: 6, total: 6 },
-        completedTasks: ['Workspace v3 데이터 모델', '4단계 Comic Workspace', 'CLE5-native 캐릭터·패널 후보', 'Comic Agent Brief', '후보 선택·패널 QA·승인 기억', '발행 게이트·세로 뷰어', '17개 자동 테스트와 반응형 검증'],
-        currentTasks: ['CLE5 private/public 및 CLE2 PR 반영'],
+        completedTasks: ['Workspace v3 데이터 모델', '4단계 Comic Workspace', 'CLE5-native 캐릭터·패널 후보', 'Comic Agent Brief', '후보 선택·패널 QA·승인 기억', '발행 게이트·세로 뷰어', '17개 자동 테스트와 반응형 검증', 'CLE5 private PR #1, public PR #1, CLE2 PR #60 머지', 'GitHub Pages 배포 성공'],
+        currentTasks: [],
         nextTasks: ['공개 Pages 실제 시범', '첫 연재 프로젝트 등록', '두 에피소드 후 성장 효과 측정'],
         blockers: []
       },
