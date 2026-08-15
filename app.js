@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v11';
+  var DATA_VERSION = 'v12';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -1439,6 +1439,94 @@
         { title: 'DECISIONS', path: 'tasks/CLE2-20/convergence-loop-system/DECISIONS.md', description: '기준선, 평가, 후보 관리와 반복 피드백 의사결정' },
         { title: 'STATUS', path: 'tasks/CLE2-20/convergence-loop-system/STATUS.md', description: '현재 진행 상황과 블로커' },
         { title: 'TESTS', path: 'tasks/CLE2-20/convergence-loop-system/TESTS.md', description: '기능/확장/비기능 검증 기준' }
+      ]
+    },
+    {
+      id: 'CLE2-21',
+      cle2Id: 'CLE2-21',
+      slug: 'cle5-standalone-comic',
+      title: 'CLE5 독립 연재 만화 제작 시스템',
+      issue: 59,
+      prs: [],
+      deliverables: [
+        { title: 'CLE2-21 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/59', description: 'CLE5가 직접 소유하는 연재 만화 제작·검수·발행 시스템' },
+        { title: 'CLE5 공개 시스템', type: 'link', url: 'https://daegu-agent-crew.github.io/creative-loop-engineering5/#comic', description: '구성, 제작, 검토, 발행이 연결된 Comic Workspace' },
+        { title: 'CLE5 공개 저장소', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering5', description: 'GitHub Pages 배포 산출물' }
+      ],
+      goal: {
+        objective: 'CLE5 안에서 프로젝트 생성부터 이미지 제작, 사람 검토, 승인 기억과 연재 발행까지 완료하며 CLE3 런타임 의존을 제거한다.',
+        successCriteria: [
+          '프로젝트·에피소드·캐릭터·콘티·패널·발행 데이터 모델',
+          '구성 → 제작 → 검토 → 발행 Comic Workspace',
+          '외부 AI Agent Brief와 이미지 산출물 반환 계약',
+          'A/B·동점·모두 탈락 판정과 선택 근거',
+          '패널 QA, 승인 기억과 발행 게이트',
+          '모바일 세로 만화 독자 화면',
+          '기존 CLE5 Workspace와 GitHub 동기화 회귀 없음',
+          'CLE3 URL·API·import·데이터 의존성 0'
+        ],
+        scope: {
+          in: ['CLE5 Comic Workspace', 'CLE5-native 이미지 자산', 'Agent Handoff', '후보 수렴과 기억', '패널 QA와 세로 뷰어'],
+          out: ['CLE3 코드·데이터 재사용', '브라우저 내 이미지 API 직접 호출', '사용자 화면에 JSON 노출']
+        }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['기존 CLE5는 텍스트 창작·기억·Agent Handoff·GitHub Workspace 동기화를 제공', '외부 이미지 에이전트가 URL 또는 CLE5 경로를 반환 가능', '사람 승인 전 후보는 기억에 포함하면 안 됨'],
+          knownUnknown: ['실제 연재의 패널 수와 주기', '대량 원본 이미지의 장기 저장 위치', '에이전트별 자산 반환 방식 차이'],
+          unknownKnown: ['사용자의 실제 패널 품질 우선순위', '모바일 검토에서 필요한 확대 수준'],
+          unknownUnknown: ['외부 URL 만료', '기억의 특정 화풍 과적합', 'Workspace 메타데이터 비대화']
+        },
+        tools: [
+          { name: 'CLE5 private source', status: 'available', purpose: '제품 코드와 내부 데이터' },
+          { name: 'CLE5 public Pages', status: 'available', purpose: '운영 UI와 배포' },
+          { name: 'GPT Image 2', status: 'available', purpose: 'CLE5-native 캐릭터와 패널 후보 생성' }
+        ],
+        references: ['Issue #59', 'CLE5 PRODUCT.md', 'CLE5 comic-core.js'],
+        needsDecision: ['예제 후보 최종 선택', '첫 실제 연재 프로젝트 시작'],
+        assumptions: ['JSON은 내부 저장 형식이며 사용자는 단계 UI와 Agent Brief를 사용'],
+        challenge: '기능을 추가하면서도 CLE5의 현재 작업·다음 결정 중심 경험을 유지해야 한다'
+      },
+      plan: {
+        phases: [
+          { name: 'Phase 1 · 요구사항과 데이터 기반', owner: 'Codex', status: 'done' },
+          { name: 'Phase 2 · Comic Workspace', owner: 'Codex', status: 'done' },
+          { name: 'Phase 3 · 산출물과 Agent Handoff', owner: 'Codex', status: 'done' },
+          { name: 'Phase 4 · 수렴, QA와 승인 기억', owner: 'Codex + 회장님', status: 'done' },
+          { name: 'Phase 5 · 발행과 세로 뷰어', owner: 'Codex', status: 'done' },
+          { name: 'Phase 6 · 검증과 배포', owner: 'Codex', status: 'in-progress' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 6, total: 6 },
+        completedTasks: ['Workspace v3 데이터 모델', '4단계 Comic Workspace', 'CLE5-native 캐릭터·패널 후보', 'Comic Agent Brief', '후보 선택·패널 QA·승인 기억', '발행 게이트·세로 뷰어', '17개 자동 테스트와 반응형 검증'],
+        currentTasks: ['CLE5 private/public 및 CLE2 PR 반영'],
+        nextTasks: ['공개 Pages 실제 시범', '첫 연재 프로젝트 등록', '두 에피소드 후 성장 효과 측정'],
+        blockers: []
+      },
+      tests: {
+        items: [
+          { name: 'Workspace v2 마이그레이션', method: 'node:test', expected: '기존 데이터 보존 + comicProjects', passed: true },
+          { name: '프로젝트·에피소드', method: 'node:test', expected: 'CLE5 내부 ID와 4단계 상태', passed: true },
+          { name: '후보와 기억', method: 'node:test', expected: '사람 선택 winner만 기억', passed: true },
+          { name: '패널 QA와 발행', method: 'node:test', expected: '전 항목 통과 후 release gate open', passed: true },
+          { name: 'Comic Agent Brief', method: 'node:test', expected: 'CLE5 경로·참조·반환 계약', passed: true },
+          { name: '기존 CLE5 회귀', method: 'npm test', expected: '17/17 통과', passed: true },
+          { name: '반응형 화면', method: 'Chrome screenshot', expected: '1440×1000 및 390×844 정상', passed: true }
+        ]
+      },
+      relatedTasks: [
+        { id: 'CLE2-19', relation: 'CLE5 성장 루프', note: '승인 패널과 판단을 다음 에피소드 기억으로 상속한다.' },
+        { id: 'CLE2-20', relation: '수렴 개념 참고', note: '후보 비교와 절대 게이트 개념을 CLE5 자체 계약으로 구현했다.' }
+      ],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-21/cle5-standalone-comic/GOAL.md', description: '독립 제작 시스템 목표와 완료 기준' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-21/cle5-standalone-comic/DISCOVERY.md', description: '기준선, Unknown Map과 시스템 경계' },
+        { title: 'PLAN', path: 'tasks/CLE2-21/cle5-standalone-comic/PLAN.md', description: '데이터부터 배포까지 6단계 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-21/cle5-standalone-comic/DECISIONS.md', description: '소유권, Agent Handoff, 기억과 발행 결정' },
+        { title: 'STATUS', path: 'tasks/CLE2-21/cle5-standalone-comic/STATUS.md', description: '구현 및 배포 진행 상태' },
+        { title: 'TESTS', path: 'tasks/CLE2-21/cle5-standalone-comic/TESTS.md', description: '기능·회귀·반응형 검증 결과' }
       ]
     }
   ];
