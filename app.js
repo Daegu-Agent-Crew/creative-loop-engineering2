@@ -12,7 +12,7 @@
   var VOTE_KEY = 'cle2_votes';
   var USER_KEY = 'cle2_current_user';
   var SETTINGS_KEY = 'cle2_settings';
-  var DATA_VERSION = 'v12';
+  var DATA_VERSION = 'v13';
   var VERSION_KEY = 'cle2_data_version';
   var MESSAGE_KEY = 'cle2_messages';
   var DELIVERABLE_KEY = 'cle2_deliverables';
@@ -1527,6 +1527,72 @@
         { title: 'DECISIONS', path: 'tasks/CLE2-21/cle5-standalone-comic/DECISIONS.md', description: '소유권, Agent Handoff, 기억과 발행 결정' },
         { title: 'STATUS', path: 'tasks/CLE2-21/cle5-standalone-comic/STATUS.md', description: '구현 및 배포 진행 상태' },
         { title: 'TESTS', path: 'tasks/CLE2-21/cle5-standalone-comic/TESTS.md', description: '기능·회귀·반응형 검증 결과' }
+      ]
+    },
+    {
+      id: 'CLE2-22',
+      cle2Id: 'CLE2-22',
+      slug: 'cle5-three-body-pilot',
+      title: 'CLE5 첫 실제 연재 파일럿 — 삼체 EP001',
+      issue: 62,
+      prs: [],
+      deliverables: [
+        { title: 'CLE2-22 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/62', description: '삼체 EP001 CLE5-native 파일럿' },
+        { title: 'CLE5 Comic Workspace', type: 'link', url: 'https://daegu-agent-crew.github.io/creative-loop-engineering5/#comic', description: '삼체 EP001 시작과 후보 검토 화면' }
+      ],
+      goal: {
+        objective: 'CLE5에서 삼체 EP001의 스토리, 캐릭터, 콘티와 대표 패널을 새로 제작하여 실제 선택·QA·기억·발행 루프를 검증한다.',
+        successCriteria: ['원클릭 파일럿 설치', '캐릭터 2명과 대표 콘티 3장면', '단인물·다인물·풀페이지 A/B 후보', '기존 삼체 저장소 비의존', 'Agent Brief 맥락 전달', '사람 선택·QA·발행 승인'],
+        scope: { in: ['CLE5-native EP001 데이터', '캐릭터 레퍼런스', '대표 패널 6장', '후보 검토와 승인 게이트'], out: ['CLE3/three-body-comic import', '사람 승인 자동화', '즉시 전체 에피소드 생성'] }
+      },
+      discovery: {
+        unknowns: {
+          knownKnown: ['CLE2-21 Comic Workspace 작동', '사람 승인 전 후보는 기억과 발행본이 아님', '이미지는 CLE5 내부에서 새로 생성'],
+          knownUnknown: ['각 장면의 최종 선택', '전체 EP001 최종 패널 수'],
+          unknownKnown: ['인물 일관성·연출·여백의 실제 우선순위'],
+          unknownUnknown: ['대표 패널 판단을 전체 에피소드에 확대할 때의 비용']
+        },
+        tools: [{ name: 'CLE5', status: 'available', purpose: '파일럿 데이터와 검토 UI' }, { name: 'GPT Image 2', status: 'available', purpose: 'CLE5-native 자산 생성' }],
+        references: ['Issue #62', 'CLE2-21', 'CLE5 comic-core.js'],
+        needsDecision: ['PANEL-001~003 A/B 최종 선택과 근거'],
+        assumptions: ['대표 3패널을 먼저 수렴한 뒤 전체 에피소드로 확대'],
+        challenge: '시각적 품질과 사람 승인 경계를 실제 연재 데이터에서 동시에 검증한다'
+      },
+      plan: {
+        phases: [
+          { name: '요구사항과 경계', owner: 'Codex', status: 'done' },
+          { name: 'EP001 구조', owner: 'Codex', status: 'done' },
+          { name: '캐릭터와 A/B 자산', owner: 'Codex', status: 'done' },
+          { name: '설치 UI와 검증', owner: 'Codex', status: 'done' },
+          { name: '사람 선택·QA·발행', owner: '회장님', status: 'in-progress' }
+        ]
+      },
+      status: {
+        state: 'in-progress',
+        progress: { current: 4, total: 5 },
+        completedTasks: ['Issue #62', '원클릭 파일럿', '왕먀오·스창 레퍼런스', '대표 패널 후보 6장', '18개 테스트', '데스크톱·모바일 검증'],
+        currentTasks: ['CLE5/CLE2 PR과 Pages 배포'],
+        nextTasks: ['사람 후보 선택', '패널 QA와 승인 기억', '발행 또는 실패 패널 재생성'],
+        blockers: ['최종 후보는 사람 선택 필요']
+      },
+      tests: {
+        items: [
+          { name: '중복 설치', method: 'node:test', expected: '프로젝트 1개', passed: true },
+          { name: '프로젝트 구조', method: 'node:test', expected: '패널 3×후보 2', passed: true },
+          { name: '외부 의존성', method: '문자열 검사', expected: 'CLE3/기존 저장소 경로 없음', passed: true },
+          { name: '회귀', method: 'npm run check', expected: '18/18', passed: true },
+          { name: '반응형', method: 'Chrome', expected: '1440×1000/390×844 정상', passed: true },
+          { name: '사람 승인', method: '공개 UI', expected: '3패널 선택·QA·발행', passed: false }
+        ]
+      },
+      relatedTasks: [{ id: 'CLE2-21', relation: '선행 시스템', note: '독립 Comic Workspace와 승인 게이트' }, { id: 'CLE2-19', relation: '성장 루프', note: '선택 근거를 다음 에피소드 기억으로 축적' }],
+      docs: [
+        { title: 'GOAL', path: 'tasks/CLE2-22/cle5-three-body-pilot/GOAL.md', description: '파일럿 목표와 완료 기준' },
+        { title: 'DISCOVERY', path: 'tasks/CLE2-22/cle5-three-body-pilot/DISCOVERY.md', description: '기준선과 Unknown Map' },
+        { title: 'PLAN', path: 'tasks/CLE2-22/cle5-three-body-pilot/PLAN.md', description: '대표 패널 우선 실행 계획' },
+        { title: 'DECISIONS', path: 'tasks/CLE2-22/cle5-three-body-pilot/DECISIONS.md', description: '자산·설치·승인 결정' },
+        { title: 'STATUS', path: 'tasks/CLE2-22/cle5-three-body-pilot/STATUS.md', description: '현재 진행과 사람 게이트' },
+        { title: 'TESTS', path: 'tasks/CLE2-22/cle5-three-body-pilot/TESTS.md', description: '자동·브라우저 검증' }
       ]
     }
   ];
