@@ -1,7 +1,7 @@
 # STATUS — CLE5 첫 실제 연재 파일럿
 
 ## 상태
-진행 중 — 시스템 구현과 자산 준비 완료, 사람 검토 대기
+진행 중 — 시스템 구현·Pages 배포 완료, 사람 검토 대기
 
 ## 완료
 - Issue #62 등록
@@ -12,13 +12,17 @@
 - 중복 설치 방지와 기존 Workspace 보존
 - 자동 테스트 18/18
 - Chrome 1440×1000 및 390×844 검증
+- CLE5 private PR #3, public PR #3, CLE2 PR #63 머지
+- GitHub Pages 배포 및 공개 이미지 HTTP 200 확인
 
 ## 다음
-1. CLE5 private/public PR과 Pages 배포
-2. 사용자가 PANEL-001~003 후보 선택
-3. 패널 QA와 승인 기억
-4. 발행 또는 실패 패널만 재생성
+1. 사용자가 PANEL-001~003 후보 선택
+2. 패널 QA와 승인 기억
+3. 발행 또는 실패 패널만 재생성
+4. 선택 기준으로 EP001 전체 패널 확대
+
+## 운영 화면
+- https://daegu-agent-crew.github.io/creative-loop-engineering5/#comic
 
 ## 블로커
 - 최종 이미지 선택은 사람 승인 필요
-

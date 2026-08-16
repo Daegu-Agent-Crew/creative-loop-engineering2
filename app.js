@@ -1535,7 +1535,7 @@
       slug: 'cle5-three-body-pilot',
       title: 'CLE5 첫 실제 연재 파일럿 — 삼체 EP001',
       issue: 62,
-      prs: [],
+      prs: [63],
       deliverables: [
         { title: 'CLE2-22 요구사항', type: 'link', url: 'https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/62', description: '삼체 EP001 CLE5-native 파일럿' },
         { title: 'CLE5 Comic Workspace', type: 'link', url: 'https://daegu-agent-crew.github.io/creative-loop-engineering5/#comic', description: '삼체 EP001 시작과 후보 검토 화면' }
@@ -1571,8 +1571,8 @@
         state: 'in-progress',
         progress: { current: 4, total: 5 },
         completedTasks: ['Issue #62', '원클릭 파일럿', '왕먀오·스창 레퍼런스', '대표 패널 후보 6장', '18개 테스트', '데스크톱·모바일 검증'],
-        currentTasks: ['CLE5/CLE2 PR과 Pages 배포'],
-        nextTasks: ['사람 후보 선택', '패널 QA와 승인 기억', '발행 또는 실패 패널 재생성'],
+        currentTasks: ['PANEL-001~003 사람 후보 선택과 근거 기록'],
+        nextTasks: ['패널 QA와 승인 기억', '발행 또는 실패 패널 재생성', '선택 기준으로 EP001 전체 패널 확대'],
         blockers: ['최종 후보는 사람 선택 필요']
       },
       tests: {
