@@ -14,12 +14,15 @@
 
 ## 진행 중인 작업
 - [ ] Phase 0 devnet 리허설 — 대구루 (ai-solana-agent 브랜치 cle2-25-phase0)
+  - 2026-08-29 심야: 스크립트 5종 완성 + 드라이런·온체인 사전검증 통과 (커밋 034820f, fd7bdc2 원격 푸시 완료)
+  - 온체인 실행 대기: devnet 파우셋 일일 한도(429). 필요 ≥ 0.8 devnet SOL, 지갑 2Ln5n8rB5Gh7bjmmurqhTZzbdT5PjezWumQYgMTMUDbh
 
 ## 다음 작업
+- [ ] Phase 0 온체인 실행 (파우셋 재시도 2026-08-30 09:15 자동 예약, 또는 수동 펀딩 시 즉시)
 - [ ] Phase 0 통과 → mainnet 실행 직전 컴플라이언스 체크리스트 회장님 확인
 
 ## 블로커
-- 없음
+- devnet 무료 파우셋 일일 한도 도달 (429×4회) — 실제 자금 아닌 무료 테스트 코인 확보 문제. 대체 경로: faucet.solsa.com(GitHub 로그인) 수동 펀딩 또는 시간 경과 후 재시도
 
 ## 사람 결정 필요
 - [x] mainnet 예산 상한 — **루트 B, 2 SOL 상한** (2026-08-29)
