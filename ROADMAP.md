@@ -39,14 +39,14 @@
 |---|---|---|---|
 | [creative-loop-engineering](https://github.com/Daegu-Agent-Crew/creative-loop-engineering) | 07-09 | v1 창의적 루프 설계 문서 | CLE2가 계승 |
 | [creatorflow-solana](https://github.com/Daegu-Agent-Crew/creatorflow-solana) | 07-20 | CreatorFlow v1 | creatorflow2-solana가 계승 |
-| [ai-nft-agent](https://github.com/Daegu-Agent-Crew/ai-nft-agent) | 07-15 | AI NFT 에이전트 | ai-solana-agent(DApp 2 NFT 쿠폰)로 계승 (추정) |
+| [ai-nft-agent](https://github.com/Daegu-Agent-Crew/ai-nft-agent) | 07-15 | AI NFT 에이전트 | ai-solana-agent(DApp 2 NFT 쿠폰)로 계승 (09-12 리뷰 확정 — CLE2-14 "기존 NFT 코드 개조" 근거) |
 | [election2663-archive](https://github.com/Daegu-Agent-Crew/election2663-archive) | 06-17 | 대구시장 선거 공개 데이터 아카이브 | 선거 종료 (6/3) — 이슈 #79 명시 완결 |
 | [election2663-archive-public](https://github.com/Daegu-Agent-Crew/election2663-archive-public) | 06-17 | 위 아카이브 공개 wiki | 동일 |
-| [three-body-comic-styles](https://github.com/Daegu-Agent-Crew/three-body-comic-styles) | 06-14 | 화풍 비교·선정 페이지 | 화풍 선정 완료, 산출은 three-body-comic으로 (추정) |
-| [context-tree](https://github.com/Daegu-Agent-Crew/context-tree) | 06-09 | 소스 리포 공유 컨텍스트 트리 | team-memory-kit #1 바인딩 후 추가 활동 없음 (추정) |
-| [dabstack](https://github.com/Daegu-Agent-Crew/dabstack) | 05-28 | Codex-first 공유 컨텍스트 스택 | context-tree·team-memory 체계로 계승 (추정) |
+| [three-body-comic-styles](https://github.com/Daegu-Agent-Crew/three-body-comic-styles) | 06-14 | 화풍 비교·선정 페이지 | 화풍 선정 완료, 산출은 three-body-comic으로 (09-12 리뷰 확정) |
+| [context-tree](https://github.com/Daegu-Agent-Crew/context-tree) | 06-09 | 소스 리포 공유 컨텍스트 트리 | team-memory-kit #1 바인딩 후 추가 활동 없음 (09-12 리뷰 확정) |
+| [dabstack](https://github.com/Daegu-Agent-Crew/dabstack) | 05-28 | Codex-first 공유 컨텍스트 스택 | context-tree·team-memory 체계로 계승 (09-12 리뷰 확정) |
 
-> **리뷰 요청**: '완결 (추정)' 4건과 '재개 조건(제안)' 2건은 대구루 검토로 확정 필요.
+> **리뷰 완료 (09-12)**: 완결 4건 확정 · org 리포 21개 검증 (agent:daeguru). 재개 조건 2건(creatorflow2-solana, agent_builder)은 제안 유지 — 실제 재개는 회장님 승인 필요.
 
 ---
 🤖 작성: agent:daeguru2 (대구루2) · CLE2-26 · 이슈 #79
