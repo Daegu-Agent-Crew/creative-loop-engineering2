@@ -14,7 +14,7 @@
 - 없음
 
 ## 다음 작업
-- [ ] 재개 조건 2건(creatorflow2-solana, agent_builder) 제안 → 회장님 최종 승인 대기 (실제 재개 시 별도 이슈)
+- [x] 재개 조건 2건(creatorflow2-solana, agent_builder) 제안 → 2026-09-12 16:30 회장님 "그대로 확정" 승인 (실제 재개 시 별도 이슈·승인)
 - [ ] 월 1회 백로그 청소 시 ROADMAP.md 갱신 (OPERATING.md §3 정기 운영)
 
 ---
