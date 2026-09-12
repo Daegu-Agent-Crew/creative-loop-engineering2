@@ -28,8 +28,8 @@
 | [team-memory-kit](https://github.com/Daegu-Agent-Crew/team-memory-kit) | 08-12 | 메모리 대시보드 킷 | 신규 기능 요청·버그 접수 시 (브랜치→PR 흐름) | 대기 |
 | [three-body-comic](https://github.com/Daegu-Agent-Crew/three-body-comic) | 08-03 | 삼체 만화 연재 산출물 (EP002까지) | CLE3 신규 에피소드 제작 시 산출물 반영 | CLE3 진행 상황 연계 |
 | [agent-reverse-survey](https://github.com/Daegu-Agent-Crew/agent-reverse-survey) | 07-26 | AI 에이전트 역공학 설문 (1회차 완료) | 2회차 개설 조건 4종 충족: ① 같은 실패 2회 반복 ② 안전·권한 문제 ③ 3점 평가 미유지 증거 ④ 개선 항목 1~3개 명확화 (2026-08-18 결정) | 월간 점검 크론으로 조건 감시 |
-| [creatorflow2-solana](https://github.com/Daegu-Agent-Crew/creatorflow2-solana) | 07-28 | CreatorFlow2 캠페인 지급 (Devnet) | 재개 조건(제안, 승인 대기): CLE2-25에서 캠페인 지급 기능 필요 시 | 조건 확정 대기 |
-| [agent_builder](https://github.com/Daegu-Agent-Crew/agent_builder) | 05-19 | 커뮤니티 private 원본 (공개판은 agent_builder_public) | 재개 조건(제안, 승인 대기): 비공개 논의 필요 시 | 조건 확정 대기 |
+| [creatorflow2-solana](https://github.com/Daegu-Agent-Crew/creatorflow2-solana) | 07-28 | CreatorFlow2 캠페인 지급 (Devnet) | 재개 조건: CLE2-25에서 캠페인 지급 기능 필요 시 (09-12 회장님 확정) | 대기 (조건 충족 시 재개 승인 요청) |
+| [agent_builder](https://github.com/Daegu-Agent-Crew/agent_builder) | 05-19 | 커뮤니티 private 원본 (공개판은 agent_builder_public) | 재개 조건: 비공개 논의 필요 시 (09-12 회장님 확정) | 대기 (조건 충족 시 재개 승인 요청) |
 
 ## 완결 (8)
 
@@ -46,7 +46,7 @@
 | [context-tree](https://github.com/Daegu-Agent-Crew/context-tree) | 06-09 | 소스 리포 공유 컨텍스트 트리 | team-memory-kit #1 바인딩 후 추가 활동 없음 (09-12 리뷰 확정) |
 | [dabstack](https://github.com/Daegu-Agent-Crew/dabstack) | 05-28 | Codex-first 공유 컨텍스트 스택 | context-tree·team-memory 체계로 계승 (09-12 리뷰 확정) |
 
-> **리뷰 완료 (09-12)**: 완결 4건 확정 · org 리포 21개 검증 (agent:daeguru). 재개 조건 2건(creatorflow2-solana, agent_builder)은 제안 유지 — 실제 재개는 회장님 승인 필요.
+> **리뷰 완료 (09-12)**: 완결 4건 확정 · org 리포 21개 검증 (agent:daeguru). 재개 조건 2건(creatorflow2-solana, agent_builder)은 09-12 회장님 확정. 실제 재개 시 회장님 승인 필수.
 
 ---
 🤖 작성: agent:daeguru2 (대구루2) · CLE2-26 · 이슈 #79
