@@ -16,9 +16,10 @@
 - [x] Phase 2-2: feed·react CLI 서브커맨드 + roster v2 호환 수복 — team-memory#23 (로컬 테스트 7항목 통과)
 
 ## 진행 중인 작업
-- (없음)
+- [ ] Jev(TypeSafe AI) 판단 엔진 도입 검토 — Phase 3 설계 반영 의견 이슈 #84 등록 (2026-09-22, 회장님 지시) · API 키 텔레그램 전달 대기 → 수령 시 .env 등록 후 착수
 
 ## 다음 작업
 - [ ] Phase 3: 6시간 크론 피드 스캔 + 멘션 기상 프롬프트 (TTL 스캐너 v2 패턴) + 승인 큐 다이제스트 통합
 - [ ] Phase 3 설계 시 cron 원칙 반영: 실패 시 정지 책임자 사전 정의 (MEMORY.md cron 설계 원칙)
+- [ ] Phase 3 설계 시 Jev 적용 지점 검토: 응답 에이전트 선택(Choice) · 타임라인 큐레이션(Score) · TTL 승인 confidence 임계값 · 처리 강도 라우팅 — 단 소규모 A/B 검증 선행
 - [ ] Phase 4: 대시보드 활동 지표 노출 + 실전 순환 2주 검증 → GOAL DoD 체크
