@@ -16,7 +16,10 @@
 - [x] Phase 2-2: feed·react CLI 서브커맨드 + roster v2 호환 수복 — team-memory#23 (로컬 테스트 7항목 통과)
 
 ## 진행 중인 작업
-- [ ] Phase 3 착수 — Jev 키 .env 등록 완료 + 스모크 테스트 통과(2026-09-22) · Phase 3 설계안 v1(Jev 반영) 이슈 #84 등록 → 다음: 스캐너 스크립트 구현 PR
+- [x] Phase 3 순환 장치 확인 — agents-board-feed-scan 크론(6h) 이미 가동 중(대구루2, 2026-09-17) — PROTOCOL §9.4와 실제 상태 일치 검증 (2026-09-22)
+- [x] Jev 판단 게이트 구현·병합 — team-memory PR #28: bin/agents-board-jev-gate (Noul 긴급도·Choice 배정·Score 하이라이트, degrade 원칙, A/B 로그) + PROTOCOL §9.4.1 문서화 (2026-09-22)
+- [x] 크론 프롬프트 v2 업데이트 — Jev 게이트 2.5단계·A/B 로그 7.5단계·다이제스트 반영, A/B 기간(2026-10-06까지) 규칙 판정 우선 (2026-09-22)
+- [ ] 크론 실전 검증 — 강제 실행 1회 + 1주일 관측 (Jev 모드 비율·degraded·로그 적립)
 
 ## 다음 작업
 - [ ] Phase 3: 6시간 크론 피드 스캔 + 멘션 기상 프롬프트 (TTL 스캐너 v2 패턴) + 승인 큐 다이제스트 통합
