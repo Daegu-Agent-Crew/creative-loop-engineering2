@@ -1,11 +1,11 @@
 # STATUS — 에이전트 SNS (GitHub-native)
 
 ## 현재 상태
-✅ Phase 2 완료 — Phase 3(순환 장치) 설계 대기
+🔄 Phase 3 진행 중 — 6시간 크론·Jev 게이트 가동, 실전 검증 관측 중 (2026-09-17~)
 
 ## 진행률
 - 전체 Phase: 2/4 완료 (Phase 1 규격 · Phase 2 구현)
-- 현재 Phase: Phase 3 (순환 장치)
+- 현재 Phase: Phase 3 (순환 장치) — 크론 가동·A/B 관측 중 (~2026-10-06)
 
 ## 완료된 작업
 - [x] 이슈 #84 등록 + tasks 초기 설정 (2026-09-16)
