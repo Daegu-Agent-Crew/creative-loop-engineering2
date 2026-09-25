@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>AI는 더 똑똑해지고 있을까? — 생각 훈련 기계 성장 보고서</title>
+<style>
+  :root{
+    --bg:#fffaf2; --ink:#1f2937; --sub:#5b6472; --card:#ffffff;
+    --line:#ece4d6; --accent:#ff7a45; --blue:#3b82f6; --green:#22a06b;
+    --yellow:#f6b73c; --red:#e5484d; --purple:#8b5cf6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    -webkit-tap-highlight-color:transparent}
+  .deck{position:relative;height:100%;width:100%}
+  .slide{position:absolute;inset:0;padding:5vh 6vw 12vh;display:flex;flex-direction:column;
+    justify-content:center;align-items:center;opacity:0;visibility:hidden;
+    transform:translateX(30px);transition:opacity .35s ease,transform .35s ease,visibility .35s;overflow-y:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none}
+  .slide.prev{transform:translateX(-30px)}
+  .inner{width:100%;max-width:1000px}
+  .tag{display:inline-block;font-size:clamp(13px,1.6vw,16px);font-weight:700;color:var(--accent);
+    background:#fff0e8;border-radius:999px;padding:5px 14px;margin-bottom:14px}
+  h1{font-size:clamp(34px,6vw,64px);line-height:1.2;font-weight:800;letter-spacing:-.02em}
+  h2{font-size:clamp(26px,4vw,42px);line-height:1.25;font-weight:800;margin-bottom:22px;letter-spacing:-.01em}
+  p,li{font-size:clamp(17px,2.2vw,23px);line-height:1.6}
+  .sub{color:var(--sub)}
+  .big{font-size:clamp(20px,2.8vw,28px);font-weight:700;line-height:1.5}
+  b,.hl{color:var(--accent)}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:760px){.g2,.g4{grid-template-columns:1fr 1fr}}
+  @media (max-width:480px){.g2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:20px 22px;
+    box-shadow:0 4px 14px rgba(120,90,40,.06)}
+  .card h3{font-size:clamp(18px,2.3vw,24px);margin-bottom:8px}
+  .card p{font-size:clamp(15px,1.9vw,19px)}
+  .num{font-size:clamp(38px,6vw,64px);font-weight:800;line-height:1.1;color:var(--blue)}
+  .num.o{color:var(--accent)}
+  .label{font-weight:700;margin:6px 0 4px;font-size:clamp(16px,2vw,20px)}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step .n{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;
+    font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .note{margin-top:20px;background:#eef5ff;border-left:6px solid var(--blue);border-radius:12px;padding:14px 18px}
+  .note p{font-size:clamp(16px,2vw,21px)}
+  .warm{background:#fff4e0;border-left-color:var(--yellow)}
+  .good{background:#e9f8f0;border-left-color:var(--green)}
+
+  /* 게이지 */
+  .gauge{position:relative;margin:30px 0 70px}
+  .bands{display:flex;height:46px;border-radius:14px;overflow:hidden;border:2px solid var(--line)}
+  .bands div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
+    font-size:clamp(12px,1.6vw,16px);text-align:center}
+  .b1{width:30%;background:#c9ced6}.b2{width:30%;background:#f6b73c}
+  .b3{width:20%;background:#3b82f6}.b4{width:20%;background:#22a06b}
+  .ticks{position:relative;height:22px;margin-top:6px;font-size:14px;color:var(--sub)}
+  .ticks span{position:absolute;transform:translateX(-50%)}
+  .marker{position:absolute;top:-34px;transform:translateX(-50%);text-align:center;font-weight:800;color:var(--accent)}
+  .marker .pin{width:4px;height:84px;background:var(--accent);margin:4px auto 0;border-radius:2px}
+  .marker .val{font-size:clamp(18px,2.4vw,24px);background:#fff;border:2px solid var(--accent);border-radius:10px;padding:2px 10px}
+  .goal{position:absolute;top:0;height:46px;border-left:4px dashed var(--ink)}
+  .goal span{position:absolute;top:52px;left:-4px;white-space:nowrap;font-weight:800;font-size:15px;transform:translateX(-50%)}
+
+  /* 진행 막대 (0→0.8) */
+  .meter{height:34px;background:#f1ebe0;border-radius:999px;overflow:hidden;position:relative;border:2px solid var(--line)}
+  .meter .fill{height:100%;background:linear-gradient(90deg,#ffb38a,var(--accent));border-radius:999px;width:0;transition:width 1.2s ease .3s}
+  .slide.active .meter .fill{width:var(--w)}
+  .meter-cap{display:flex;justify-content:space-between;margin-top:8px;font-weight:700;color:var(--sub);font-size:clamp(14px,1.8vw,18px)}
+
+  /* 전/후 비교 */
+  .vs{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin:10px 0 20px}
+  .vs .box{text-align:center;padding:18px 26px;border-radius:20px;background:#fff;border:2px solid var(--line);min-width:200px}
+  .vs .bad{color:var(--red)} .vs .ok{color:var(--green)}
+  .arrow{font-size:40px;color:var(--sub)}
+
+  /* 동전 */
+  .coins{display:flex;gap:14px;justify-content:center;margin:6px 0 18px;font-size:clamp(40px,7vw,70px)}
+  .scatter{display:block;margin:0 auto;max-width:100%}
+
+  /* 타임라인 */
+  .tl{position:relative;display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+  .tl::before{content:"";position:absolute;left:4%;right:4%;top:22px;height:5px;background:var(--line);border-radius:3px}
+  .tl .ev{position:relative;flex:1;text-align:center}
+  .tl .dot{width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:#fff;background:#c9ced6;position:relative;z-index:1;font-size:18px}
+  .tl .done .dot{background:var(--green)} .tl .next .dot{background:var(--yellow)} .tl .final .dot{background:var(--accent)}
+  .tl .d{font-weight:800;font-size:clamp(15px,2vw,20px)}
+  .tl .t{font-size:clamp(13px,1.7vw,17px);color:var(--sub);line-height:1.45}
+  @media (max-width:640px){
+    .tl{flex-direction:column}.tl::before{left:22px;right:auto;top:0;bottom:0;width:5px;height:auto}
+    .tl .ev{display:flex;gap:14px;text-align:left;align-items:center}.tl .dot{margin:0}
+  }
+
+  /* 네비게이션 */
+  .nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:14px;
+    padding:12px 10px 16px;background:linear-gradient(transparent,var(--bg) 40%);z-index:10}
+  .navbtn{border:2px solid var(--line);background:#fff;border-radius:50%;width:44px;height:44px;font-size:20px;
+    cursor:pointer;color:var(--ink)}
+  .navbtn:disabled{opacity:.35;cursor:default}
+  .dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .dots button{width:12px;height:12px;border-radius:50%;border:none;background:#dcd3c3;cursor:pointer;padding:0;transition:all .2s}
+  .dots button.on{background:var(--accent);width:30px;border-radius:6px}
+  .count{position:fixed;top:14px;right:18px;font-weight:700;color:var(--sub);font-size:15px;z-index:10}
+  .howto{margin-top:34px;display:inline-block;background:#fff;border:2px dashed var(--line);border-radius:14px;
+    padding:10px 18px;font-size:clamp(14px,1.8vw,18px);color:var(--sub)}
+  .center{text-align:center}
+</style>
+</head>
+<body>
+<div class="count" id="count">1 / 12</div>
+<main class="deck" id="deck">
+
+  <!-- 1. 표지 -->
+  <section class="slide">
+    <div class="inner center">
+      <div class="tag">생각 훈련 기계 성장 보고서 · 2026-09-26</div>
+      <h1>AI는 더 똑똑해지고<br>있을까? 🤔</h1>
+      <p class="sub" style="margin-top:18px">"deep-think-jev"라는 생각 훈련 기계가<br>시험을 두 번 치른 결과를 쉽게 풀어봅니다</p>
+      <div class="howto">👉 넘기기: <b>← → 화살표</b> · 화면 <b>클릭</b> · 아래 <b>점</b> 누르기 · 휴대폰은 <b>옆으로 밀기</b></div>
+    </div>
+  </section>
+
+  <!-- 2. 기계 소개 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">이 기계는 뭘 하나요?</div>
+      <h2>🍳 요리 대회 채점 시스템과 비슷해요</h2>
+      <div class="grid g2">
+        <div class="card step"><div class="n">1</div><div><h3>레시피 받기</h3><p>AI가 한 주제로 <b>아이디어(생각 후보)</b>를 잔뜩 만들어요.</p></div></div>
+        <div class="card step"><div class="n">2</div><div><h3>심사위원 채점</h3><p><b>Jev</b>라는 별도의 심사위원 AI가 "놀라운가? 반박을 버티나? 구체적인가? 새로운가?"를 보고 점수를 매겨요.</p></div></div>
+        <div class="card step"><div class="n">3</div><div><h3>직접 요리해 보기</h3><p>점수 높은 아이디어는 <b>깊게 파기</b>(딥다이브) — 계산하고, 사례를 찾고, 스스로 반박까지 해봐요.</p></div></div>
+        <div class="card step"><div class="n">4</div><div><h3>경험 노트에 적기</h3><p>살아남은 결과 점수를 기록해요. 이 경험이 "<b>감(직관)</b>"으로 쌓이게 돼요.</p></div></div>
+      </div>
+      <div class="note warm"><p>🎯 진짜 목표: <b>쓸수록 "어떤 생각이 좋은지" 알아보는 눈이 생기는가?</b></p></div>
+    </div>
+  </section>
+
+  <!-- 3. 점수 척도 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">점수는 어떻게 읽나요?</div>
+      <h2>📏 0점~1점, 시험 등급처럼 보면 쉬워요</h2>
+      <div class="gauge">
+        <div class="bands">
+          <div class="b1">0~0.2 탈락</div><div class="b2">0.3~0.5 아쉬움</div><div class="b3">0.6~0.7 합격</div><div class="b4">0.8~1 새 발견</div>
+        </div>
+        <div class="goal" style="left:80%"><span>목표 0.8</span></div>
+        <div class="marker" style="left:71.9%"><div class="val">0.719</div><div class="pin"></div></div>
+        <div class="ticks"><span style="left:0">0</span><span style="left:50%">0.5</span><span style="left:100%">1</span></div>
+      </div>
+      <div class="grid g2">
+        <div class="card"><h3>🔵 0.6~0.7 "합격"</h3><p>구체적인 주장이 반박을 견뎌요. 다만 새로움은 조금 부족해요.</p></div>
+        <div class="card"><h3>🟢 0.8~1.0 "새 발견"</h3><p>뻔하지 않고 새롭고, 확인해 볼 수 있는 예측까지 만들어내요.</p></div>
+      </div>
+      <div class="note"><p>이 기계의 최고 점수 <b>0.719</b>는 "공격해도 살아남는 확실한 생각" 등급. <b>새 발견(0.8)까지 0.081</b> 모자라요.</p></div>
+    </div>
+  </section>
+
+  <!-- 4. 세션1 숫자 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">첫 번째 시험 · 9월 24일</div>
+      <h2>📊 첫 실전 결과, 숫자 4개</h2>
+      <p class="sub" style="margin-bottom:16px">주제: 코인 선물 거래의 위험 줄이기 전략</p>
+      <div class="grid g4">
+        <div class="card center"><div class="num">92</div><div class="label">아이디어</div><p class="sub">대회에 접수된 레시피 수</p></div>
+        <div class="card center"><div class="num">29</div><div class="label">깊게 파기</div><p class="sub">실제로 요리해 본 레시피 수</p></div>
+        <div class="card center"><div class="num">123</div><div class="label">채점 횟수</div><p class="sub">심사위원이 점수를 매긴 횟수</p></div>
+        <div class="card center"><div class="num o">0.719</div><div class="label">최고 점수</div><p class="sub">1등 요리의 점수</p></div>
+      </div>
+      <div class="note good"><p>처음엔 <b>0.11점</b>짜리 생각도 있었지만, 뒤로 갈수록 <b>0.6~0.73점</b>에 머물렀어요. 제자리를 맴돌지 않고 점점 좋아지며 8라운드를 끝까지 완주했어요.</p></div>
+    </div>
+  </section>
+
+  <!-- 5. 세션1 1위 아이디어 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">첫 번째 시험의 1등 아이디어</div>
+      <h2>🏆 "담보 배치 생존 테이블"</h2>
+      <p style="margin-bottom:10px">버는 방법(연 15% 수익)은 <b>그대로</b> 두고, <b>맡겨둔 돈(담보)을 관리하는 방식만</b> 바꿨더니…</p>
+      <div class="vs">
+        <div class="box"><p class="sub">30일 안에 망할 확률</p><div class="num bad" style="color:var(--red)">63.7%</div><p class="sub">열 번 중 6번 넘게 망함</p></div>
+        <div class="arrow">➜</div>
+        <div class="box"><p class="sub">30일 안에 망할 확률</p><div class="num ok" style="color:var(--green)">0.2%</div><p class="sub">천 번 중 2번꼴</p></div>
+      </div>
+      <p class="big center">위험이 약 <span class="hl">300배</span> 줄었어요!</p>
+      <div class="note warm"><p>💡 교훈: "돈을 버는 전략"만큼 "<b>돈을 어떻게 보관·운영하느냐</b>"도 중요하다. 전략 찾기의 절반은 운영 설계예요.</p></div>
+    </div>
+  </section>
+
+  <!-- 6. 세션2 결과 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">두 번째 시험 · 9월 26일 완주</div>
+      <h2>📊 두 번째 시험도 끝까지 완주!</h2>
+      <p class="sub" style="margin-bottom:16px">주제: 밈코인(유행 코인)을 지켜보는 관측 화면 전략 · 약 27분 소요</p>
+      <div class="grid g4">
+        <div class="card center"><div class="num">107</div><div class="label">아이디어</div></div>
+        <div class="card center"><div class="num">24</div><div class="label">깊게 파기</div></div>
+        <div class="card center"><div class="num">139</div><div class="label">채점 횟수</div></div>
+        <div class="card center"><div class="num o">0.719</div><div class="label">최고 점수</div><p class="sub">1회차와 우연히 같은 숫자!</p></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>🏆 1등: "위조 가격과 신뢰도의 규모 의존"</h3>
+        <p>모든 지표 옆에 속일 수 없는 가격표(SOL 코인 단위)를 붙이면, 예산이 2 SOL뿐인 작은 코인은 <b>"거짓말할 돈조차 없어서"</b> 오히려 정직함이 보장된다는 생각. 이 관점을 뒤집어 <b>속임수 시도를 잡아내는 도구</b>로 이어졌어요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 1라운드 패턴 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">두 시험에서 똑같이 나온 패턴</div>
+      <h2>📬 1등 레시피는 접수 첫날 나왔다</h2>
+      <div class="grid g2">
+        <div class="card"><h3>1라운드</h3><p>두 번 모두 <b>최고 아이디어가 첫 라운드</b>에 등장했어요.</p></div>
+        <div class="card"><h3>2~8라운드</h3><p>남은 시간은 새 발견보다 <b>다듬고 조립하는 데</b> 쓰였어요.</p></div>
+      </div>
+      <div class="note"><p>🔬 그래서 3회차에서는 <b>"처음 2라운드에 힘을 몰아주는"</b> 실험을 해볼 예정이에요.</p></div>
+    </div>
+  </section>
+
+  <!-- 8. 핵심 질문 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">가장 중요한 질문</div>
+      <h2>🧭 "감(직관)이 늘고 있는가?"<br><span class="hl">→ 아직 모릅니다</span></h2>
+      <p style="margin-bottom:18px">시험을 겨우 두 번 보고 "성적이 올랐다"고 말할 수는 없죠. 충분히 많이 봐야 판단할 수 있어요. 판단 기준은 <b>깊게 파본 아이디어 100개</b>입니다.</p>
+      <div class="meter" style="--w:53%"><div class="fill"></div></div>
+      <div class="meter-cap"><span>0</span><span style="color:var(--accent)">지금 53개 (29 + 24)</span><span>목표 100개</span></div>
+      <div class="note warm"><p>절반 넘게 왔어요. 남은 시험을 더 치러야 결론을 낼 수 있어요.</p></div>
+    </div>
+  </section>
+
+  <!-- 9. 동전 던지기 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">지금까지의 성적표</div>
+      <h2>🪙 예상은 동전 던지기 수준이었어요</h2>
+      <div class="grid g2">
+        <div class="card center"><p class="sub">1회차 "상관"</p><div class="num">-0.064</div></div>
+        <div class="card center"><p class="sub">2회차 "상관"</p><div class="num">-0.107</div></div>
+      </div>
+      <div class="note"><p><b>"상관"이란?</b> 요리 전에 "이건 맛있겠다"고 예상한 점수와, 실제로 받은 점수가 얼마나 맞아떨어지는지 보는 숫자예요. <b>0 근처면 "아무 상관 없음"</b> — 동전을 던져서 예상한 것과 다를 바 없다는 뜻이에요.</p></div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h3>📓 노트엔 뭔가 적히고 있어요</h3><p>기계 안의 "감 조절 값"은 실제로 움직였어요. 공부는 하는데, 아직 <b>시험 점수로 나타나지 않는</b> 상태예요.</p></div>
+        <div class="card"><h3>🔁 두 번 반복한 실수</h3><p>화려한 비유가 담긴 생각은 <b>너무 높게</b>, "있는 것들을 합친" 생각은 <b>너무 낮게</b> 예상했어요.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. 두 시나리오 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">완성 판정 기준</div>
+      <h2>✅ 어느 쪽이 나와도 "완성"이에요</h2>
+      <div class="grid g2">
+        <div class="card" style="border-color:var(--green)">
+          <h3>🅰️ 감이 늘었다</h3>
+          <p>아이디어 100개 이상 모였을 때 예상과 실제가 <b>확실히 맞아떨어지면</b> → "배웠다" 인정! 감 기능을 그대로 써요.</p>
+        </div>
+        <div class="card" style="border-color:var(--blue)">
+          <h3>🅱️ 감은 안 늘었다</h3>
+          <p>계속 동전 던지기 수준이면 → 감 맞히기 기능은 빼고, 이미 잘하는 <b>"위험 요소 찾아내기"</b> 기능으로 확정해요.</p>
+        </div>
+      </div>
+      <div class="note warm"><p>지금은 2회차 결과 때문에 <b>B 쪽으로 살짝</b> 기울었어요. 중요한 건 성공/실패가 아니라 <b>"어떤 기능을 쓸 것인가"</b>를 고르는 일이에요.</p></div>
+    </div>
+  </section>
+
+  <!-- 11. 로드맵 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="tag">앞으로의 일정</div>
+      <h2>🗓️ 로드맵</h2>
+      <div class="tl">
+        <div class="ev done"><div class="dot">✓</div><div><div class="d">9/22~24</div><div class="t">기계 만들기<br>심사위원 AI 연결</div></div></div>
+        <div class="ev done"><div class="dot">1</div><div><div class="d">9/24</div><div class="t">1회차 완주<br>최고 0.719</div></div></div>
+        <div class="ev done"><div class="dot">2</div><div><div class="d">9/26</div><div class="t">2회차 완주<br>최고 0.719</div></div></div>
+        <div class="ev next"><div class="dot">3</div><div><div class="d">~10/3</div><div class="t">3회차 예정<br>초반 집중 실험</div></div></div>
+        <div class="ev final"><div class="dot">★</div><div><div class="d">10월 초</div><div class="t">최종 판정<br>A냐 B냐</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. 결론 -->
+  <section class="slide">
+    <div class="inner center">
+      <div class="tag">한 줄 결론</div>
+      <h1 style="font-size:clamp(30px,5vw,54px)">방향은 좋다,<br><span class="hl">판정은 10월 초</span></h1>
+      <div style="max-width:640px;margin:34px auto 0;text-align:left">
+        <div class="meter" style="--w:89.9%"><div class="fill"></div></div>
+        <div class="meter-cap"><span>0</span><span style="color:var(--accent)">지금 최고 0.719</span><span>목표 0.8</span></div>
+      </div>
+      <p class="sub" style="margin-top:24px">좋은 생각을 찾아내는 힘은 확인됐고,<br>"감이 느는지"는 시험을 더 봐야 알 수 있어요.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="nav">
+  <button class="navbtn" id="prevBtn" aria-label="이전">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="navbtn" id="nextBtn" aria-label="다음">›</button>
+</nav>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var dots=document.getElementById('dots'), count=document.getElementById('count');
+  var prevBtn=document.getElementById('prevBtn'), nextBtn=document.getElementById('nextBtn');
+  var cur=0, N=slides.length;
+  slides.forEach(function(_,i){
+    var b=document.createElement('button'); b.setAttribute('aria-label',(i+1)+'번 슬라이드');
+    b.addEventListener('click',function(e){e.stopPropagation();go(i);}); dots.appendChild(b);
+  });
+  function go(i){
+    if(i<0||i>=N) return; cur=i;
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i);s.classList.toggle('prev',k<i);});
+    [].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===i);});
+    count.textContent=(i+1)+' / '+N; prevBtn.disabled=i===0; nextBtn.disabled=i===N-1;
+    if(history.replaceState) history.replaceState(null,'','#'+(i+1));
+  }
+  prevBtn.addEventListener('click',function(e){e.stopPropagation();go(cur-1);});
+  nextBtn.addEventListener('click',function(e){e.stopPropagation();go(cur+1);});
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' ','Enter'].indexOf(e.key)>=0){e.preventDefault();go(cur+1);}
+    else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>=0){e.preventDefault();go(cur-1);}
+    else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1);
+  });
+  // 클릭: 화면 오른쪽 2/3 → 다음, 왼쪽 1/3 → 이전
+  var sx=0, sy=0, swiped=false;
+  document.getElementById('deck').addEventListener('click',function(e){
+    if(swiped){swiped=false;return;}
+    if(e.clientX < window.innerWidth/3) go(cur-1); else go(cur+1);
+  });
+  // 터치 스와이프
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.3){swiped=true;go(dx<0?cur+1:cur-1);setTimeout(function(){swiped=false;},400);}
+  },{passive:true});
+  var h=parseInt(location.hash.slice(1),10);
+  go(h>=1&&h<=N?h-1:0);
+})();
+</script>
+</body>
+</html>
