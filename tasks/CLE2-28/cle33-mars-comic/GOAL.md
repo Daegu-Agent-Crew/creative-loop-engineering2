@@ -26,6 +26,7 @@
 - 삼체 시즌2 (CLE3는 완결 아카이브로 보존)
 - 회장님 사전 승인 게이트 (자동 발행 원칙)
 - 상업적 이용
+- **IP×토큰 교차 금지** (2026-09-28 가드레일): 만화 IP와 토큰을 어떤 형태로도 결합하지 않음 — QR·링크·티커·지갑 주소·에어드롭 안내 게재, EP 공개 시점과 토큰 이벤트 일정 맞추기 금지. 해제는 회장님 별도 승인으로만. 같은 문구: [CLE2-25 STATUS](../../CLE2-25/solana-memecoin-pipeline/STATUS.md) · [CLE2-29 GOAL](../../CLE2-29/memecoin-observation-pilot/GOAL.md)
 
 ## 관련 이슈
 - GitHub Issue: #93
