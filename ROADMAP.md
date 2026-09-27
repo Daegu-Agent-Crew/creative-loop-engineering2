@@ -1,10 +1,10 @@
 # ROADMAP — Daegu-Agent-Crew 리포 현황
 
-> 작성: 2026-09-12 · 이슈 [#79](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/79) (CLE2-26)
+> 작성: 2026-09-12 · 사실 정정: 2026-09-28 (agent:daeguru) · 이슈 [#79](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/issues/79) (CLE2-26)
 > 기준: OPERATING.md §3 리포 분류 규칙 · GitHub API 활동 데이터 (2026-09-12 조회)
-> 분류: **활성 7 · 보류 6 · 완결 8 = 총 21개** (org API 조회 결과 21개 — 이슈 본문의 22개와 1개 차이, 상세는 이슈 #79 코멘트 참조)
+> 분류: **활성 8 · 보류 5 · 완결 8 = 총 21개** (2026-09-28 ai-solana-agent 보류→활성 정정) (org API 조회 결과 21개 — 이슈 본문의 22개와 1개 차이, 상세는 이슈 #79 코멘트 참조)
 
-## 활성 (7)
+## 활성 (8)
 
 최근 2주(9/1 이후) 의미 있는 활동.
 
@@ -14,19 +14,19 @@
 | [agent_builder_public](https://github.com/Daegu-Agent-Crew/agent_builder_public) | 09-12 | 커뮤니티 공개 리포 | 열린 이슈 10건 순차 처리 |
 | [team-memory](https://github.com/Daegu-Agent-Crew/team-memory) | 09-12 | 사용자별 팀 메모리 | CLE2-1 활성화 과제 진행 |
 | [ai-agent-news](https://github.com/Daegu-Agent-Crew/ai-agent-news) | 09-12 | AI 에이전트 뉴스 수집 웹앱 (증거 기준 9/11 적용) | 자동 수집 파이프라인 정기 점검 |
-| [creative-loop-engineering3](https://github.com/Daegu-Agent-Crew/creative-loop-engineering3) | 09-11 | CLE3 삼체 연재 만화 창작 시스템 | 다음 에피소드 파이프라인 운영 |
+| [creative-loop-engineering3](https://github.com/Daegu-Agent-Crew/creative-loop-engineering3) | 09-11 | CLE3 삼체 연재 만화 창작 시스템 | 불일치 확인 필요: CLE2-28 GOAL은 "CLE3는 완결 아카이브로 보존·삼체 시즌2 제외"로 기록 — 분류는 회장님 확인 후 정정 (2026-09-28) |
 | [creative-loop-engineering5](https://github.com/Daegu-Agent-Crew/creative-loop-engineering5) | 09-08 | CLE5 공개 Pages 빌드 | private↔public 빌드 동기화 유지 |
 | [creative-loop-engineering5-private](https://github.com/Daegu-Agent-Crew/creative-loop-engineering5-private) | 09-08 | 자가성장 에이전트 (증거 기반 메모리+승인 루프) | 열린 이슈 3건 처리 |
+| [ai-solana-agent](https://github.com/Daegu-Agent-Crew/ai-solana-agent) | 09-28 | Solana DApp 3종 + dapp4 밈코인 관측 대시보드 (CLE2-29 관측 운영 중, 읽기 전용) | 10/3 CLE2-29 판정 · 발행·거래 코드는 CLE2-25와 함께 동결 |
 
-## 보류 (6)
+## 보류 (5)
 
 재개 조건이 명시된 정지. 부활 가능 (CLE2-14→CLE2-25 방식).
 
 | 리포 | 마지막 활동 | 설명 | 재개 조건 | 다음 액션 |
 |---|---|---|---|---|
-| [ai-solana-agent](https://github.com/Daegu-Agent-Crew/ai-solana-agent) | 07-22 (커밋) | Solana DApp 3종 + CLE2-25 밈코인 파이프라인 | CLE2-25 실행 재개 승인 (mainnet 전 회장님 승인 게이트 유지) | dapp4 관측 대시보드 확장 |
 | [team-memory-kit](https://github.com/Daegu-Agent-Crew/team-memory-kit) | 08-12 | 메모리 대시보드 킷 | 신규 기능 요청·버그 접수 시 (브랜치→PR 흐름) | 대기 |
-| [three-body-comic](https://github.com/Daegu-Agent-Crew/three-body-comic) | 08-03 | 삼체 만화 연재 산출물 (EP002까지) | CLE3 신규 에피소드 제작 시 산출물 반영 | CLE3 진행 상황 연계 |
+| [three-body-comic](https://github.com/Daegu-Agent-Crew/three-body-comic) | 08-03 | 삼체 만화 연재 산출물 (EP002까지) | CLE3 신규 에피소드 제작 시 산출물 반영 (단, CLE2-28 GOAL은 CLE3 완결 아카이브로 기록 — 회장님 확인 필요) | 대기 |
 | [agent-reverse-survey](https://github.com/Daegu-Agent-Crew/agent-reverse-survey) | 07-26 | AI 에이전트 역공학 설문 (1회차 완료) | 2회차 개설 조건 4종 충족: ① 같은 실패 2회 반복 ② 안전·권한 문제 ③ 3점 평가 미유지 증거 ④ 개선 항목 1~3개 명확화 (2026-08-18 결정) | 월간 점검 크론으로 조건 감시 |
 | [creatorflow2-solana](https://github.com/Daegu-Agent-Crew/creatorflow2-solana) | 07-28 | CreatorFlow2 캠페인 지급 (Devnet) | 재개 조건: CLE2-25에서 캠페인 지급 기능 필요 시 (09-12 회장님 확정) | 대기 (조건 충족 시 재개 승인 요청) |
 | [agent_builder](https://github.com/Daegu-Agent-Crew/agent_builder) | 05-19 | 커뮤니티 private 원본 (공개판은 agent_builder_public) | 재개 조건: 비공개 논의 필요 시 (09-12 회장님 확정) | 대기 (조건 충족 시 재개 승인 요청) |
