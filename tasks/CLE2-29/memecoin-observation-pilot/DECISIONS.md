@@ -2,9 +2,9 @@
 
 > 이 문서는 해당 요구사항에서 합의된 핵심 결정, 보류된 쟁점, 참고 링크를 누적 기록한다.
 >
-> **판정 규칙은 여기에 옮겨 적지 않는다.** 판정 절차·유보 규칙의 유일한 기준은 [PRE-REGISTRATION.md @ 05cb20f](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) 이다. 이 문서와 PRE-REG가 다르게 읽히면 PRE-REG가 우선한다.
+> **판정 규칙은 여기에 옮겨 적지 않는다.** 판정 절차·유보 규칙의 유일한 기준은 [PRE-REGISTRATION.md @ 05cb20f](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f8540c4e29bffc75be84c3c7b8f42ef237/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) 이다. 이 문서와 PRE-REG가 다르게 읽히면 PRE-REG가 우선한다.
 >
-> **서명 한계:** 아래 "사람 승인" 출처는 모두 sfex11 계정 또는 GitHub 밖 채널이다. 회장님 직접 작성과 에이전트 대필을 GitHub상 구분할 수 없으므로 "미인증"으로 표기한다 (결정 카드 #106 C2 참조).
+> **서명 한계:** 아래 "사람 승인" 출처는 (not-required 항목 제외) 모두 sfex11 계정 또는 GitHub 밖 채널이다. 회장님 직접 작성과 에이전트 대필을 GitHub상 구분할 수 없으므로 "미인증"으로 표기한다 (결정 카드 #106 C2 참조).
 
 ## 사용 규칙
 - 짧은 논의는 GitHub Issue 댓글에 남긴다.
@@ -20,14 +20,15 @@
 
 ### 2026-09-26 — 판정 함수 v2 동결 · prior B 55 : A 45
 - 결정: 4스위치 + S1 프레임 조항(코인-가중/모집단-가중 병기)으로 판정 함수 v2를 동결. baseline 95코인 재판정 결과 prior B 55 : A 45
-- 주의: 55:45는 판정의 **출발점으로 정한 값(결정)**이지 근거 있는 추정이 아니다. 표본 규모상 사실상 무차별이다.
+- 주의: 55:45는 판정의 **출발점으로 정한 값(결정)**이며 근거 있는 추정이 아니다. A·B 사이의 증거로 해석하지 않는다.
+- 표본: #101 소급 프로브 100코인 중 baseline 재판정에 쓰인 95코인 (제외 5코인의 사유는 #101 원문 참조 — 이 문서에서 미확인)
 - 근거: [#101](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/pull/101) (100코인 소급 프로브)
-- 강제 수단: ai-solana-agent `dapp4-pipeline/FROZEN.sha256` + `freeze-guard.yml` CI ([ai-solana-agent PR #11](https://github.com/Daegu-Agent-Crew/ai-solana-agent/pull/11), 2026-09-28)
+- 감지 수단: ai-solana-agent `dapp4-pipeline/FROZEN.sha256` + `freeze-guard.yml` CI ([ai-solana-agent PR #11](https://github.com/Daegu-Agent-Crew/ai-solana-agent/pull/11), 2026-09-28 머지) — 같은 계정이 해시와 CI를 함께 고치면 우회 가능 (#106 C2 전 한계)
 - 사람 승인: 미인증
 
 ### 2026-09-28 — 판정 절차 사전등록
 - 결정: 판정 규칙을 판정 전에 문서로 고정 (사후 기준 조정 방지)
-- 내용: [PRE-REGISTRATION.md @ 05cb20f](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) — 링크로만 참조
+- 내용: [PRE-REGISTRATION.md @ 05cb20f](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f8540c4e29bffc75be84c3c7b8f42ef237/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) — 링크로만 참조
 - 출처: PR #105 · 사람 승인: 미인증
 
 ### 2026-09-28 — CLE2-25 흡수 범위
@@ -47,4 +48,4 @@
 ## 참고 링크
 - GitHub Issue: #102
 - 관련 PR: #103, #104, #105 · ai-solana-agent #11
-- 관련 문서: [PRE-REGISTRATION.md](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) · [OWNERS.md](../../../OWNERS.md)
+- 관련 문서: [PRE-REGISTRATION.md](https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/05cb20f8540c4e29bffc75be84c3c7b8f42ef237/tasks/CLE2-29/memecoin-observation-pilot/PRE-REGISTRATION.md) · [OWNERS.md](../../../OWNERS.md)
