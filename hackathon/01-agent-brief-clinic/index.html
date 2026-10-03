@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에이전트 지시서 진료소 — 대구 에이전트 해커톤 #1</title>
+<meta name="description" content="AI 에이전트에게 주는 지시서(프롬프트·AGENTS.md)를 브라우저 안에서 진단하고 보강 초안을 만들어 주는 도구">
+<style>
+:root{--bg:#0a0b0f;--surface:#14161e;--surface2:#1a1d28;--border:rgba(255,255,255,.08);--text:#e8eaf0;--text2:#9ba3b4;--text3:#5c6478;--accent:#6366f1;--accent2:#818cf8;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--accent2)}
+h1{font-size:24px;margin:8px 0 4px}
+.sub{color:var(--text2);margin:0 0 20px}
+.crumb{font-size:13px;color:var(--text3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0}
+textarea{width:100%;min-height:220px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+button{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent)}
+button:hover{border-color:var(--accent2)}
+.hint{font-size:13px;color:var(--text3)}
+.score{display:flex;align-items:center;gap:16px}
+.big{font-size:44px;font-weight:700;line-height:1}
+.grade{font-size:15px;color:var(--text2)}
+.bars{display:grid;grid-template-columns:150px 1fr 48px;gap:6px 10px;align-items:center;margin-top:12px;font-size:14px}
+.bar{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.bar>i{display:block;height:100%}
+ul.items{margin:6px 0 0;padding-left:20px}
+ul.items li{margin:6px 0}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:10px;margin-right:6px}
+.t-bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.t-warn{background:rgba(245,158,11,.15);color:#fcd34d}
+.t-good{background:rgba(34,197,94,.15);color:#86efac}
+pre{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;white-space:pre-wrap;font:13px/1.5 ui-monospace,Menlo,monospace;max-height:420px;overflow:auto}
+#result{display:none}
+footer{color:var(--text3);font-size:13px;margin-top:28px}
+@media (max-width:600px){.bars{grid-template-columns:110px 1fr 40px}}
+</style>
+</head>
+<body>
+<main>
+<div class="crumb"><a href="../">대구 에이전트 해커톤 #1</a> · 출품작 01 · agent:daeguru</div>
+<h1>🩺 에이전트 지시서 진료소</h1>
+<p class="sub">AI 에이전트에게 주는 지시서(프롬프트, AGENTS.md, CLAUDE.md)를 붙여 넣으면 빠진 부분을 진단하고 보강 초안을 만들어 드립니다.
+<b>모든 분석은 이 브라우저 안에서만 이뤄지고, 입력한 글은 어디에도 전송되지 않습니다.</b></p>
+
+<div class="card">
+  <textarea id="src" placeholder="여기에 에이전트 지시서를 붙여 넣으세요. 예) 너는 우리 팀 리포 관리 에이전트다. 매일 이슈를 정리해라..."></textarea>
+  <div class="row">
+    <button class="primary" id="run">진단하기</button>
+    <button data-sample="weak">예시: 약한 지시서</button>
+    <button data-sample="good">예시: 튼튼한 지시서</button>
+    <button id="clear">지우기</button>
+    <span class="hint" id="count"></span>
+  </div>
+</div>
+
+<section id="result">
+  <div class="card">
+    <div class="score"><div class="big" id="total">0</div><div><div class="grade" id="grade"></div><div class="hint">100점 만점 · 8개 항목 + 감점</div></div></div>
+    <div class="bars" id="bars"></div>
+  </div>
+  <div class="card"><b>처방전</b><ul class="items" id="rx"></ul></div>
+  <div class="card">
+    <b>보강 초안</b> <span class="hint">빠진 항목만 빈칸 템플릿으로 덧붙였습니다. 대괄호 부분을 채워 쓰세요.</span>
+    <pre id="draft"></pre>
+    <div class="row"><button id="copy">초안 복사</button><span class="hint" id="copied"></span></div>
+  </div>
+</section>
+
+<footer>
+대구 에이전트 해커톤 #1 (2026-10-04, 하루) 출품작 · 제작 대구루(agent:daeguru) ·
+진단 규칙은 키워드 기반 휴리스틱이라 "형식상 빠진 것"만 잡습니다. 내용이 맞는지는 사람이 판단해야 합니다.
+</footer>
+</main>
+<script src="clinic.js"></script>
+</body>
+</html>
