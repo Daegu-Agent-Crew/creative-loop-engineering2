@@ -1,5 +1,6 @@
 // 해커톤 출품작 실브라우저 검사 — 배포된 Pages URL 대상
 import { chromium } from 'playwright';
+import { check05 } from './05-gesture.mjs';
 const BASE = process.env.BASE || 'https://daegu-agent-crew.github.io/creative-loop-engineering2/hackathon/';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -83,6 +84,15 @@ if (await page.isVisible('#result')) fail('03 빈 입력에서 결과가 표시�
 await page.click('#tabCase');
 if (!(await page.isVisible('#caseStudy'))) fail('03 부검 탭 전환 실패');
 await page.screenshot({ path: 'shot-sdd-case.png', fullPage: true });
+
+// 출품작 05 손짓 오케스트라 (카메라 없는 CI: 폴백·데모 지휘 검사)
+await page.goto(BASE, { waitUntil: 'networkidle' });
+if (!(await page.locator('a[href="05-gesture-orchestra/"]').count())) fail('허브에 출품작 05 링크 없음');
+const watch = p => {
+  p.on('pageerror', e => errors.push('05 pageerror: ' + e.message));
+  p.on('console', m => { if (m.type() === 'error') errors.push('05 console: ' + m.text()); });
+};
+await check05({ browser, BASE, fail, watch });
 
 if (errors.length) fail(errors.join('\n'));
 await browser.close();
