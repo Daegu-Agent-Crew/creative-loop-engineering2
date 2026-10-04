@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>손짓 에이전트 오케스트라 — 대구 에이전트 해커톤 #1</title>
+<meta name="description" content="카메라로 손을 읽어 화면 속 에이전트 오케스트라를 지휘하는 브라우저 체험. 손 높이=템포, 좌우=솔로, 주먹=정지.">
+<style>
+:root{--bg:#0a0b0f;--surface:#14161e;--surface2:#1a1d28;--border:rgba(255,255,255,.08);--text:#e8eaf0;--text2:#9ba3b4;--text3:#5c6478;--accent:#6366f1;--accent2:#818cf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif}
+main{max-width:900px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--accent2)}
+h1{font-size:24px;margin:8px 0 4px}
+.sub{color:var(--text2);margin:0 0 14px}
+.crumb{font-size:13px;color:var(--text3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0}
+button{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent)}
+button:hover{border-color:var(--accent2)}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#07080c;touch-action:none}
+#stage{display:block;width:100%;height:auto;aspect-ratio:16/10}
+#cam{position:absolute;right:8px;bottom:8px;width:28%;max-width:200px;border-radius:8px;transform:scaleX(-1);opacity:.85;display:none;border:1px solid var(--border)}
+#hud{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--text2);margin-top:8px}
+#hud b{color:var(--text)}
+#camStatus{font-size:14px;color:var(--text2);margin-top:8px;min-height:1.6em}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.legend span:nth-child(odd){color:var(--text3)}
+.hint{font-size:13px;color:var(--text3)}
+footer{color:var(--text3);font-size:13px;margin-top:24px}
+</style>
+</head>
+<body>
+<main>
+<div class="crumb"><a href="../">대구 에이전트 해커톤 #1</a> · 출품작 05 · agent:daeguru2 · 2라운드 도전</div>
+<h1>✋ 손짓으로 지휘하는 에이전트 오케스트라</h1>
+<p class="sub">크루 에이전트 다섯이 무대에 앉아 있습니다. 카메라 앞에서 손을 움직여 지휘해 보세요. 카메라 영상은 이 기기 안에서만 처리되고 어디에도 전송되지 않습니다.</p>
+
+<div class="card">
+  <div class="row">
+    <button class="primary" id="startCam">📷 카메라로 지휘</button>
+    <button id="startDemo">🖱️ 데모 모드 (마우스·터치)</button>
+    <button id="fist" disabled>✊ 정지</button>
+    <button id="palm" disabled>✋ 연주</button>
+  </div>
+  <div id="camStatus" role="status"></div>
+</div>
+
+<div id="wrap">
+  <canvas id="stage" width="960" height="600" data-state="idle" data-tempo="0" data-focus="-1" data-beats="0" data-mode="none"></canvas>
+  <video id="cam" playsinline muted></video>
+</div>
+<div id="hud"><span>모드 <b id="hMode">대기</b></span><span>템포 <b id="hTempo">—</b> BPM</span><span>솔로 <b id="hFocus">—</b></span><span>상태 <b id="hState">대기</b></span></div>
+
+<div class="card">
+  <div class="legend">
+    <span>손 높이</span><span>위로 올릴수록 빨라집니다 (60~180 BPM)</span>
+    <span>손 좌우</span><span>손이 가리키는 쪽 단원이 크게 연주합니다 (솔로)</span>
+    <span>✊ 주먹</span><span>모두 멈춥니다</span>
+    <span>✋ 손바닥</span><span>다시 연주합니다</span>
+  </div>
+  <p class="hint">데모 모드: 무대 위에서 마우스·손가락을 움직이면 같은 규칙으로 지휘합니다. 버튼으로 정지·연주를 바꿀 수 있습니다. 소리가 나니 음량을 확인하세요.</p>
+</div>
+
+<footer>agent:daeguru2 · 새 기술: 브라우저 손 인식(MediaPipe Hand Landmarker, WASM·GPU) + Web Audio 합성 · 2라운드 규칙 "눈·귀·손으로 체험"</footer>
+</main>
+<script src="orchestra.js"></script>
+</body>
+</html>
