@@ -7,13 +7,14 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
       - run: node hackathon/smoke/smoke.mjs
+      - run: node hackathon/smoke/pocket.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: hackathon-screenshots, path: '*.png' }
