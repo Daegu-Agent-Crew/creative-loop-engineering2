@@ -94,6 +94,69 @@ const watch = p => {
 };
 await check05({ browser, BASE, fail, watch });
 
+// 출품작 06 에이전트 심음 (Web Audio 실시간 합성)
+await page.goto(BASE, { waitUntil: 'networkidle' });
+if (!(await page.locator('a[href="06-agent-heartbeat/"]').count())) fail('허브에 출품작 06 링크 없음');
+{
+  const p6 = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  p6.on('pageerror', e => errors.push('06 pageerror: ' + e.message));
+  p6.on('console', m => { if (m.type() === 'error') errors.push('06 console: ' + m.text()); });
+  await p6.goto(BASE + '06-agent-heartbeat/', { waitUntil: 'networkidle' });
+
+  // 배포된 스크립트의 순수 로직을 실브라우저에서 직접 호출
+  const pure = await p6.evaluate(() => ({
+    normal: ECG.notesFor('normal', 0, 16).length,
+    silenceAfter9: ECG.notesFor('silence', 9, 16).length,
+    counts: ECG.ORDER.map(id => ECG.notesFor(id, 0, 16).length),
+    flat: ECG.ORDER.every(id => ECG.dashboardRate(id).every(v => v === 100))
+  }));
+  console.log(`ecg pure: normal=${pure.normal} silenceAfter9=${pure.silenceAfter9} counts=${pure.counts.join('/')} flat100=${pure.flat}`);
+  if (pure.normal !== 60) fail(`06 정상 음표 수 오류: ${pure.normal} (기대 60)`);
+  if (pure.silenceAfter9 !== 0) fail(`06 침묵 구간에 음표가 있음: ${pure.silenceAfter9}`);
+  if (new Set(pure.counts).size !== 4) fail(`06 시나리오 음표 수가 겹침: ${pure.counts.join('/')}`);
+  if (!pure.flat) fail('06 성공률이 100% 수평선이 아님 (작품의 전제)');
+
+  if ((await p6.locator('#svgRate').getAttribute('points') || '').split(' ').length !== 16) fail('06 성공률 폴리라인 점 수 오류');
+  if (!(await p6.isVisible('#charts'))) fail('06 초기 차트 미표시');
+
+  // 실제 Web Audio 경로 — 오실레이터가 실브라우저에서 예약되는지
+  await p6.click('[data-scenario="normal"]');
+  await p6.waitForFunction(() => Number(document.getElementById('noteCount').textContent) > 0, null, { timeout: 5000 })
+    .catch(() => fail('06 재생 직후 음표 예약 0건'));
+  const audio = await p6.evaluate(() => ({
+    state: window.ECG.player.ctx ? window.ECG.player.ctx.state : 'none',
+    scheduled: window.ECG.player.scheduled.length
+  }));
+  console.log(`ecg audio: ctx=${audio.state} scheduled=${audio.scheduled}`);
+  if (audio.state === 'none') fail('06 AudioContext 생성 실패');
+  if (!audio.scheduled) fail('06 예약된 음표 없음');
+  await p6.waitForTimeout(2200);
+  const moved = await p6.evaluate(() => Number(document.getElementById('elapsed').textContent));
+  console.log(`ecg clock: elapsed=${moved}s`);
+  if (!(moved > 0.5)) fail(`06 오디오 시계가 전진하지 않음: ${moved}`);
+  await p6.screenshot({ path: 'shot-ecg-listen.png', fullPage: true });
+
+  // 침묵 시나리오: 9초 이후 예약 0건
+  await p6.click('[data-scenario="silence"]');
+  await p6.waitForTimeout(600);
+  const sil = await p6.evaluate(() => window.ECG.player.scheduled.every(n => n.at < 9));
+  if (!sil) fail('06 침묵 시나리오에서 9초 이후 음표가 예약됨');
+
+  // 블라인드 테스트 1라운드
+  await p6.click('#stop');
+  await p6.click('#blindStart');
+  if (!(await p6.isVisible('#blindBody'))) fail('06 블라인드 시작 실패');
+  await p6.click('#blindPlay');
+  const truth = await p6.evaluate(() => window.ECG.player.scenario);
+  await p6.click(`#blindOpts .opt[data-pick="${truth}"]`);
+  const fbCls = await p6.getAttribute('#blindFeedback', 'class');
+  if (!(fbCls || '').includes('good')) fail(`06 정답 피드백 실패: ${fbCls}`);
+  if (!(await p6.isVisible('#blindNext'))) fail('06 다음 버튼 미표시');
+  console.log(`ecg blind: truth=${truth} ok`);
+  await p6.screenshot({ path: 'shot-ecg-blind.png', fullPage: true });
+  await p6.close();
+}
+
 if (errors.length) fail(errors.join('\n'));
 await browser.close();
 console.log(process.exitCode ? 'SMOKE FAIL' : 'SMOKE PASS');
