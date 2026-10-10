@@ -17,6 +17,8 @@ jobs:
       - run: node hackathon/smoke/pocket.mjs
       - run: node hackathon/smoke/07-spread.mjs
       - run: node hackathon/07-funding-spread-lab/test/lab.test.mjs
+      - run: node hackathon/smoke/06-mirage.mjs
+      - run: node hackathon/06-backtest-mirage/test/mirage.test.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: hackathon-screenshots, path: '*.png' }

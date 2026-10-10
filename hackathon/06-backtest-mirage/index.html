@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📉 백테스트는 전부 아름답다 — 해커톤 06</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --surface-1: #fcfcfb;
+    --plane: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --train: #2a78d6;
+    --test: #eb6834;
+    --critical: #d03b3b;
+    --good: #0ca30c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-1: #1a1a19; --plane: #0d0d0d;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7;
+      --muted: #898781; --grid: #2c2c2a; --axis: #383835;
+      --border: rgba(255,255,255,0.10);
+      --train: #3987e5; --test: #d95926;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--plane); color: var(--text-primary);
+    padding: 20px 16px 56px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 650; margin: 0 0 6px; letter-spacing: -0.01em; line-height: 1.3; }
+  .lede { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 4px; }
+  .lede b { color: var(--text-primary); }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0 0; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+           border: 1px solid var(--border); color: var(--text-secondary); background: var(--surface-1); }
+
+  .card { background: var(--surface-1); border: 1px solid var(--border);
+          border-radius: 12px; padding: 16px 18px 18px; margin-top: 16px; }
+  .card h2 { font-size: 15px; font-weight: 650; margin: 0 0 4px; }
+  .card .note { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 12px; line-height: 1.55; }
+
+  /* controls */
+  .ctrl { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 11px; font-weight: 650; color: var(--muted); letter-spacing: 0.02em; }
+  .field .val { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-primary); font-weight: 600; }
+  input[type=range] { width: 190px; accent-color: var(--train); }
+  button { font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+           background: var(--train); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; }
+  button.ghost { background: var(--surface-1); color: var(--text-secondary); border: 1px solid var(--border); }
+  button:disabled { opacity: .55; cursor: default; }
+
+  /* tiles */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .tile { border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px 12px; background: var(--plane); }
+  .tile .k { font-size: 10.5px; font-weight: 650; color: var(--muted); letter-spacing: 0.02em; }
+  .tile .v { font-size: 24px; font-weight: 640; line-height: 1.12; margin-top: 6px; letter-spacing: -0.02em;
+             font-variant-numeric: tabular-nums; }
+  .tile .d { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.35; }
+  .tile.train .v { color: var(--train); }
+  .tile.test .v { color: var(--test); }
+  .tile.warn .v, .tile.warn .k { color: var(--critical); }
+
+  /* charts */
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  .chart h3 { font-size: 12.5px; font-weight: 650; margin: 0 0 2px; display: flex; align-items: center; gap: 6px; }
+  .chart h3 .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .chart .sub { font-size: 11px; color: var(--muted); margin: 0 0 6px; font-variant-numeric: tabular-nums; }
+  .plot { position: relative; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ax { stroke: var(--axis); stroke-width: 1; }
+  .gl { stroke: var(--grid); stroke-width: 1; }
+  .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .base { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+  .ylab { position: absolute; left: 0; font-size: 10px; color: var(--muted);
+          transform: translateY(-50%); font-variant-numeric: tabular-nums; background: var(--surface-1); padding-right: 3px; }
+  .xlab { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .xrow { display: flex; justify-content: space-between; margin-top: 3px; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 11.5px; color: var(--text-secondary); }
+  .legend span.i { display: inline-flex; align-items: center; gap: 5px; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap;
+           font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-size: 10.5px; color: var(--muted); font-weight: 650; border-bottom: 1px solid var(--axis); }
+  td.up { color: var(--train); font-weight: 600; }
+  td.dn { color: var(--test); font-weight: 600; }
+
+  .verdict { margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+             border: 1px solid var(--border); background: var(--plane); font-size: 13.5px; line-height: 1.65; }
+  .verdict b { color: var(--critical); }
+  .big { font-size: 15px; font-weight: 650; line-height: 1.5; margin: 0 0 6px; }
+
+  footer { margin-top: 22px; font-size: 11.5px; color: var(--muted); line-height: 1.65; }
+  footer a { color: var(--text-secondary); }
+  .status { font-size: 12px; color: var(--muted); margin-top: 8px; min-height: 1.3em; }
+
+  @media (max-width: 680px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .charts { grid-template-columns: 1fr; }
+    input[type=range] { width: 100%; }
+    .field { flex: 1 1 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>📉 백테스트는 전부 아름답다</h1>
+  <p class="lede">
+    아래 가격은 <b>주사위로 만든 가짜</b>입니다. 드리프트 0짜리 랜덤워크라서, 예측할 패턴이
+    <b>존재하지 않는다는 것이 수학적으로 보장</b>됩니다. 그런데도 전략을 여러 개 돌려 보면
+    언제나 "최고의 전략"이 나옵니다. 그게 이 작품이 보여주려는 전부입니다.
+  </p>
+  <div class="badges">
+    <span class="badge">라이브러리 0개</span>
+    <span class="badge">네트워크 요청 0건</span>
+    <span class="badge">실제 시장 데이터 0건</span>
+    <span class="badge">교육·관측 목적 · 투자 권유 아님</span>
+  </div>
+
+  <div class="card">
+    <h2>1. 전략을 몇 개나 시도해 볼까요?</h2>
+    <p class="note">
+      시도 횟수 N을 늘릴수록 학습 구간 최고 성적은 <b>반드시</b> 좋아집니다 — 후보가 늘어날 뿐
+      데이터는 그대로인데도 그렇습니다. 직접 밀어 보세요.
+    </p>
+    <div class="ctrl">
+      <div class="field">
+        <label for="n">시도한 전략 구성 수 N</label>
+        <input type="range" id="n" min="10" max="3016" step="1" value="200">
+        <span class="val" id="nv">200개</span>
+      </div>
+      <div class="field">
+        <label for="seed">주사위 시드</label>
+        <span class="val" id="seedv">1</span>
+        <input type="hidden" id="seed" value="1">
+      </div>
+      <button id="roll" class="ghost" type="button">🎲 다시 굴리기</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. 발굴된 "최고의 전략"</h2>
+    <p class="note" id="winnerNote">—</p>
+
+    <div class="tiles">
+      <div class="tile train">
+        <div class="k">학습 구간 샤프</div>
+        <div class="v" id="t-train">—</div>
+        <div class="d" id="d-train">—</div>
+      </div>
+      <div class="tile test">
+        <div class="k">검증 구간 샤프</div>
+        <div class="v" id="t-test">—</div>
+        <div class="d" id="d-test">—</div>
+      </div>
+      <div class="tile warn">
+        <div class="k">검증 구간 순위</div>
+        <div class="v" id="t-rank">—</div>
+        <div class="d" id="d-rank">—</div>
+      </div>
+      <div class="tile warn">
+        <div class="k">필요한 최소 기간</div>
+        <div class="v" id="t-btl">—</div>
+        <div class="d" id="d-btl">—</div>
+      </div>
+    </div>
+
+    <div class="charts">
+      <div class="chart">
+        <h3><span class="sw" style="background:var(--train)"></span>학습 구간 — 전략을 고른 곳</h3>
+        <p class="sub" id="sub-train">—</p>
+        <div class="plot" id="plot-train"></div>
+      </div>
+      <div class="chart">
+        <h3><span class="sw" style="background:var(--test)"></span>검증 구간 — 같은 전략을 그대로</h3>
+        <p class="sub" id="sub-test">—</p>
+        <div class="plot" id="plot-test"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span class="i"><span class="sw" style="background:var(--train)"></span>학습 구간 누적수익</span>
+      <span class="i"><span class="sw" style="background:var(--test)"></span>검증 구간 누적수익</span>
+      <span class="i"><span class="sw" style="background:var(--axis)"></span>원금선 (1.0)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. N을 늘리면 무슨 일이 생기나</h2>
+    <p class="note">
+      같은 데이터, 같은 주사위. 시도 횟수만 바꿉니다. 학습 성적은 올라가는데 검증 성적은 따라오지 않습니다.
+    </p>
+    <table id="sweep">
+      <thead><tr><th>시도 N</th><th>학습 샤프</th><th>검증 샤프</th><th>검증 순위</th><th>필요 최소기간</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>4. 한 번은 운일 수 있습니다 — 그래서 60번 돌립니다</h2>
+    <p class="note">
+      시드 1~60을 전부 돌린 결과입니다. 개별 실행에서는 검증이 더 좋게 나오는 경우도 있습니다.
+      이 작품의 주장은 개별 사례가 아니라 <b>분포</b>입니다.
+    </p>
+    <table id="aggTable">
+      <thead><tr><th>시도 N</th><th>학습 샤프 평균</th><th>검증 샤프 평균</th><th>검증 순위 중앙값</th><th>성적 악화 비율</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="status" id="aggStatus"></div>
+    <button id="agg" type="button" style="margin-top:10px">N=50·800도 함께 비교 (약 3초)</button>
+  </div>
+
+  <div class="verdict" id="verdict">
+    <p class="big">결론</p>
+    <p style="margin:0">실행해 보세요.</p>
+  </div>
+
+  <footer>
+    출품작 06 · 대구 에이전트 해커톤 시즌1 (2026-10-10) · 조사 기록은 <a href="./RESEARCH.md">RESEARCH.md</a>,
+    통과 조건은 <a href="./GATES.md">GATES.md</a>에 있습니다.<br>
+    근거 논문: Bailey·Borwein·López de Prado·Zhu,
+    <a href="https://scholarworks.wmich.edu/math_pubs/40/">Pseudo-Mathematics and Financial Charlatanism</a> (Notices of the AMS, 2014) ·
+    <a href="https://papers.ssrn.com/abstract=2326253">The Probability of Backtest Overfitting</a> (J. Computational Finance, 2015)<br>
+    교육·관측 목적입니다. 투자 권유가 아닙니다. — 🐕 라이카
+  </footer>
+</div>
+
+<script type="module">
+import { runExperiment, sweepN, aggregate } from "./mirage.js";
+
+const $ = (id) => document.getElementById(id);
+const fmtS = (v) => (v === null || v === undefined || !isFinite(v)) ? "—" : v.toFixed(2);
+const fmtY = (v) => (v === null || v === undefined || !isFinite(v)) ? "—" : (v >= 100 ? Math.round(v) + "년" : v.toFixed(1) + "년");
+
+/** 수익곡선 하나. SVG로 선을 긋고, 축 글자는 HTML로 얹는다(SVG 텍스트를 못 그리는 브라우저 대비). */
+function drawCurve(host, equity, color, domain) {
+  const W = 460, H = 190, M = { t: 8, r: 8, b: 4, l: 44 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const lo = domain[0], hi = domain[1];
+  const X = (i) => M.l + (i / Math.max(1, equity.length - 1)) * iw;
+  const Y = (v) => M.t + ih - ((v - lo) / Math.max(1e-9, hi - lo)) * ih;
+
+  const ticks = 4;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="누적 수익 곡선">`;
+  const labels = [];
+  for (let k = 0; k <= ticks; k++) {
+    const v = lo + ((hi - lo) * k) / ticks;
+    s += `<line class="gl" x1="${M.l}" y1="${Y(v).toFixed(1)}" x2="${W - M.r}" y2="${Y(v).toFixed(1)}"/>`;
+    labels.push({ top: (Y(v) / H) * 100, text: v.toFixed(2) });
+  }
+  if (lo < 1 && hi > 1) s += `<line class="base" x1="${M.l}" y1="${Y(1).toFixed(1)}" x2="${W - M.r}" y2="${Y(1).toFixed(1)}"/>`;
+  s += `<line class="ax" x1="${M.l}" y1="${M.t + ih}" x2="${W - M.r}" y2="${M.t + ih}"/>`;
+  let d = "";
+  for (let i = 0; i < equity.length; i++) d += (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(equity[i]).toFixed(1);
+  s += `<path class="ln" d="${d}" stroke="${color}"/>`;
+  s += `</svg>`;
+
+  host.innerHTML = s + labels.map((l) => `<span class="ylab" style="top:${l.top}%">${l.text}</span>`).join("")
+    + `<div class="xrow"><span class="xlab">0일</span><span class="xlab">${equity.length - 1}일</span></div>`;
+}
+
+let busy = false;
+
+function render() {
+  if (busy) return;
+  busy = true;
+  const n = +$("n").value;
+  const seed = +$("seed").value;
+  $("nv").textContent = n.toLocaleString() + "개";
+  $("seedv").textContent = seed;
+  $("status").textContent = "계산 중…";
+
+  setTimeout(() => {
+    const t0 = performance.now();
+    const r = runExperiment({ seed, n });
+    const took = Math.round(performance.now() - t0);
+
+    $("winnerNote").innerHTML =
+      `학습 구간 ${r.n.toLocaleString()}개 후보 중 1등: <b>MA(${r.winner.fast}, ${r.winner.slow})</b> — `
+      + `빠른 이동평균 ${r.winner.fast}일이 느린 ${r.winner.slow}일을 넘으면 사고, 아니면 현금. 거래 ${r.winner.trades}회.`;
+
+    $("t-train").textContent = fmtS(r.winner.sharpe);
+    $("d-train").textContent = `누적 ${(r.winner.totalReturn * 100).toFixed(1)}% · ${r.trainDays}일`;
+    $("t-test").textContent = fmtS(r.winnerOnTest.sharpe);
+    $("d-test").textContent = `누적 ${(r.winnerOnTest.totalReturn * 100).toFixed(1)}% · ${r.testDays}일`;
+
+    const mid = r.n / 2;
+    $("t-rank").textContent = `${r.testRank}/${r.n}`;
+    $("d-rank").textContent = Math.abs(r.testRank - mid) < r.n * 0.2
+      ? "사실상 한가운데 — 평범한 전략이 됐습니다"
+      : (r.testRank <= mid
+        ? (r.winnerOnTest.totalReturn < 0 ? "순위는 높지만 돈은 잃었습니다" : "이번엔 상위권 — 운이 좋았습니다")
+        : "하위권으로 떨어졌습니다");
+
+    $("t-btl").textContent = fmtY(r.minBtlYears);
+    $("d-btl").textContent = r.minBtlYears === null
+      ? "학습 성적이 0 이하라 계산 불가"
+      : `실제로 쓴 건 ${r.actualTrainYears.toFixed(1)}년 — ${(r.minBtlYears / r.actualTrainYears).toFixed(0)}배 부족`;
+
+    const all = r.trainCurve.concat(r.testCurve);
+    const lo = Math.min(...all, 1), hi = Math.max(...all, 1);
+    const pad = (hi - lo) * 0.08 || 0.05;
+    const domain = [lo - pad, hi + pad];
+    const cs = getComputedStyle(document.documentElement);
+    drawCurve($("plot-train"), r.trainCurve, cs.getPropertyValue("--train").trim(), domain);
+    drawCurve($("plot-test"), r.testCurve, cs.getPropertyValue("--test").trim(), domain);
+    $("sub-train").textContent = `샤프 ${fmtS(r.winner.sharpe)} · 바이앤홀드 ${(r.trainBuyHold * 100).toFixed(1)}%`;
+    $("sub-test").textContent = `샤프 ${fmtS(r.winnerOnTest.sharpe)} · 바이앤홀드 ${(r.testBuyHold * 100).toFixed(1)}%`;
+
+    const ns = [10, 50, 200, 800, 3016].filter((x) => x <= 3016);
+    const rows = sweepN({ seed, ns });
+    $("sweep").tBodies[0].innerHTML = rows.map((x) => `
+      <tr>
+        <td>${x.n.toLocaleString()}</td>
+        <td class="up">${fmtS(x.trainSharpe)}</td>
+        <td class="${x.testSharpe < x.trainSharpe ? "dn" : ""}">${fmtS(x.testSharpe)}</td>
+        <td>${x.testRank}/${x.n}</td>
+        <td>${fmtY(x.minBtlYears)}</td>
+      </tr>`).join("");
+
+    const worsened = r.winnerOnTest.sharpe < r.winner.sharpe;
+    const lostMoney = r.winnerOnTest.totalReturn < 0;
+    let tail;
+    if (worsened && lostMoney && r.testRank <= mid) {
+      tail = `순위만 보면 상위권이지만 <b>원금은 ${(r.winnerOnTest.totalReturn * 100).toFixed(1)}%</b> 줄었습니다 — `
+        + `검증 구간에서는 이 전략만 나빴던 게 아니라 ${r.n.toLocaleString()}개가 다 같이 나빴습니다. 등수는 위로가 되지 않습니다.`;
+    } else if (worsened) {
+      tail = `샤프가 <b>${fmtS(r.winner.sharpe)} → ${fmtS(r.winnerOnTest.sharpe)}</b>로 내려앉았습니다.`;
+    } else {
+      tail = `이번 실행은 검증이 오히려 더 좋게 나왔습니다 — 한 번의 결과는 운입니다. 그래서 아래에 60회 분포를 함께 둡니다.`;
+    }
+    $("verdict").innerHTML = `<p class="big">결론</p>
+      <p style="margin:0">예측할 것이 <b>하나도 없는</b> 가격에서 ${r.n.toLocaleString()}개를 뒤져
+      샤프 ${fmtS(r.winner.sharpe)}짜리 전략을 찾았습니다. 그 성적이 실력이라고 주장하려면
+      <b>${fmtY(r.minBtlYears)}</b>치 데이터가 필요한데, 쓴 것은 ${r.actualTrainYears.toFixed(1)}년입니다.
+      같은 전략을 옆 구간에 대자 ${r.n.toLocaleString()}개 중 <b>${r.testRank}등</b> — ${tail}</p>`;
+
+    $("status").textContent = `완료 · ${took}ms · 시드 ${seed} · 후보 ${r.n.toLocaleString()}개`;
+    busy = false;
+    window.__mirageReady = true;   // CI 스모크가 렌더 완료를 기다리는 신호
+  }, 0);
+}
+
+$("n").addEventListener("input", () => { $("nv").textContent = (+$("n").value).toLocaleString() + "개"; });
+$("n").addEventListener("change", render);
+$("roll").addEventListener("click", () => {
+  $("seed").value = String(1 + Math.floor(Math.random() * 100000));
+  render();
+});
+
+const SEEDS_60 = Array.from({ length: 60 }, (_, i) => i + 1);
+
+function renderAgg(ns) {
+  const out = ns.map((n) => aggregate({ seeds: SEEDS_60, n }));
+  $("aggTable").tBodies[0].innerHTML = out.map((a) => `
+    <tr>
+      <td>${a.n.toLocaleString()}</td>
+      <td class="up">${a.meanTrainSharpe.toFixed(3)}</td>
+      <td class="dn">${a.meanTestSharpe.toFixed(3)}</td>
+      <td>${a.medianTestRank}/${a.n}</td>
+      <td>${(a.degradedRate * 100).toFixed(0)}% (${a.degradedCount}/${a.runs})</td>
+    </tr>`).join("");
+  $("aggStatus").innerHTML = "검증 구간 순위 중앙값이 <b>한가운데</b>에 섭니다 — "
+    + "학습 1등은 검증에서 그냥 평균짜리 전략이라는 뜻입니다. 신호가 0인 데이터에서 이론적으로 나와야 할 값이고, 실제로 그렇게 나옵니다.";
+  window.__mirageAgg = out.map((a) => ({ n: a.n, meanTrain: a.meanTrainSharpe, meanTest: a.meanTestSharpe, medianRank: a.medianTestRank, degraded: a.degradedCount }));
+  return out;
+}
+
+$("agg").addEventListener("click", () => {
+  const btn = $("agg");
+  btn.disabled = true;
+  $("aggStatus").textContent = "60회 × 3구간 계산 중…";
+  setTimeout(() => { renderAgg([50, 200, 800]); btn.disabled = false; btn.style.display = "none"; }, 0);
+});
+
+render();
+// 개별 실행 한 번은 운일 수 있으므로, 분포를 처음부터 함께 보여준다(N=200 한 줄, 약 0.5초).
+setTimeout(() => renderAgg([200]), 60);
+</script>
+</body>
+</html>
