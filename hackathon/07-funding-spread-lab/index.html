@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 펀딩 스프레드 실험실 — 대구 에이전트 해커톤</title>
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --fg:#e7e9ee; --mut:#9aa1ad; --acc:#4cc38a; --neg:#ef6461; --train:#2a2f3a; --line:#2c313c; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Noto Sans KR", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 18px 16px 48px; }
+  h1 { font-size: 22px; margin: 4px 0 2px; }
+  .sub { color: var(--mut); margin: 0 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 12px 0; }
+  .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px 18px; align-items: end; }
+  label { display: block; font-size: 13px; color: var(--mut); margin-bottom: 4px; }
+  input[type=range] { width: 100%; accent-color: var(--acc); }
+  .val { color: var(--fg); font-weight: 600; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button, .btn { background: #232834; color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 14px; cursor: pointer; }
+  .seg button[aria-pressed=true] { background: var(--acc); color: #0b1a12; border-color: var(--acc); font-weight: 600; }
+  .btn.primary { background: #2d6cdf; border-color: #2d6cdf; font-weight: 600; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+  .stat { background: #12151b; border-radius: 10px; padding: 8px 10px; }
+  .stat b { display: block; font-size: 18px; }
+  .stat span { font-size: 12px; color: var(--mut); }
+  .pos { color: var(--acc); } .neg { color: var(--neg); }
+  h2 { font-size: 16px; margin: 0 0 8px; }
+  #chart svg, #bars svg { max-width: 100%; height: auto; }
+  .note { color: var(--mut); font-size: 13px; }
+  #verdict { font-size: 15px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td, th { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: right; }
+  td:first-child, th:first-child { text-align: left; }
+  tr.chosen td { color: var(--acc); font-weight: 600; }
+  a { color: #7fb0ff; }
+</style>
+</head>
+<body>
+<main>
+  <p class="sub"><a href="../">← 해커톤 허브</a> · 시즌 1 · 출품 대구루</p>
+  <h1>07 펀딩 스프레드 실험실</h1>
+  <p class="sub">같은 코인이라도 Binance와 Bybit는 서로 다른 펀딩비를 받습니다. 그 차이(스프레드)가 벌어질 때 양쪽에 반대 포지션을 잡으면 가격 위험 없이 차이만 먹을 수 있을까? 손잡이를 돌려 직접 확인해 보세요. 실제 확정 결산 데이터 349종목 · 2026-04-10 ~ 09-23.</p>
+
+  <section class="card controls" aria-label="전략 손잡이">
+    <div>
+      <label for="th">진입 문턱 (8시간 스프레드) <span class="val" id="thv"></span></label>
+      <input id="th" type="range" min="0" max="4" step="1" value="1">
+    </div>
+    <div>
+      <label>확인 규칙 (직전 창도 같은 방향이어야 진입)</label>
+      <div class="seg" id="conf"><button aria-pressed="false" data-v="0">끄기</button><button aria-pressed="true" data-v="1">켜기</button></div>
+    </div>
+    <div>
+      <label>거래 비용 (진입·청산 4회)</label>
+      <div class="seg" id="cost"><button aria-pressed="true" data-v="maker">메이커 0.08%</button><button aria-pressed="false" data-v="taker">테이커 0.22%</button></div>
+    </div>
+    <div>
+      <button class="btn primary" id="auto">사전 등록 규칙으로 자동 선택</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>누적 순손익 (거래 1건 = 같은 비중)</h2>
+    <div id="chart" role="img" aria-label="누적 순손익 차트"></div>
+    <p class="note">어두운 배경 = 학습 구간(앞 60%), 밝은 배경 = 검증 구간(뒤 40%). 점선 = 가장 많이 번 거래 1건을 뺀 곡선 — 한 방에 기댄 성과인지 보여 줍니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>숫자로 보기</h2>
+    <div class="stats" id="stats"></div>
+    <p id="verdict"></p>
+  </section>
+
+  <section class="card">
+    <h2>어느 코인이 벌고 잃었나 (검증 구간 상위·하위 8)</h2>
+    <div id="bars"></div>
+  </section>
+
+  <section class="card" id="wfbox" hidden>
+    <h2>자동 선택 결과 — 학습 구간 격자</h2>
+    <table id="grid"></table>
+    <p class="note">규칙: 학습 구간에서 거래 30건 이상인 조합 중 평균 순손익이 가장 높은 것을 고르고, 검증 구간에는 딱 한 번만 적용합니다. 검증 결과를 보고 다시 고치지 않습니다.</p>
+  </section>
+
+  <section class="card note">
+    <h2>한계 (정직하게)</h2>
+    펀딩비만 계산했습니다. 두 거래소 가격 차이(베이시스) 변동, 증거금 이동, 체결 실패, 상장 폐지 종목(생존 편향)은 빠져 있습니다. 실제 돈을 넣기 전에는 전진 페이퍼 트레이딩(판정 2026-10-28 또는 청산 50건)으로 다시 검증합니다.
+    <br>조사 기록: <a href="RESEARCH.md">RESEARCH.md</a> · 검증 게이트: <a href="GATES.md">GATES.md</a>
+  </section>
+</main>
+
+<script type="module">
+import * as Plot from 'https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17/+esm';
+import { THS, COSTS, prepare, simulate, summarize, walkForward, curve } from './lab.js';
+
+const data = await (await fetch('data.json')).json();
+const syms = prepare(data);
+const tStart = new Date(data.g0), tSplit = new Date(data.split), tEnd = new Date(data.g0 + 501 * data.h8);
+const PSTYLE = { background: 'transparent', color: '#e7e9ee', fontFamily: '"Noto Sans KR", "Noto Sans", sans-serif', fontSize: '12px' };
+const state = { thIdx: 1, conf: true, cost: 'maker' };
+const pct = (x, d = 2) => (x >= 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
+const cls = x => (x >= 0 ? 'pos' : 'neg');
+
+function seg(id, key, parse) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    state[key] = parse(b.dataset.v); render();
+  });
+  return () => el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(parse(b.dataset.v) === state[key])));
+}
+const syncConf = seg('conf', 'conf', v => v === '1');
+const syncCost = seg('cost', 'cost', v => v);
+const th = document.getElementById('th');
+th.addEventListener('input', () => { state.thIdx = +th.value; render(); });
+
+document.getElementById('auto').addEventListener('click', () => {
+  const { grid, best } = walkForward(data, syms, COSTS[state.cost]);
+  state.thIdx = THS.indexOf(best.th); state.conf = best.conf;
+  const rows = grid.map(g => `<tr class="${g.th === best.th && g.conf === best.conf ? 'chosen' : ''}"><td>${(g.th * 100).toFixed(2)}% · 확인 ${g.conf ? '켜기' : '끄기'}</td><td>${g.n}건</td><td>${g.n ? pct(g.mean, 3) : '-'}</td><td>${g.n >= 30 ? '후보' : '표본 부족'}</td></tr>`).join('');
+  document.getElementById('grid').innerHTML = `<tr><th>조합</th><th>거래</th><th>평균</th><th>자격</th></tr>${rows}`;
+  document.getElementById('wfbox').hidden = false;
+  render();
+});
+
+function render() {
+  const p = { th: THS[state.thIdx], conf: state.conf, cost: COSTS[state.cost] };
+  th.value = state.thIdx; document.getElementById('thv').textContent = (p.th * 100).toFixed(2) + '%';
+  syncConf(); syncCost();
+  const all = simulate(data, syms, p);
+  const train = all.filter(x => x.t < data.split), test = all.filter(x => x.t >= data.split);
+
+  const full = curve(all), ex = curve(all, true);
+  const chart = Plot.plot({
+    width: 940, height: 340, marginLeft: 56, style: PSTYLE,
+    x: { type: 'time', label: null, domain: [tStart, tEnd] }, y: { label: '누적 %', grid: true },
+    marks: [
+      Plot.rectX([{ a: tStart, b: tSplit }], { x1: 'a', x2: 'b', fill: '#000', fillOpacity: 0.35 }),
+      Plot.ruleY([0], { stroke: '#666' }),
+      Plot.ruleX([tSplit], { stroke: '#9aa1ad', strokeDasharray: '2,3' }),
+      Plot.text([{ t: tSplit }], { x: 't', frameAnchor: 'top', dx: 6, textAnchor: 'start', text: () => '검증 시작', fill: '#9aa1ad' }),
+      Plot.lineY(full, { x: 't', y: 'cum', stroke: '#4cc38a', strokeWidth: 2 }),
+      Plot.lineY(ex, { x: 't', y: 'cum', stroke: '#e0b04c', strokeDasharray: '5,4' }),
+      Plot.tip(full, Plot.pointerX({ x: 't', y: 'cum', title: d => `${d.t.toISOString().slice(0, 10)}\n누적 ${d.cum.toFixed(2)}%` }))
+    ]
+  });
+  document.getElementById('chart').replaceChildren(chart);
+
+  const s = summarize(test), sTr = summarize(train);
+  const cell = (label, v, fmt = pct) => `<div class="stat"><b class="${typeof v === 'number' && fmt === pct ? cls(v) : ''}">${v === undefined ? '-' : fmt(v)}</b><span>${label}</span></div>`;
+  document.getElementById('stats').innerHTML = [
+    cell('학습 거래 수', sTr.n, x => x + '건'), cell('학습 평균', sTr.mean),
+    cell('검증 거래 수', s.n, x => x + '건'), cell('검증 평균', s.mean), cell('검증 중앙값', s.median),
+    cell('검증 승률', s.win, x => (x * 100).toFixed(1) + '%'), cell('검증 합계', s.sum), cell('최대 1건 제외 합계', s.sumExTop1)
+  ].join('');
+
+  let v;
+  if (!s.n) v = '검증 구간에 거래가 없습니다 — 기회 부족.';
+  else if (s.n < 50) v = `검증 거래 ${s.n}건 — 표본이 작아 판단 보류(사전 등록 기준 50건).`;
+  else if (s.mean > 0 && s.sumExTop1 > 0) v = `<span class="pos">이 설정은 검증 구간에서도 남았습니다</span> (평균 ${pct(s.mean, 3)}, 최대 1건 빼도 ${pct(s.sumExTop1)}). 단 중앙값 ${pct(s.median, 3)} — 보통 거래는 작게 벌고 큰 몇 건이 끌어올립니다.`;
+  else v = `<span class="neg">이 설정은 검증 구간에서 돈을 잃습니다</span> (평균 ${pct(s.mean, 3)}). 비용이 스프레드를 먹어 버립니다.`;
+  if (s.n && sTr.n && s.mean > 0 && s.mean > 3 * Math.max(sTr.mean, 0.0001)) v += ` <br>⚠️ 학습 구간 평균(${pct(sTr.mean, 3)})보다 검증 구간이 훨씬 좋습니다 — 규칙의 힘인지 시장 분위기(국면) 덕인지 아직 구분되지 않습니다.`;
+  document.getElementById('verdict').innerHTML = v;
+
+  const bySym = new Map();
+  for (const x of test) bySym.set(x.s, (bySym.get(x.s) || 0) + x.net * 100);
+  const arr = [...bySym].map(([s, v]) => ({ s, v })).sort((a, b) => b.v - a.v);
+  const pick = arr.length > 16 ? [...arr.slice(0, 8), ...arr.slice(-8)] : arr;
+  const bars = Plot.plot({
+    width: 940, height: Math.max(120, pick.length * 22), marginLeft: 110, style: PSTYLE,
+    x: { label: '검증 구간 합계 %', grid: true }, y: { label: null, domain: pick.map(d => d.s) },
+    marks: [Plot.barX(pick, { y: 's', x: 'v', fill: d => (d.v >= 0 ? '#4cc38a' : '#ef6461') }), Plot.ruleX([0], { stroke: '#666' })]
+  });
+  document.getElementById('bars').replaceChildren(bars);
+}
+render();
+window.__labReady = true;
+</script>
+</body>
+</html>
