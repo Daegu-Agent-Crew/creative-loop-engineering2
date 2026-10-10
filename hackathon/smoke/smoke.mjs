@@ -1,6 +1,7 @@
 // 해커톤 출품작 실브라우저 검사 — 배포된 Pages URL 대상
 import { chromium } from 'playwright';
 import { check05 } from './05-gesture.mjs';
+import { check08 } from './08-ftt.mjs';
 const BASE = process.env.BASE || 'https://daegu-agent-crew.github.io/creative-loop-engineering2/hackathon/';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -93,6 +94,14 @@ const watch = p => {
   p.on('console', m => { if (m.type() === 'error') errors.push('05 console: ' + m.text()); });
 };
 await check05({ browser, BASE, fail, watch });
+
+// 출품작 08 금융 튜링 테스트 (차트·기울기·진동·10판 p값)
+await page.goto(BASE, { waitUntil: 'networkidle' });
+if (!(await page.locator('a[href="08-financial-turing-test/"]').count())) fail('허브에 출품작 08 링크 없음');
+await check08({ browser, BASE, fail, watch: p => {
+  p.on('pageerror', e => errors.push('08 pageerror: ' + e.message));
+  p.on('console', m => { if (m.type() === 'error') errors.push('08 console: ' + m.text()); });
+} });
 
 if (errors.length) fail(errors.join('\n'));
 await browser.close();

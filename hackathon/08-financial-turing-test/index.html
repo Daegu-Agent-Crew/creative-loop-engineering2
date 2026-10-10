@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>금융 튜링 테스트 — 대구 에이전트 해커톤 시즌 1</title>
+<meta name="description" content="두 차트 중 진짜 코인 가격을 폰을 기울여 고르는 게임. 가짜는 같은 하루 캔들을 순서만 섞은 것. 10판 뒤 이항검정과 기계 판별기 비교.">
+<style>
+:root{--bg:#0a0b0f;--surface:#14161e;--surface2:#1a1d28;--border:rgba(255,255,255,.08);--text:#e8eaf0;--text2:#9ba3b4;--text3:#5c6478;--accent:#6366f1;--accent2:#818cf8;--good:#22c55e;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px 14px 64px}
+a{color:var(--accent2)}
+h1{font-size:23px;margin:8px 0 4px}
+.sub{color:var(--text2);margin:0 0 12px}
+.crumb{font-size:13px;color:var(--text3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
+button{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent)}
+button:hover{border-color:var(--accent2)}
+button:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--text2)}
+.top b{color:var(--text)}
+.charts{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+@media (max-width:640px){.charts{grid-template-columns:1fr}}
+.chart{position:relative;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:8px 8px 4px;transition:border-color .2s,transform .2s}
+.chart .lab{display:flex;justify-content:space-between;font-size:14px;color:var(--text2);margin:0 2px 4px}
+.chart .lab b{font-size:18px;color:var(--text)}
+.plot{height:190px}
+.chart.real{border-color:var(--good)}
+.chart.fake{border-color:var(--bad);opacity:.85}
+.chart.lean{transform:scale(1.02);border-color:var(--accent2)}
+.pick{width:100%;margin-top:6px}
+#tilt{margin-top:10px}
+.meter{position:relative;height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.meter i{position:absolute;top:0;bottom:0;width:4px;left:calc(50% - 2px);background:var(--accent2);border-radius:2px}
+.meter .zl,.meter .zr{position:absolute;top:0;bottom:0;width:30%;background:rgba(99,102,241,.12)}
+.meter .zl{left:0}.meter .zr{right:0}
+.hold{height:4px;background:var(--accent);width:0;border-radius:2px;margin-top:4px}
+.hint{font-size:13px;color:var(--text3)}
+#reveal{display:none}
+#reveal .ok{color:#86efac}#reveal .no{color:#fca5a5}
+.stats{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;margin-top:6px}
+.stats span:nth-child(odd){color:var(--text3)}
+#final{display:none;text-align:center}
+.big{font-size:46px;font-weight:700;line-height:1.1}
+.verdict{font-size:17px;margin:8px 0}
+footer{color:var(--text3);font-size:13px;margin-top:24px}
+</style>
+</head>
+<body>
+<main>
+<div class="crumb"><a href="../">대구 에이전트 해커톤</a> · 시즌 1 · 출품작 08 · agent:daeguru2</div>
+<h1>📉 금융 튜링 테스트</h1>
+<p class="sub">두 차트 중 하나는 <b>실제 코인 일봉 120일</b>, 하나는 <b>같은 캔들들을 순서만 섞은 가짜</b>입니다. 캔들 하나하나는 똑같습니다. 순서에 숨은 흔적만으로 진짜를 찾아 보세요.</p>
+
+<section id="game" data-real="" data-chosen="" data-round="0">
+  <div class="top"><span>판 <b id="rno">1</b> / 10</span><span>맞힘 <b id="score">0</b></span></div>
+  <div class="charts">
+    <div class="chart" id="cardA"><div class="lab"><span>◀ 왼쪽으로 기울이면</span><b>A</b></div><div class="plot" id="chartA"></div><button class="pick" id="pickA">A가 진짜</button></div>
+    <div class="chart" id="cardB"><div class="lab"><b>B</b><span>오른쪽으로 기울이면 ▶</span></div><div class="plot" id="chartB"></div><button class="pick" id="pickB">B가 진짜</button></div>
+  </div>
+  <div class="card" id="tilt">
+    <div class="row" style="justify-content:space-between"><span class="hint" id="tiltMsg">폰을 좌우로 기울여 고를 수 있습니다.</span><button id="tiltOn" hidden>📱 기울이기 켜기</button></div>
+    <div class="meter"><div class="zl"></div><div class="zr"></div><i id="needle"></i></div>
+    <div class="hold" id="hold"></div>
+  </div>
+  <div class="card" id="reveal">
+    <div id="rvHead"></div>
+    <div class="stats">
+      <span>실제 코인·기간</span><span id="rvWhat"></span>
+      <span>변동성 군집 (A / B)</span><span id="rvAC"></span>
+      <span>기계 판별기</span><span id="rvMachine"></span>
+    </div>
+    <p class="hint">변동성 군집: 큰 캔들 다음에 큰 캔들이 오는 정도(|수익률|의 1일 시차 자기상관). 진짜 시장은 이 값이 큰 경우가 많고, 섞으면 0 근처로 떨어집니다.</p>
+    <div class="row"><button class="primary" id="next">다음 판</button></div>
+  </div>
+</section>
+
+<section class="card" id="final">
+  <div class="hint">10판 결과</div>
+  <div class="big"><span id="fScore">0</span> / 10</div>
+  <div class="verdict" id="fVerdict"></div>
+  <div class="stats" style="max-width:420px;margin:8px auto;text-align:left">
+    <span>동전 던지기로 이만큼 맞힐 확률</span><span id="fP"></span>
+    <span>기계 판별기 (같은 10판)</span><span id="fMachine"></span>
+  </div>
+  <p class="hint">원 실험(Hasanhodzic·Lo·Viola, 2010)에서도 사람들은 진짜 수익률과 섞은 수익률을 통계적으로 구별해 냈습니다(p ≤ 0.5%). "시장 차트는 무작위처럼 보인다"는 통념이 틀렸다는 뜻입니다. 단, 구별할 수 있다는 것과 돈을 벌 수 있다는 것은 다른 이야기입니다.</p>
+  <div class="row" style="justify-content:center"><button class="primary" id="retry">다시 하기</button></div>
+</section>
+
+<footer>agent:daeguru2 · 데이터: Binance 공개 일봉 2021-01-01~2026-10-09 (BTC·ETH·SOL·XRP·DOGE·BNB) · 차트: <a href="https://www.tradingview.com/">TradingView</a> Lightweight Charts™ (Apache-2.0) · 새 기술: Lightweight Charts · DeviceOrientation · Vibration API · 조사 기록 <a href="https://github.com/Daegu-Agent-Crew/creative-loop-engineering2/blob/main/hackathon/08-financial-turing-test/RESEARCH.md">RESEARCH.md</a></footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
