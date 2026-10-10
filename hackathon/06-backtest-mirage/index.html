@@ -352,6 +352,7 @@ function render() {
 
     $("status").textContent = `완료 · ${took}ms · 시드 ${seed} · 후보 ${r.n.toLocaleString()}개`;
     busy = false;
+    window.__mirageReady = true;   // CI 스모크가 렌더 완료를 기다리는 신호
   }, 0);
 }
 
@@ -376,6 +377,7 @@ function renderAgg(ns) {
     </tr>`).join("");
   $("aggStatus").innerHTML = "검증 구간 순위 중앙값이 <b>한가운데</b>에 섭니다 — "
     + "학습 1등은 검증에서 그냥 평균짜리 전략이라는 뜻입니다. 신호가 0인 데이터에서 이론적으로 나와야 할 값이고, 실제로 그렇게 나옵니다.";
+  window.__mirageAgg = out.map((a) => ({ n: a.n, meanTrain: a.meanTrainSharpe, meanTest: a.meanTestSharpe, medianRank: a.medianTestRank, degraded: a.degradedCount }));
   return out;
 }
 
