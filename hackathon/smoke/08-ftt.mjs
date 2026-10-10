@@ -19,12 +19,18 @@ export async function check08({ browser, BASE, fail, watch, domClick = false }) 
   const click = sel => domClick ? page.$eval(sel, b => b.click()) : page.click(sel);
   const shown = sel => domClick ? page.$eval(sel, el => getComputedStyle(el).display !== 'none') : page.isVisible(sel);
   const ds = k => page.$eval('#game', (el, k) => el.dataset[k], k);
-  const tilt = gamma => page.evaluate(g => window.dispatchEvent(Object.assign(new Event('deviceorientation'), { gamma: g, beta: 0, alpha: 0 })), gamma);
+  const tilt = gamma => page.evaluate(g => window.dispatchEvent(typeof DeviceOrientationEvent === 'function'
+    ? new DeviceOrientationEvent('deviceorientation', { alpha: 0, beta: 0, gamma: g })
+    : Object.assign(new Event('deviceorientation'), { alpha: 0, beta: 0, gamma: g })), gamma);
 
   // 1판: 수평 → 왼쪽 40° 유지 → A 선택
   await tilt(0);
   for (let i = 0; i < 10; i++) { await tilt(-40); await page.waitForTimeout(100); }
-  if ((await ds('chosen')) !== 'A') fail('08 기울기(왼쪽)로 A 선택 안 됨');
+  if ((await ds('chosen')) !== 'A') {
+    const diag = await page.evaluate(() => ({ perm: typeof (window.DeviceOrientationEvent || {}).requestPermission, msg: document.getElementById('tiltMsg').textContent, hold: document.getElementById('hold').style.width, needle: document.getElementById('needle').style.left }));
+    fail('08 기울기(왼쪽)로 A 선택 안 됨 ' + JSON.stringify(diag));
+    await click('#pickA'); // 이후 단계 검사는 계속
+  }
   let correct = (await ds('real')) === 'A' ? 1 : 0;
   await click('#next');
 

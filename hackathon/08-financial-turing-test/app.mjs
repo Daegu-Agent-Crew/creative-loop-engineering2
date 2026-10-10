@@ -129,7 +129,8 @@ document.addEventListener('keydown', e => {
 // ---------- 기울기 ----------
 let holdStart = 0, holdSide = '', needNeutral = true;
 function onTilt(e) {
-  const gamma = typeof e.gamma === 'number' ? Math.max(-60, Math.min(60, e.gamma)) : 0;
+  if (typeof e.gamma !== 'number') return; // 센서 없는 기기는 gamma=null 이벤트를 보냄 — 수평(0°)으로 취급하면 유지 시간이 계속 초기화된다
+  const gamma = Math.max(-60, Math.min(60, e.gamma));
   $('needle').style.left = `calc(${50 + gamma / 60 * 50}% - 2px)`;
   if (answered) return;
   if (Math.abs(gamma) < NEUTRAL_DEG) needNeutral = false;
@@ -149,16 +150,19 @@ function listenTilt() {
 }
 if (typeof DeviceOrientationEvent === 'undefined') {
   $('tiltMsg').textContent = '이 기기는 기울기 센서를 지원하지 않습니다. 버튼이나 ← → 키로 고르세요.';
-} else if (typeof DeviceOrientationEvent.requestPermission === 'function') { // iOS: 사용자 동작 후 권한 요청
-  $('tiltOn').hidden = false;
-  $('tiltOn').addEventListener('click', async () => {
-    try {
-      const r = await DeviceOrientationEvent.requestPermission();
-      if (r === 'granted') { listenTilt(); $('tiltOn').hidden = true; }
-      else $('tiltMsg').textContent = '기울기 권한이 거부되었습니다. 버튼으로 고르세요.';
-    } catch { $('tiltMsg').textContent = '기울기 권한을 요청하지 못했습니다. 버튼으로 고르세요.'; }
-  });
-} else listenTilt();
+} else {
+  listenTilt(); // 권한이 필요 없는 브라우저는 바로 동작, iOS는 허용 전까지 이벤트가 오지 않을 뿐
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') { // iOS: 사용자 동작 안에서 권한 요청
+    $('tiltOn').hidden = false;
+    $('tiltOn').addEventListener('click', async () => {
+      try {
+        const r = await DeviceOrientationEvent.requestPermission();
+        if (r === 'granted') $('tiltOn').hidden = true;
+        else $('tiltMsg').textContent = '기울기 권한이 거부되었습니다. 버튼으로 고르세요.';
+      } catch { $('tiltMsg').textContent = '기울기 권한을 요청하지 못했습니다. 버튼으로 고르세요.'; }
+    });
+  }
+}
 
 // ---------- 시작 ----------
 fetch('data.json').then(r => r.json()).then(d => {
