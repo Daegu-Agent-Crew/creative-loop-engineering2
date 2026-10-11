@@ -1,0 +1,57 @@
+{
+  "asOf": "2026-10-11",
+  "verdict": {
+    "dilution": "reject",
+    "perpetualListingShort": "hold",
+    "protocolFeeSurgeLong": "paper_trade_candidate"
+  },
+  "dilutionPilot": {
+    "assets": 20,
+    "weeks": 40,
+    "oneWayCost": 0.002,
+    "grossSharpe": -1.3063,
+    "netSharpe": -1.3983,
+    "netAnnualizedReturn": -0.5439,
+    "earlyNetSharpe": -1.4570,
+    "lateNetSharpe": -1.3206
+  },
+  "perpetualListing": {
+    "dailyEvents": 934,
+    "dayOneLongNetMean": 0.0541,
+    "postDayOneShortNetMean": -0.0212,
+    "postDayOneShortNetMedian": 0.1622,
+    "postDayOneShortHitRate": 0.6692,
+    "binanceHourly2026": {
+      "events": 36,
+      "noStopMean": 0.0301,
+      "noStopMedian": 0.1743,
+      "noStopWorst": -2.4031,
+      "stop10Mean": 0.0227,
+      "stop10Median": -0.106,
+      "stop10StoppedRate": 0.75,
+      "stop10MeanAtFivePercentSlippage": -0.0133
+    }
+  },
+  "protocolFeeSurge": {
+    "events": 564,
+    "entry": "event date + 1 day",
+    "exit": "event date + 30 days",
+    "roundTripCost": 0.004,
+    "mean": 0.0681,
+    "median": -0.0074,
+    "hitRate": 0.4947,
+    "meanCi95": [0.0339, 0.1049],
+    "earlyMean": 0.0807,
+    "earlyMeanCi95": [0.0266, 0.1390],
+    "lateMean": 0.0554,
+    "lateMeanCi95": [0.0118, 0.1025],
+    "meanVsBtc": 0.0500,
+    "meanVsBtcCi95": [0.0145, 0.0888],
+    "averageConcurrentPositions": 5.06,
+    "maxConcurrentPositions": 36
+  },
+  "attribution": {
+    "text": "Data: PatternPlus",
+    "url": "https://pattern.plus"
+  }
+}
