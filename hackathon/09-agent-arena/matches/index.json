@@ -1,0 +1,22 @@
+[
+ {
+  "id": "test-01",
+  "kst_start": "2026-10-12 03:57",
+  "ranking": [
+   "daeguru",
+   "house-hold",
+   "house-coin"
+  ],
+  "scores": {
+   "daeguru": -0.1526,
+   "house-hold": -0.1526,
+   "house-coin": -2.3711
+  },
+  "rets": {
+   "daeguru": -0.1126,
+   "house-hold": -0.1126,
+   "house-coin": -1.64
+  },
+  "liquidated": []
+ }
+]

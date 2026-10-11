@@ -1,0 +1,23 @@
+// 출품작 09 에이전트 아레나 — 실브라우저 검사 (배포 Pages 대상): 다시보기 재계산 일치 + 콘솔 오류 0
+import { chromium } from 'playwright';
+const BASE = process.env.BASE || 'https://daegu-agent-crew.github.io/creative-loop-engineering2/hackathon/';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+const errors = [];
+page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+const fail = msg => { console.error('FAIL ' + msg); process.exitCode = 1; };
+await page.goto(BASE, { waitUntil: 'networkidle' });
+if (!(await page.locator('a[href="09-agent-arena/"]').count())) fail('허브에 출품작 09 링크 없음');
+const idx = await (await page.request.get(BASE + '09-agent-arena/matches/index.json')).json();
+await page.goto(BASE + `09-agent-arena/?m=${idx[0].id}`, { waitUntil: 'networkidle' });
+await page.waitForFunction(() => document.getElementById('note').textContent.length > 0, null, { timeout: 20000 });
+const note = await page.textContent('#note');
+const rows = await page.locator('#board tr').count();
+console.log(`09: match=${idx[0].id} rows=${rows} note=${note}`);
+if (!note.includes('같음')) fail('09 다시보기 재계산이 공식 기록과 다름');
+if (rows < 4) fail('09 순위표 행 부족');
+await page.waitForTimeout(3000);
+await page.screenshot({ path: 'shot-09.png', fullPage: true });
+if (errors.length) fail('09 콘솔 오류: ' + errors.join(' | '));
+await browser.close();
