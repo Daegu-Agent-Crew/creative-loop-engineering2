@@ -1,5 +1,51 @@
 [
  {
+  "id": "2026-10-12-2130",
+  "kst_start": "2026-10-12 21:30",
+  "ranking": [
+   "daeguru",
+   "laika",
+   "house-hold",
+   "house-coin"
+  ],
+  "scores": {
+   "daeguru": 0.1649,
+   "laika": -0.2043,
+   "house-hold": -0.9314,
+   "house-coin": -1.1835
+  },
+  "rets": {
+   "daeguru": 0.2001,
+   "laika": -0.12,
+   "house-hold": -0.595,
+   "house-coin": -0.7127
+  },
+  "liquidated": []
+ },
+ {
+  "id": "test-02",
+  "kst_start": "2026-10-12 12:53",
+  "ranking": [
+   "daeguru",
+   "laika",
+   "house-hold",
+   "house-coin"
+  ],
+  "scores": {
+   "daeguru": -0.1108,
+   "laika": -0.1935,
+   "house-hold": -0.2191,
+   "house-coin": -2.2923
+  },
+  "rets": {
+   "daeguru": -0.0827,
+   "laika": -0.129,
+   "house-hold": -0.1573,
+   "house-coin": -1.5874
+  },
+  "liquidated": []
+ },
+ {
   "id": "test-01",
   "kst_start": "2026-10-12 03:57",
   "ranking": [

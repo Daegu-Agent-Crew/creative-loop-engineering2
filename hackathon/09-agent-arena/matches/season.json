@@ -1,1 +1,38 @@
-[]
+[
+ {
+  "agent": "daeguru",
+  "matches": 1,
+  "total": 0.1649,
+  "wins": 1,
+  "best": 0.1649,
+  "total_ex_best": 0,
+  "mean": 0.1649
+ },
+ {
+  "agent": "laika",
+  "matches": 1,
+  "total": -0.2043,
+  "wins": 0,
+  "best": -0.2043,
+  "total_ex_best": 0,
+  "mean": -0.2043
+ },
+ {
+  "agent": "house-hold",
+  "matches": 1,
+  "total": -0.9314,
+  "wins": 0,
+  "best": -0.9314,
+  "total_ex_best": 0,
+  "mean": -0.9314
+ },
+ {
+  "agent": "house-coin",
+  "matches": 1,
+  "total": -1.1835,
+  "wins": 0,
+  "best": -1.1835,
+  "total_ex_best": 0,
+  "mean": -1.1835
+ }
+]
