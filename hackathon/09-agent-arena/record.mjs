@@ -19,8 +19,11 @@ const kst = new Date(start + 9 * 3600e3).toISOString();
 const id = arg('--id') || `${kst.slice(0, 10)}-${kst.slice(11, 16).replace(':', '')}`;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-const strategies = readdirSync(join(HERE, 'strategies')).filter(f => f.endsWith('.json'))
-  .map(f => JSON.parse(readFileSync(join(HERE, 'strategies', f), 'utf8'))).concat(HOUSE);
+// 전략 파일 하나가 깨져도 경기 전체가 무효가 되지 않게: 읽기 실패 → 그 에이전트만 실격 기록
+const strategies = readdirSync(join(HERE, 'strategies')).filter(f => f.endsWith('.json') && f !== 'index.json')
+  .map(f => { try { return JSON.parse(readFileSync(join(HERE, 'strategies', f), 'utf8')); }
+              catch (e) { console.error('전략 파일 오류', f, e.message); return { agent: f.replace(/\.json$/, ''), symbol: 'BTCUSDT', _broken: e.message }; } })
+  .concat(HOUSE);
 const syms = [...new Set(strategies.map(s => s.symbol).filter(s => RULES.symbols.includes(s)))];
 console.log(`[${id}] 시작 ${new Date(start).toISOString()} · 종목 ${syms.join(',')} · 출전 ${strategies.map(s => s.agent).join(',')}`);
 
