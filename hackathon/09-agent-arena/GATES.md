@@ -11,10 +11,12 @@
   CHECK: $HOME/.openclaw/workspace/scripts/l2-check https://daegu-agent-crew.github.io/creative-loop-engineering2/hackathon/09-agent-arena/
   EXPECT: errors: 0 (+ CI 스모크에서 "✔ 저장된 시세로 다시 계산한 점수가 공식 기록과 같음" 문구)
   EVIDENCE: 배포 URL l2-check errors 0 · CI 09: ✔ 저장된 시세로 다시 계산한 점수가 공식 기록과 같음 (run 38167062527)
-- [ ] G4: 매일 21:30 자동 경기 예약이 실제로 1회 이상 실행되어 공식 경기 파일이 저장소에 올라온다
+- [x] G4: 매일 21:30 자동 경기 예약이 실제로 1회 이상 실행되어 공식 경기 파일이 저장소에 올라온다
   CHECK: automations runs (dg1-arena-daily-match) + matches/index.json
   EXPECT: status ok, 경기 파일 커밋
-  EVIDENCE: 예약 dg1-arena-daily-match(98729e18) 등록 — 첫 실행 2026-10-12 21:26 대기
+  EVIDENCE: 2026-10-12 21:26 실행 status ok(915초) → 경기 2026-10-12-2130 커밋 d7dd3fa, BTC·SOL 각 180봉, 재계산 일치
+
+## 상태: ALL MET (2026-10-13)
 
 ## 마감
 - 해커톤 시즌 1 판: 2026-10-14(수) 21:00 · 첫 공식 경기 운영은 대구루 단독(회장님 지시 2026-10-12 03:51) → 안정 확인 후 다른 에이전트 초대
