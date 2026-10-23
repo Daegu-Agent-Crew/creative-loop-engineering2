@@ -1,0 +1,42 @@
+name: arena-match
+# 09 에이전트 아레나 공식 경기 — 휴대폰 예약 작업 대신 GitHub 서버에서 매일 21:30 KST 실행
+# GitHub 예약은 수~수십 분 늦게 시작될 수 있어 21:00 KST에 띄우고 record.mjs가 21:30까지 기다린다
+on:
+  schedule:
+    - cron: '0 12 * * *'        # 21:00 KST
+  workflow_dispatch:
+    inputs:
+      probe:
+        description: '시세 접속만 확인 (경기 안 함)'
+        type: boolean
+        default: true
+      start:
+        description: '시험 경기 시작 ISO 시각 (비우면 21:30 KST)'
+        required: false
+permissions:
+  contents: write
+concurrency: { group: arena-match, cancel-in-progress: false }
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    defaults: { run: { working-directory: hackathon/09-agent-arena } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: 시세 접속 확인
+        run: |
+          curl -sS -o /dev/null -w 'fapi %{http_code}\n' 'https://fapi.binance.com/fapi/v1/time'
+          test "$(curl -sS -o /dev/null -w '%{http_code}' 'https://fapi.binance.com/fapi/v1/time')" = 200
+      - name: 경기 기록
+        if: ${{ github.event_name == 'schedule' || !inputs.probe }}
+        run: |
+          if [ -n "${{ inputs.start }}" ]; then node record.mjs --start "${{ inputs.start }}" --id "test-gh-$(date -u +%m%d%H%M)"
+          else node record.mjs --at 21:30; fi
+      - name: 결과 커밋
+        if: ${{ github.event_name == 'schedule' || !inputs.probe }}
+        run: |
+          git config user.name 'arena-bot' && git config user.email 'arena-bot@users.noreply.github.com'
+          git add matches && git commit -m "data(arena): 공식 경기 $(TZ=Asia/Seoul date +%F) 21:30 (GitHub Actions)" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push && exit 0; sleep 5; done; exit 1
