@@ -1,17 +1,16 @@
 name: arena-match
-# 09 에이전트 아레나 공식 경기 — 휴대폰 예약 작업 대신 GitHub 서버에서 매일 21:30 KST 실행
-# GitHub 예약은 수~수십 분 늦게 시작될 수 있어 21:00 KST에 띄우고 record.mjs가 21:30까지 기다린다
+# 09 에이전트 아레나 공식 경기 보증 — 휴대폰 예약 작업이 멈춰도 경기 기록이 빠지지 않게 한다
+# GitHub 서버(미국)는 바이낸스 실시간 API가 막혀(HTTP 451) 생중계 기록은 못 한다.
+# 대신 다음 날 data.binance.vision 일별 체결로 같은 21:30 창을 재구성해 같은 엔진으로 채점한다(10/19 경기로 점수 완전 일치 확인).
+# 휴대폰이 이미 기록한 날은 건너뛴다. 출전 전략은 그날 마감(20:30 KST) 시점 커밋 기준.
 on:
   schedule:
-    - cron: '0 12 * * *'        # 21:00 KST
+    - cron: '30 2 * * *'        # 11:30 KST — 전날 일별 체결 파일 공개 후
+    - cron: '0 8 * * *'         # 17:00 KST — 공개가 늦었을 때 재시도
   workflow_dispatch:
     inputs:
-      probe:
-        description: '시세 접속만 확인 (경기 안 함)'
-        type: boolean
-        default: true
-      start:
-        description: '시험 경기 시작 ISO 시각 (비우면 21:30 KST)'
+      days:
+        description: '채점할 경기일 KST (공백 구분, 비우면 어제)'
         required: false
 permissions:
   contents: write
@@ -19,24 +18,25 @@ concurrency: { group: arena-match, cancel-in-progress: false }
 jobs:
   match:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 30
     defaults: { run: { working-directory: hackathon/09-agent-arena } }
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - name: 시세 접속 확인
-        run: |
-          curl -sS -o /dev/null -w 'fapi %{http_code}\n' 'https://fapi.binance.com/fapi/v1/time'
-          test "$(curl -sS -o /dev/null -w '%{http_code}' 'https://fapi.binance.com/fapi/v1/time')" = 200
-      - name: 경기 기록
-        if: ${{ github.event_name == 'schedule' || !inputs.probe }}
-        run: |
-          if [ -n "${{ inputs.start }}" ]; then node record.mjs --start "${{ inputs.start }}" --id "test-gh-$(date -u +%m%d%H%M)"
-          else node record.mjs --at 21:30; fi
-      - name: 결과 커밋
-        if: ${{ github.event_name == 'schedule' || !inputs.probe }}
+      - name: 경기 재구성·채점
+        env: { DAYS: '${{ inputs.days }}' }
         run: |
           git config user.name 'arena-bot' && git config user.email 'arena-bot@users.noreply.github.com'
-          git add matches && git commit -m "data(arena): 공식 경기 $(TZ=Asia/Seoul date +%F) 21:30 (GitHub Actions)" || exit 0
+          DAYS=${DAYS:-$(TZ=Asia/Seoul date -d yesterday +%F)}
+          for D in $DAYS; do
+            if [ -f "matches/$D-2130.json" ]; then echo "$D 이미 기록됨 — 건너뜀"; continue; fi
+            SHA=$(git rev-list -1 --before="$D 20:30:00 +0900" HEAD)
+            echo "$D 출전 전략 기준 커밋 $SHA"
+            git checkout "$SHA" -- strategies
+            node record.mjs --archive --start "${D}T12:30:00Z"
+            git checkout HEAD -- strategies
+            git add matches && git commit -qm "data(arena): 공식 경기 $D 21:30 (체결 기록 재구성)"
+          done
           for i in 1 2 3; do git pull --rebase -q && git push && exit 0; sleep 5; done; exit 1

@@ -27,8 +27,18 @@ const strategies = readdirSync(join(HERE, 'strategies')).filter(f => f.endsWith(
 const syms = [...new Set(strategies.map(s => s.symbol).filter(s => RULES.symbols.includes(s)))];
 console.log(`[${id}] 시작 ${new Date(start).toISOString()} · 종목 ${syms.join(',')} · 출전 ${strategies.map(s => s.agent).join(',')}`);
 
-while (Date.now() < start) await sleep(500);
-const feeds = Object.fromEntries(syms.map(s => [s, new BarFeed(s, RULES.bar_sec)]));
+// --archive: 실시간 대신 data.binance.vision 일별 체결로 같은 창을 재구성(다음 날 재채점용 — 해외 서버에서 fapi가 막힐 때)
+const archive = process.argv.includes('--archive');
+if (archive) {
+  const { homedir } = await import('node:os');
+  const { execFileSync } = await import('node:child_process');
+  const days = [...new Set([warm, end - 1].map(t => new Date(t).toISOString().slice(0, 10)))];
+  for (const s of syms) for (const d of days) execFileSync('python3', [join(HERE, 'tools', 'archive_bars.py'), s, d, d], { stdio: 'inherit' });
+  global.__archiveFeeds = Object.fromEntries(syms.map(s => [s, { bars: days.flatMap(d => JSON.parse(readFileSync(`${homedir()}/.cache/arena-bars/${s}-${d}.json`, 'utf8'))) }]));
+}
+while (!archive && Date.now() < start) await sleep(500);
+const feeds = archive ? global.__archiveFeeds : Object.fromEntries(syms.map(s => [s, new BarFeed(s, RULES.bar_sec)]));
+if (!archive) {
 await Promise.all(Object.values(feeds).map(f => f.backfill(warm)));
 let lastLog = 0;
 while (Date.now() < end + 2500) {
@@ -37,6 +47,7 @@ while (Date.now() < end + 2500) {
   await sleep(1000);
 }
 await Promise.all(Object.values(feeds).map(f => f.poll(end + 1600)));
+}
 
 const bars = {}, gaps = {};
 for (const [s, f] of Object.entries(feeds)) {
