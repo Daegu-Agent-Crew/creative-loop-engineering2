@@ -1,0 +1,208 @@
+{
+  "generatedAt": "2026-10-11T19:06:28.264Z",
+  "sources": [
+    "https://pattern.plus/api/v1/scoreboard.json",
+    "https://pattern.plus/api/v1/events/futures_listing.json",
+    "https://pattern.plus/api/v1/events/fees_jump.json"
+  ],
+  "attribution": {
+    "text": "Data: PatternPlus",
+    "url": "https://pattern.plus"
+  },
+  "eventScreen": {
+    "patterns": 40,
+    "tests": 120,
+    "candidates": [
+      {
+        "kind": "delisting",
+        "horizon": "1d",
+        "n": 109,
+        "edgePoints": -38,
+        "ci95Points": [
+          -42,
+          -27
+        ],
+        "halvesPoints": [
+          -38,
+          -37
+        ]
+      },
+      {
+        "kind": "delisting",
+        "horizon": "7d",
+        "n": 107,
+        "edgePoints": -29,
+        "ci95Points": [
+          -35,
+          -16
+        ],
+        "halvesPoints": [
+          -31,
+          -26
+        ]
+      },
+      {
+        "kind": "hack",
+        "horizon": "1d",
+        "n": 108,
+        "edgePoints": -17,
+        "ci95Points": [
+          -24,
+          -7
+        ],
+        "halvesPoints": [
+          -13,
+          -20
+        ]
+      },
+      {
+        "kind": "funding_low",
+        "horizon": "30d",
+        "n": 1066,
+        "edgePoints": 11,
+        "ci95Points": [
+          5,
+          17
+        ],
+        "halvesPoints": [
+          6,
+          16
+        ]
+      },
+      {
+        "kind": "fees_jump",
+        "horizon": "1d",
+        "n": 529,
+        "edgePoints": 6,
+        "ci95Points": [
+          1,
+          10
+        ],
+        "halvesPoints": [
+          4,
+          7
+        ]
+      },
+      {
+        "kind": "fees_jump",
+        "horizon": "30d",
+        "n": 502,
+        "edgePoints": 9,
+        "ci95Points": [
+          4,
+          14
+        ],
+        "halvesPoints": [
+          10,
+          9
+        ]
+      },
+      {
+        "kind": "futures_listing",
+        "horizon": "1d",
+        "n": 379,
+        "edgePoints": 6,
+        "ci95Points": [
+          1,
+          12
+        ],
+        "halvesPoints": [
+          7,
+          5
+        ]
+      },
+      {
+        "kind": "futures_listing",
+        "horizon": "30d",
+        "n": 366,
+        "edgePoints": -8,
+        "ci95Points": [
+          -13,
+          -2
+        ],
+        "halvesPoints": [
+          -9,
+          -6
+        ]
+      },
+      {
+        "kind": "tvl_jump",
+        "horizon": "30d",
+        "n": 345,
+        "edgePoints": -7,
+        "ci95Points": [
+          -12,
+          -2
+        ],
+        "halvesPoints": [
+          -8,
+          -6
+        ]
+      }
+    ]
+  },
+  "perpetualListings": {
+    "firstDayLongNet": {
+      "n": 934,
+      "mean": 0.05406841541755881,
+      "median": -0.00355,
+      "positiveRate": 0.48822269807280516,
+      "meanCi95": [
+        0.03281531049250532,
+        0.07706595289079221
+      ]
+    },
+    "postDayOneShortNet": {
+      "n": 934,
+      "mean": -0.021167955682989195,
+      "median": 0.16218083953507756,
+      "positiveRate": 0.6691648822269807,
+      "meanCi95": [
+        -0.13069611721331287,
+        0.053337338341908756
+      ]
+    }
+  },
+  "protocolFeeSurges": {
+    "all": {
+      "n": 564,
+      "mean": 0.06807938965445533,
+      "median": -0.0073500874776335455,
+      "positiveRate": 0.4946808510638298,
+      "meanCi95": [
+        0.03393572669426693,
+        0.10490187667689571
+      ]
+    },
+    "early": {
+      "n": 282,
+      "mean": 0.08071374723465728,
+      "median": -0.0073500874776335455,
+      "positiveRate": 0.4929078014184397,
+      "meanCi95": [
+        0.02599335353332738,
+        0.1384679138746146
+      ]
+    },
+    "late": {
+      "n": 282,
+      "mean": 0.05544503207425335,
+      "median": -0.005143307138140981,
+      "positiveRate": 0.49645390070921985,
+      "meanCi95": [
+        0.011569528561141835,
+        0.10290589250161707
+      ]
+    },
+    "vsBtcFromEventDate": {
+      "n": 564,
+      "mean": 0.04996081560283687,
+      "median": -0.0311,
+      "positiveRate": 0.4166666666666667,
+      "meanCi95": [
+        0.014954078014184405,
+        0.08831312056737589
+      ]
+    }
+  }
+}
