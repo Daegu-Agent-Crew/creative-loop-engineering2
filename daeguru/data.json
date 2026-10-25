@@ -1,0 +1,33 @@
+{
+ "updated": "2026-10-25T15:35:00+09:00",
+ "selfcheck": { "ranAt": "2026-10-25 15:30 KST", "items": [
+   { "name": "안드로이드 패치", "status": "OK", "detail": "4개 파일 적용" },
+   { "name": "예약 타이머", "status": "OK", "detail": "최근 10분 실패 0회" },
+   { "name": "약속 장부", "status": "OK", "detail": "기한 초과 없음" },
+   { "name": "아레나 기록", "status": "OK", "detail": "마지막 경기 2026-10-23" } ] },
+ "promises": [
+   { "due": "10-20 21:52", "desc": "v2 첫 대국 직후 보고", "done": true, "note": "예약 정지로 지연, 사과 보고로 마감" },
+   { "due": "10-23 22:00", "desc": "v2 첫 실전 결과 보고", "done": true, "note": "GitHub 재구성으로 채점·보고" },
+   { "due": "10-24 18:00", "desc": "10/23 경기 자동 채점 확인", "done": true, "note": "run 40074453537 성공" },
+   { "due": "10-25 05:00", "desc": "하트비트·백업 점검 보고", "done": true, "note": "Discord 보고, 백업 0파일은 이월" },
+   { "due": "10-25 22:00", "desc": "21:30 경기 개최 확인 + 예약 정지 원인 + 백업 원인 보고", "done": false } ],
+ "lessons": [
+   { "date": "10-20", "type": "코드모드 파일 생성", "lesson": "라인 배열+write, node --check", "evidence": "search3.mjs 전수 null → 수정 후 정상" },
+   { "date": "10-20", "type": "백그라운드 잡", "lesson": "exec background:true 사용", "evidence": "nohup 소실 회복" },
+   { "date": "10-20", "type": "프로세스 정리", "lesson": "pkill 패턴 [.] 처리 + 종료/시작 분리", "evidence": "SIGTERM 2회 후 성공" },
+   { "date": "10-20", "type": "안드로이드", "lesson": "/tmp 금지, ~/.cache 사용", "evidence": "EACCES 결과 소실" },
+   { "date": "10-20", "type": "탐색 파이프라인", "lesson": "결과 저장 경로 조기 검증 게이트", "evidence": "전수 null 후발견" },
+   { "date": "10-23", "type": "운영 감시", "lesson": "조용한 실패는 관찰자(self-check)가 잡는다", "evidence": "예약 정지 3일 방치 → 검출" },
+   { "date": "10-23", "type": "OpenClaw 업데이트", "lesson": "업데이트 후 패치 재실행 + ocr", "evidence": "2026.10.5 패치 소실" } ],
+ "lessonReview": { "next": "2026-10-30", "status": "대기", "criterion": "같은 방법 3회 반복 실패 감소 + 회장님 부정 반응 0" },
+ "arena": { "season": "시즌1", "standings": [
+   { "agent": "daeguru", "sum": -1.400, "avg": -0.100, "wins": 11, "n": 14 },
+   { "agent": "laika", "sum": -2.551, "avg": -0.196, "wins": 1, "n": 13 },
+   { "agent": "house-hold", "sum": -4.314, "avg": -0.308, "wins": 2, "n": 14 },
+   { "agent": "house-coin", "sum": -35.302, "avg": -2.522, "wins": 0, "n": 14 } ],
+   "strategy": "v2 비용 최소 스캘프 (10/20부터)", "link": "../hackathon/09-agent-arena/" },
+ "techlog": [
+   { "item": "예약 작업 계통", "status": "OPEN→CLOSED", "action": "패치 재적용 + 재시작(10/25 04:46) 후 정상", "checked": "타이머 실패 0회" },
+   { "item": "아레나 경기 기록", "status": "CLOSED", "action": "GitHub Actions 다음날 채점 장착(매일 11:30/17:00)", "checked": "10/19 재채점 일치 + 3일 연속 성공" },
+   { "item": "전략 v2 성능", "status": "MONITOR", "action": "v2 교체(10/20)", "checked": "4경기 3승 1준우승, 시즌 1위 유지" } ]
+}

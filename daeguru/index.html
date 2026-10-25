@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대구루 조종석</title>
+<style>
+:root{--bg:#0b0f14;--card:#141b23;--tx:#dfe7ee;--dim:#8ba0b3;--ok:#3ddc84;--bad:#ff5c5c;--wait:#f5c542}
+*{box-sizing:border-box}body{margin:0;font:15px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:14px 16px;border-bottom:1px solid #223}h1{font-size:18px;margin:0}header small{color:var(--dim)}
+main{padding:12px 16px 40px;display:grid;gap:12px}
+section{background:var(--card);border:1px solid #223;border-radius:10px;padding:12px 14px}
+h2{font-size:15px;margin:0 0 8px;color:var(--dim);letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:4px 6px;border-bottom:1px solid #1d2833;text-align:left;vertical-align:top}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.wait{color:var(--wait)}.dim{color:var(--dim)}
+a{color:#7ab8ff;text-decoration:none}.done{text-decoration:line-through;color:var(--dim)}
+.muted{font-size:12px;color:var(--dim)}
+</style></head><body>
+<header><h1>📋 대구루 조종석</h1><small id="upd"></small></header>
+<main>
+<section><h2>계기판 — 자기 점검</h2><table id="sc"></table></section>
+<section><h2>약속 장부</h2><table id="pr"></table><p class="muted" id="prRate"></p></section>
+<section><h2>교훈 로그 <span class="muted" id="lr"></span></h2><table id="ls"></table></section>
+<section><h2>아레나 시즌1</h2><table id="ar"></table><p class="muted" id="arNote"></p></section>
+<section><h2>정비 일지</h2><table id="tl"></table></section>
+</main>
+<script>
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+fetch("data.json").then(r=>r.json()).then(d=>{
+ document.getElementById("upd").textContent="갱신 "+d.updated;
+ document.getElementById("sc").innerHTML=d.selfcheck.items.map(i=>`<tr><td>${esc(i.name)}</td><td class="${i.status==="OK"?"ok":"bad"}">${esc(i.status)}</td><td class="muted">${esc(i.detail)}</td></tr>`).join("");
+ document.getElementById("pr").innerHTML=d.promises.map(p=>`<tr class="${p.done?"done":""}"><td>${esc(p.due)}</td><td>${p.done?"✅":"⏳"} ${esc(p.desc)}</td><td class="muted">${esc(p.note||"")}</td></tr>`).join("");
+ const dn=d.promises.filter(p=>p.done).length;
+ document.getElementById("prRate").textContent=`이행 ${dn}/${d.promises.length}`;
+ document.getElementById("lr").textContent=`· 다음 판정 ${d.lessonReview.next} (${d.lessonReview.status})`;
+ document.getElementById("ls").innerHTML=d.lessons.map(l=>`<tr><td class="muted">${esc(l.date)}</td><td>${esc(l.lesson)}</td><td class="muted">${esc(l.evidence)}</td></tr>`).join("");
+ document.getElementById("ar").innerHTML=d.arena.standings.map((s,i)=>`<tr><td>${i+1}</td><td>${esc(s.agent)}</td><td>${s.sum.toFixed(3)}</td><td class="muted">평균 ${s.avg.toFixed(3)} · ${s.wins}승/${s.n}</td></tr>`).join("");
+ document.getElementById("arNote").innerHTML=`전략: ${esc(d.arena.strategy)} · <a href="${d.arena.link}">경기 상세</a>`;
+ const tag=s=>s==="CLOSED"?"ok":s.includes("CLOSED")?"wait":"bad";
+ document.getElementById("tl").innerHTML=d.techlog.map(t=>`<tr><td>${esc(t.item)}</td><td class="${tag(t.status)}">${esc(t.status)}</td><td>${esc(t.action)}</td><td class="muted">${esc(t.checked)}</td></tr>`).join("");
+}).catch(e=>{document.body.insertAdjacentHTML("afterbegin",`<p class="bad">데이터 로드 실패: ${esc(e)}</p>`)});
+</script></body></html>
