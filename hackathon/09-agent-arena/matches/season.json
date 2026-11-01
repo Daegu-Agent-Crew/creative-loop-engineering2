@@ -1,38 +1,38 @@
 [
  {
   "agent": "daeguru",
-  "matches": 21,
-  "total": -2.3352,
+  "matches": 22,
+  "total": -2.5751,
   "wins": 11,
   "best": 0.2001,
-  "total_ex_best": -2.5353,
-  "mean": -0.1112
+  "total_ex_best": -2.7752,
+  "mean": -0.1171
  },
  {
   "agent": "laika",
-  "matches": 21,
-  "total": -3.8298,
+  "matches": 22,
+  "total": -4.2197,
   "wins": 4,
   "best": 0.2001,
-  "total_ex_best": -4.0299,
-  "mean": -0.1824
+  "total_ex_best": -4.4198,
+  "mean": -0.1918
  },
  {
   "agent": "house-hold",
-  "matches": 21,
-  "total": -6.1979,
-  "wins": 6,
+  "matches": 22,
+  "total": -6.3415,
+  "wins": 7,
   "best": 0.1724,
-  "total_ex_best": -6.3703,
-  "mean": -0.2951
+  "total_ex_best": -6.5139,
+  "mean": -0.2883
  },
  {
   "agent": "house-coin",
-  "matches": 21,
-  "total": -51.0566,
+  "matches": 22,
+  "total": -53.3661,
   "wins": 0,
   "best": -1.1835,
-  "total_ex_best": -49.8731,
-  "mean": -2.4313
+  "total_ex_best": -52.1826,
+  "mean": -2.4257
  }
 ]
