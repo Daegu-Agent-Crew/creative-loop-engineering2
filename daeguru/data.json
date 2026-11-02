@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-25T15:35:00+09:00",
+ "updated": "2026-11-03T03:55:00+09:00",
  "selfcheck": { "ranAt": "2026-10-25 15:30 KST", "items": [
    { "name": "안드로이드 패치", "status": "OK", "detail": "4개 파일 적용" },
    { "name": "예약 타이머", "status": "OK", "detail": "최근 10분 실패 0회" },
@@ -21,13 +21,15 @@
    { "date": "10-23", "type": "OpenClaw 업데이트", "lesson": "업데이트 후 패치 재실행 + ocr", "evidence": "2026.10.5 패치 소실" } ],
  "lessonReview": { "next": "2026-10-30", "status": "대기", "criterion": "같은 방법 3회 반복 실패 감소 + 회장님 부정 반응 0" },
  "arena": { "season": "시즌1", "standings": [
-   { "agent": "daeguru", "sum": -1.400, "avg": -0.100, "wins": 11, "n": 14 },
-   { "agent": "laika", "sum": -2.551, "avg": -0.196, "wins": 1, "n": 13 },
-   { "agent": "house-hold", "sum": -4.314, "avg": -0.308, "wins": 2, "n": 14 },
-   { "agent": "house-coin", "sum": -35.302, "avg": -2.522, "wins": 0, "n": 14 } ],
+   { "agent": "daeguru", "sum": -2.928, "avg": -0.117, "wins": 13, "n": 25 },
+   { "agent": "laika", "sum": -4.404, "avg": -0.184, "wins": 5, "n": 24 },
+   { "agent": "house-hold", "sum": -7.285, "avg": -0.291, "wins": 7, "n": 25 },
+   { "agent": "house-coin", "sum": -60.867, "avg": -2.435, "wins": 0, "n": 25 } ],
    "strategy": "v2 비용 최소 스캘프 (10/20부터)", "link": "../hackathon/09-agent-arena/" },
+ "improvements": { "cycle": "매주 월 10:00", "next": "2026-11-09", "critic": "고립 비평관(루브릭 판정) + 자동 게이트 + 회장님 종심", "history": [
+   { "week": "(시작 전)", "what": "-", "verdict": "-", "rollback": "-" } ] },
  "techlog": [
    { "item": "예약 작업 계통", "status": "OPEN→CLOSED", "action": "패치 재적용 + 재시작(10/25 04:46) 후 정상", "checked": "타이머 실패 0회" },
    { "item": "아레나 경기 기록", "status": "CLOSED", "action": "GitHub Actions 다음날 채점 장착(매일 11:30/17:00)", "checked": "10/19 재채점 일치 + 3일 연속 성공" },
-   { "item": "전략 v2 성능", "status": "MONITOR", "action": "v2 교체(10/20)", "checked": "4경기 3승 1준우승, 시즌 1위 유지" } ]
+   { "item": "전략 v2 성능", "status": "MONITOR", "action": "v2 교체(10/20)", "checked": "25경기 13승, 시즌 1위 유지 (11/3 기준)" } ]
 }

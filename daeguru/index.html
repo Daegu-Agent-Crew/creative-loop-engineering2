@@ -20,6 +20,7 @@ a{color:#7ab8ff;text-decoration:none}.done{text-decoration:line-through;color:va
 <section><h2>약속 장부</h2><table id="pr"></table><p class="muted" id="prRate"></p></section>
 <section><h2>교훈 로그 <span class="muted" id="lr"></span></h2><table id="ls"></table></section>
 <section><h2>아레나 시즌1</h2><table id="ar"></table><p class="muted" id="arNote"></p></section>
+<section><h2>자율 개선 <span class="muted" id="imN"></span></h2><table id="im"></table><p class="muted" id="imNote"></p></section>
 <section><h2>정비 일지</h2><table id="tl"></table></section>
 </main>
 <script>
@@ -34,6 +35,9 @@ fetch("data.json").then(r=>r.json()).then(d=>{
  document.getElementById("ls").innerHTML=d.lessons.map(l=>`<tr><td class="muted">${esc(l.date)}</td><td>${esc(l.lesson)}</td><td class="muted">${esc(l.evidence)}</td></tr>`).join("");
  document.getElementById("ar").innerHTML=d.arena.standings.map((s,i)=>`<tr><td>${i+1}</td><td>${esc(s.agent)}</td><td>${s.sum.toFixed(3)}</td><td class="muted">평균 ${s.avg.toFixed(3)} · ${s.wins}승/${s.n}</td></tr>`).join("");
  document.getElementById("arNote").innerHTML=`전략: ${esc(d.arena.strategy)} · <a href="${d.arena.link}">경기 상세</a>`;
+ if(d.improvements){document.getElementById("imN").textContent=`· ${d.improvements.cycle} · 다음 ${d.improvements.next}`;
+  document.getElementById("im").innerHTML=d.improvements.history.map(h=>`<tr><td class="muted">${esc(h.week)}</td><td>${esc(h.what)}</td><td class="${h.verdict==="채택"?"ok":h.verdict==="기각"?"bad":"wait"}">${esc(h.verdict)}</td><td class="muted">${esc(h.rollback)}</td></tr>`).join("");
+  document.getElementById("imNote").textContent="비평: "+d.improvements.critic;}
  const tag=s=>s==="CLOSED"?"ok":s.includes("CLOSED")?"wait":"bad";
  document.getElementById("tl").innerHTML=d.techlog.map(t=>`<tr><td>${esc(t.item)}</td><td class="${tag(t.status)}">${esc(t.status)}</td><td>${esc(t.action)}</td><td class="muted">${esc(t.checked)}</td></tr>`).join("");
 }).catch(e=>{document.body.insertAdjacentHTML("afterbegin",`<p class="bad">데이터 로드 실패: ${esc(e)}</p>`)});
