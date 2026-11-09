@@ -1,5 +1,31 @@
 [
  {
+  "id": "2026-11-09-2130",
+  "kst_start": "2026-11-09 21:30",
+  "ranking": [
+   "house-hold",
+   "laika",
+   "daeguru",
+   "daeguru2",
+   "house-coin"
+  ],
+  "scores": {
+   "daeguru": -0.2401,
+   "daeguru2": -0.2401,
+   "laika": -0.1268,
+   "house-hold": -0.0707,
+   "house-coin": -1.3919
+  },
+  "rets": {
+   "daeguru": -0.16,
+   "daeguru2": -0.16,
+   "laika": -0.0162,
+   "house-hold": 0.0598,
+   "house-coin": -0.8457
+  },
+  "liquidated": []
+ },
+ {
   "id": "2026-11-08-2130",
   "kst_start": "2026-11-08 21:30",
   "ranking": [
