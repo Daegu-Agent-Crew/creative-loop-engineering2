@@ -58,6 +58,15 @@ for (const [s, f] of Object.entries(feeds)) {
 }
 const match = { id, start, end, warm, kst_start: kst.slice(0, 16).replace('T', ' '), rules: RULES, strategies, bars };
 const { results, ranking } = runMatch(match);
+
+// #143 실행 경로 활성화 판정 — 이벤트열(진입·청산 k·사유)이 같은 전략끼리 묶어 표시
+const pathKey = r => (r.events || []).map(e => e.type + ':' + e.k + ':' + e.why).join('|') || 'no-entry';
+const pathGroups = {};
+for (const r of results) (pathGroups[pathKey(r)] ??= []).push(r.agent);
+for (const r of results) {
+  r.path_twins = pathGroups[pathKey(r)].filter(a => a !== r.agent);
+  r.unique_path = r.path_twins.length === 0;
+}
 match.results = results.map(({ curve, ...r }) => ({ ...r, curve }));
 match.ranking = ranking;
 mkdirSync(join(HERE, 'matches'), { recursive: true });
@@ -67,13 +76,14 @@ writeFileSync(join(HERE, 'matches', `${id}.json`), JSON.stringify(match));
 const idxF = join(HERE, 'matches', 'index.json');
 const idx = existsSync(idxF) ? JSON.parse(readFileSync(idxF, 'utf8')) : [];
 const summary = { id, kst_start: match.kst_start, ranking, scores: Object.fromEntries(results.map(r => [r.agent, r.score])),
-  rets: Object.fromEntries(results.map(r => [r.agent, r.ret])), liquidated: results.filter(r => r.liquidated).map(r => r.agent) };
+  rets: Object.fromEntries(results.map(r => [r.agent, r.ret])), liquidated: results.filter(r => r.liquidated).map(r => r.agent),
+  paths: { distinct: Object.keys(pathGroups).length, total: results.length }, unique_path_agents: results.filter(r => r.unique_path).map(r => r.agent) };
 writeFileSync(idxF, JSON.stringify([summary, ...idx.filter(m => m.id !== id)], null, 1));
 const season = {};
 for (const m of [summary, ...idx.filter(m => m.id !== id)].filter(m => !m.id.startsWith('test-'))) for   // 시범 경기(test-)는 시즌 제외
   (const [a, sc] of Object.entries(m.scores)) {
   const s = season[a] ??= { agent: a, matches: 0, total: 0, wins: 0, best: -Infinity };
-  s.matches++; s.total += sc; s.best = Math.max(s.best, sc); if (m.ranking[0] === a) s.wins++;
+  s.matches++; s.total += sc; s.best = Math.max(s.best, sc); if (m.ranking[0] === a) s.wins++; if (m.unique_path_agents?.includes(a)) s.unique_paths = (s.unique_paths ?? 0) + 1;
 }
 const table = Object.values(season).map(s => ({ ...s, total: +s.total.toFixed(4), total_ex_best: +(s.total - s.best).toFixed(4), mean: +(s.total / s.matches).toFixed(4) }))
   .sort((a, b) => b.total_ex_best - a.total_ex_best);
