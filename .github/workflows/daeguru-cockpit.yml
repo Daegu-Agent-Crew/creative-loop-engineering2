@@ -1,8 +1,9 @@
 name: daeguru-cockpit
 # 조종석 아레나 순위 자동 갱신 (2026-W46 자율 개선) — 경기 기록 push → data.json 재계산·커밋
 # 사람 손 없이 다음 날 조종석에 최신 순위 반영. 휴대폰이 내려가 있어도 작동.
-# 2026-W47 고장 수리: 커밋 스텝에 git commit이 없고 add 후 pull --rebase를 써 7연속 실패.
-# 순서 교정: pull → 재계산 → diff → commit → push (게이트 daeguru/gates-w47.mjs가 순서·동작 검증).
+# 2026-W47 고장 수리 v2: v1(aac4669)은 재계산을 별도 스텝에 두어 트리가 더러운 상태로
+# 커밋 스텝 첫 git pull --rebase가 실패(실전 43784500526·43784926638). 재계산을 루프 안
+# pull 다음으로 옮겨 단일 스텝으로 통합. 게이트 daeguru/gates-w47.mjs G7이 풀 파이프라인을 검증.
 on:
   push:
     branches: [main]
@@ -17,11 +18,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - name: 아레나 순위 재계산
-        run: node daeguru/update-arena.mjs
-      - name: 변경 있을 때만 커밋·푸시
+      - name: 재계산 후 변경 있을 때만 커밋·푸시
         run: |
           git config user.name 'cockpit-bot'
           git config user.email 'cockpit-bot@users.noreply.github.com'

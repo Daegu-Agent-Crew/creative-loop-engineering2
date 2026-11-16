@@ -1,4 +1,4 @@
-// 2026-W47 게이트 기계 판정: G2(회귀 시뮬레이션) G3(스텝 순서) G4(기존 기능 무변경) — G1/G5/G6는 별도 실행·기록
+// 2026-W47 게이트 기계 판정: G2(회귀 시뮬레이션) G3(스텝 순서) G4(기존 기능 무변경) G7(풀 파이프라인 시뮬) — G1/G5/G6는 별도 실행·기록
 import { readFileSync, rmSync, mkdirSync, cpSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
@@ -120,7 +120,66 @@ try {
   const expect = recompute(seedIdx);
   if (JSON.stringify(expect) !== JSON.stringify(after.arena.standings)) throw new Error('G4-3 standings 불일치: 기대 1위 ' + expect[0].agent + ' vs ' + after.arena.standings[0].agent);
   ok('G4-3 PASS 시뮬 standings 재계산과 일치: 1위 ' + expect[0].agent + '(n=' + expect[0].n + ') · 최다 ' + Math.max(...expect.map((e) => e.n)) + '경기');
-} catch (e) { fails.push('G2/G4 시뮬 FAIL ' + e.message); }
+  // ── G7: 풀 파이프라인 시뮬레이션 — run 스텝 전체를 순서 실행(스텝1이 트리를 더럽히는 실전 결함 재현)
+  const sim2 = homedir() + '/.cache/daeguru-w47-sim2';
+  rmSync(sim2, { recursive: true, force: true });
+  mkdirSync(sim2, { recursive: true });
+  const bare2 = join(sim2, 'origin.git');
+  execFileSync('git', ['init', '--bare', '-b', 'main', bare2]);
+  const seed2 = join(sim2, 'seed');
+  mkdirSync(join(seed2, 'daeguru'), { recursive: true });
+  mkdirSync(join(seed2, 'hackathon/09-agent-arena/matches'), { recursive: true });
+  cpSync(repo + '/daeguru/update-arena.mjs', join(seed2, 'daeguru/update-arena.mjs'));
+  const stale = JSON.parse(JSON.stringify(seedData)); stale.arena.standings = [];
+  writeFileSync(join(seed2, 'daeguru/data.json'), JSON.stringify(stale, null, 1) + '\n');
+  writeFileSync(join(seed2, 'hackathon/09-agent-arena/matches/index.json'), seedIdx);
+  execFileSync('git', ['init', '-q', '-b', 'main', seed2]);
+  g(seed2, ['add', '-A']);
+  g(seed2, ['-c', 'user.name=seed', '-c', 'user.email=seed@x', 'commit', '-q', '-m', 'seed']);
+  g(seed2, ['push', '-q', bare2, 'main:main']);
+  function pipeline(yml, cloneDir) {
+    execFileSync('git', ['clone', '-q', bare2, cloneDir]);
+    const scripts = [];
+    const ls = yml.split('\n');
+    for (let i = 0; i < ls.length; i++) {
+      if (!/^      - name:/.test(ls[i])) continue;
+      for (let j = i + 1; j < ls.length; j++) {
+        if (/^      - (name|uses):/.test(ls[j])) break;
+        if (/^        run: \|$/.test(ls[j])) {
+          const body = [];
+          for (let k = j + 1; k < ls.length; k++) {
+            if (ls[k].startsWith('          ')) body.push(ls[k].slice(10));
+            else if (ls[k].trim() === '') body.push('');
+            else break;
+          }
+          scripts.push(body.join('\n')); break;
+        }
+        const one = ls[j].match(/^        run: (.+)$/);
+        if (one) { scripts.push(one[1]); break; }
+      }
+    }
+    if (!scripts.length) throw new Error('run 스텝 0개');
+    let last = { code: 0, out: '' };
+    for (const s of scripts) { last = runBash(cloneDir, s); if (last.code !== 0) break; }
+    return { n: scripts.length, last };
+  }
+  const ymlW46 = execFileSync('git', ['-C', repo, 'show', 'd2075e4:.github/workflows/daeguru-cockpit.yml'], { encoding: 'utf8' });
+  const ymlV1 = execFileSync('git', ['-C', repo, 'show', 'aac4669:.github/workflows/daeguru-cockpit.yml'], { encoding: 'utf8' });
+  const p46 = pipeline(ymlW46, join(sim2, 'pipe-w46'));
+  if (p46.last.code === 0 || !/cannot pull with rebase/.test(p46.last.out)) throw new Error('G7-W46 재현 실패 code=' + p46.last.code);
+  ok("G7-W46 PASS W46판 파이프라인(스텝" + p46.n + ") 실패 재현: 'cannot pull with rebase'");
+  const pv1 = pipeline(ymlV1, join(sim2, 'pipe-v1'));
+  if (pv1.last.code === 0 || !/cannot pull with rebase/.test(pv1.last.out)) throw new Error('G7-V1 재현 실패 code=' + pv1.last.code);
+  ok("G7-V1 PASS v1판(aac4669) 실전 탈출 결함 재현(스텝" + pv1.n + "): 런 43784926638과 동일 실패");
+  const pn = pipeline(wf, join(sim2, 'pipe-new'));
+  if (pn.last.code !== 0) throw new Error('G7-NEW 실패 code=' + pn.last.code + ' out=' + pn.last.out.slice(-300));
+  const bare2Log = g(bare2, ['log', '--oneline', 'main']).trim().split('\n').length;
+  if (bare2Log !== 2) throw new Error('G7-NEW 커밋 수 기대 2 실제 ' + bare2Log);
+  const after2 = JSON.parse(g(bare2, ['show', 'main:daeguru/data.json']));
+  const expect2 = recompute(seedIdx);
+  if (JSON.stringify(expect2) !== JSON.stringify(after2.arena.standings)) throw new Error('G7-NEW standings 불일치');
+  ok('G7-NEW PASS v2 파이프라인(스텝' + pn.n + ') 전 스텝 exit 0 · 커밋 푸시 · standings 일치(1위 ' + expect2[0].agent + ' n=' + expect2[0].n + ')');
+} catch (e) { fails.push('G2/G4/G7 시뮬 FAIL ' + e.message); }
 
 if (fails.length) { console.error('FAIL'); for (const f of fails) console.error(' - ' + f); process.exit(1); }
-console.log('PASS G2/G3/G4');
+console.log('PASS G2/G3/G4/G7');
