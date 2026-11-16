@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09T10:04:00+09:00",
+ "updated": "2026-11-16T10:15:00+09:00",
  "selfcheck": {
   "ranAt": "2026-10-25 15:30 KST",
   "items": [
@@ -110,38 +110,38 @@
   "standings": [
    {
     "agent": "daeguru2",
-    "sum": -0.406,
-    "avg": -0.203,
+    "sum": -1.625,
+    "avg": -0.181,
     "wins": 1,
-    "n": 2
+    "n": 9
    },
    {
     "agent": "daeguru",
-    "sum": -4.049,
-    "avg": -0.131,
-    "wins": 17,
-    "n": 31
+    "sum": -5.267,
+    "avg": -0.139,
+    "wins": 19,
+    "n": 38
    },
    {
     "agent": "laika",
-    "sum": -6.121,
-    "avg": -0.204,
-    "wins": 6,
-    "n": 30
+    "sum": -7.323,
+    "avg": -0.198,
+    "wins": 8,
+    "n": 37
    },
    {
     "agent": "house-hold",
-    "sum": -9.376,
-    "avg": -0.302,
-    "wins": 7,
-    "n": 31
+    "sum": -10.392,
+    "avg": -0.273,
+    "wins": 10,
+    "n": 38
    },
    {
     "agent": "house-coin",
-    "sum": -74.551,
-    "avg": -2.405,
+    "sum": -89.209,
+    "avg": -2.348,
     "wins": 0,
-    "n": 31
+    "n": 38
    }
   ],
   "strategy": "v2 비용 최소 스캘프 — daeguru(10/20~) → daeguru2(11/07~)",
