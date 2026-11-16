@@ -27,7 +27,7 @@ jobs:
           git config user.email 'cockpit-bot@users.noreply.github.com'
           MSG="data(daeguru): cockpit standings auto-refresh $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do
-            git pull --rebase -q || { git rebase --abort 2>/dev/null; sleep 5; continue; }
+            git pull --rebase --autostash -q || { git rebase --abort 2>/dev/null; sleep 5; continue; }
             node daeguru/update-arena.mjs
             if git diff --quiet -- daeguru/data.json; then echo '변경 없음 — 커밋 생략'; exit 0; fi
             git add daeguru/data.json
