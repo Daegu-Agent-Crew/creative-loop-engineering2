@@ -149,14 +149,26 @@
  },
  "improvements": {
   "cycle": "매주 월 10:00",
-  "next": "2026-11-09",
+  "next": "2026-11-30",
   "critic": "고립 비평관(루브릭 판정) + 자동 게이트 + 회장님 종심",
   "history": [
    {
-    "week": "(시작 전)",
-    "what": "-",
-    "verdict": "-",
-    "rollback": "-"
+    "week": "2026-W46",
+    "what": "조종석 아레나 순위 자동 갱신 워크플로(daeguru-cockpit) 신설",
+    "verdict": "게이트 6/6 통과·실전 배포. 단 비평 판정 미수령 — 크론 텔레그램 대상 미지정으로 사이클 후반 중단(4주 연속 실패 패턴)",
+    "rollback": "git revert d2075e4"
+   },
+   {
+    "week": "2026-W47",
+    "what": "cockpit 7연속 실패 수리 v2 — 재계산을 pull 루프 안으로 통합+풀 파이프라인 게이트 G7 신설",
+    "verdict": "게이트 G1-G7 통과·이후 매일 자동 갱신 지속(백로그1 게이트 충족). 비평 판정 미수령(같은 텔레그램 결함)",
+    "rollback": "git revert 4861566"
+   },
+   {
+    "week": "2026-W48",
+    "what": "워크스페이스 일일 스냅샷+검증 — scripts/backup-workspace(sha256 manifest·보존14) · 크론 dg1-workspace-backup(07:40) · self-check ⑤ · 자율개선 크론 텔레그램 대상 수리",
+    "verdict": "채택 — 게이트 G1-G6 전 통과+고립 비평관 루브릭 5항목 통과(잔여 위험 5건 백로그 승계)",
+    "rollback": "git revert 9b74523 + 크론 00445d84 삭제"
    }
   ]
  },
