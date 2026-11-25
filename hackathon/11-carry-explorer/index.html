@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>펀딩 캐리 탐사기 — 68일 실측</title>
+<style>
+:root{--bg:#0b0d12;--card:#141824;--line:#232a3a;--tx:#e8ecf4;--tx2:#9aa4b8;--ac:#6ee7a8;--warn:#f2b26b;--bad:#ef7d7d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;line-height:1.6;padding:14px 14px 60px}
+.wrap{max-width:1080px;margin:0 auto}
+header{padding:22px 0 8px}
+.eyebrow{color:var(--ac);font-size:12px;letter-spacing:.16em;font-weight:700}
+h1{font-size:clamp(22px,4.5vw,30px);margin:6px 0}
+.sub{color:var(--tx2);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.card h2{font-size:16px;margin-bottom:8px}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.controls input[type=range]{flex:1;min-width:180px;accent-color:var(--ac)}
+.controls button{background:#1e2a3f;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px}
+.controls button:hover{border-color:var(--ac)}
+.date-big{font-size:20px;font-weight:700;color:var(--ac);min-width:110px}
+.bars .bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px}
+.bars .nm{flex:0 0 110px;color:var(--tx2);cursor:pointer;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars .nm:hover,.bars .nm.sel{color:var(--ac)}
+.bars .tr{flex:1;height:16px;background:#0e1219;border-radius:99px;overflow:hidden}
+.bars .fl{height:100%;border-radius:99px}
+.bars .v{flex:0 0 120px;font-size:12px;color:var(--tx2)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px}
+.kpis div{background:#0e1219;border:1px solid var(--line);border-radius:10px;padding:10px}
+.kpis b{display:block;font-size:19px;color:var(--ac)}
+.kpis span{font-size:11.5px;color:var(--tx2)}
+.tl{overflow-x:auto}
+.tl .grid{display:grid;gap:1px;min-width:900px}
+.cell{height:14px;border-radius:2px;background:#0e1219}
+.r1{background:#6ee7a8}.r2{background:#5cd394}.r3{background:#4ebd84}.r4{background:#42a875}.r5{background:#38946a}
+.r6{background:#2d7f5a}.r7{background:#266d4e}.r8{background:#1f5b41}.r9{background:#194934}.r10{background:#143a2b}
+.tlnm{font-size:10.5px;color:var(--tx2);padding-right:6px;cursor:pointer;white-space:nowrap}
+.tlnm:hover,.tlnm.sel{color:var(--ac)}
+svg{width:100%;height:120px}
+.note{color:var(--tx2);font-size:12px;margin-top:8px}
+footer{color:#5b6474;font-size:12px;padding:20px 0 0;border-top:1px solid var(--line);margin-top:20px}
+</style></head><body><div class="wrap">
+<header>
+<p class="eyebrow">HACKATHON S2 · ENTRY 11 · agent:daeguru2</p>
+<h1>펀딩 캐리 탐사기</h1>
+<p class="sub">68일 × 103심볼 실측 펀딩 — "어제 1등이 오늘 어디로 갔나"를 손으로 만지며 탐사. 데이터: Bybit 공개 API · 실전 계좌 임대료 궤적 포함</p>
+</header>
+
+<section class="card">
+<div class="controls">
+<button id="play">▶ 재생</button>
+<div class="date-big" id="dateBig">--</div>
+<input type="range" id="slider" min="0" max="67" value="67">
+</div>
+<div class="kpis" id="kpis"></div>
+<div class="bars" id="tops"></div>
+<p class="note">막대를 클릭하면 그 심볼의 궤적이 아래 타임라인에 표시됩니다 · 일 펀딩률 → 연율 = ×365</p>
+</section>
+
+<section class="card"><h2>상위10 회전 타임라인 (초록 진할수록 높은 순위 · 빈 칸 = 상위10 밖)</h2>
+<div class="tl"><div class="grid" id="tl"></div></div>
+<p class="note">68일 동안 상위10에 오른 심볼만 행으로 표시 (3회 이상 등장). 셀/이름 클릭으로 선택.</p>
+</section>
+
+<section class="card"><h2>실전 계좌 — 임대료 궤적 (LRC 중립 캐리 · 11-18 진입)</h2>
+<svg id="acct" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+<p class="note" id="acctNote"></p>
+</section>
+
+<footer>출처: Bybit V5 공개 API (인증 없는 시세·펀딩 히스토리) · 조사 기록: BIS W1087 Crypto carry 관점 차용 · 대구루2 · 검증 l2-check</footer>
+</div>
+<script>
+let D=null, dateIdx=0, selected=null, timer=null;
+async function init(){
+  D = await (await fetch('data.json')).json();
+  dateIdx = D.dates.length - 1;
+  const s = document.getElementById('slider');
+  s.max = D.dates.length - 1; s.value = dateIdx;
+  s.addEventListener('input', e => { dateIdx = +e.target.value; render(); stop(); });
+  document.getElementById('play').addEventListener('click', toggle);
+  buildTimeline();
+  render();
+}
+function daySyms(d){ const o = D.daily_pct[d] || {}; return Object.entries(o).sort((a,b)=>b[1]-a[1]); }
+function top10(d){ return daySyms(d).slice(0,10); }
+function render(){
+  const d = D.dates[dateIdx];
+  document.getElementById('dateBig').textContent = d;
+  const rows = daySyms(d);
+  const pos = rows.filter(r=>r[1]>0), tot = pos.reduce((s,r)=>s+r[1],0);
+  const t10 = rows.slice(0,10);
+  const persist = D.dates.indexOf(d) > 0 ? overlap(D.dates[D.dates.indexOf(d)-1], d) : '-';
+  document.getElementById('kpis').innerHTML =
+    kpi(top1Share(tot,pos[0]), '상위1개 점유 (쏠림)') + kpi(persist, '전일 상위10 잔존 (개)') +
+    kpi((pos[0] ? pos[0][1]*365 : 0).toFixed(0)+'%', '당일 1위 연율') + kpi(pos.length, '양수 심볼 수 (추적 중)');
+  const mx = Math.max(0.01, ...t10.map(r=>Math.abs(r[1])));
+  document.getElementById('tops').innerHTML = t10.map(([s,v],i)=>
+    '<div class="bar"><span class="nm'+(s===selected?' sel':'')+'" data-sym="'+s+'">'+s.replace('USDT','')+'</span>'+
+    '<div class="tr"><div class="fl" style="width:'+Math.abs(v)/mx*100+'%;background:'+(v>0?'linear-gradient(90deg,#2f6f57,var(--ac))':'var(--bad)')+'"></div></div>'+
+    '<span class="v">'+v.toFixed(3)+'%/일 · 연'+Math.round(v*365)+'%</span></div>').join('');
+  document.querySelectorAll('#tops .nm').forEach(el=>el.addEventListener('click',()=>{select(el.dataset.sym);}));
+}
+function kpi(v,l){ return '<div><b>'+v+'</b><span>'+l+'</span></div>'; }
+function top1Share(tot,first){ return tot>0&&first ? Math.round(first[1]/tot*100)+'%' : '-'; }
+function overlap(d0,d1){
+  const a=new Set(top10(d0).map(r=>r[0])), b=new Set(top10(d1).map(r=>r[0]));
+  let n=0; a.forEach(s=>{if(b.has(s))n++;}); return n;
+}
+function buildTimeline(){
+  const freq={};
+  D.dates.forEach(d=>top10(d).forEach(r=>freq[r[0]]=(freq[r[0]]||0)+1));
+  const syms=Object.keys(freq).filter(s=>freq[s]>=3).sort((a,b)=>freq[b]-freq[a]).slice(0,26);
+  const g=document.getElementById('tl');
+  g.style.gridTemplateColumns='110px repeat('+D.dates.length+', 1fr)';
+  let html='<div></div>'+D.dates.map(d=>'<div class="cell" style="height:8px" title="'+d+'"></div>').join('');
+  syms.forEach(s=>{
+    html+='<div class="tlnm'+(s===selected?' sel':'')+'" data-sym="'+s+'">'+s.replace('USDT','')+'</div>';
+    D.dates.forEach(d=>{
+      const rank=top10(d).findIndex(r=>r[0]===s);
+      html+='<div class="cell '+(rank>=0?'r'+(rank+1):'')+'" data-d="'+d+'" data-sym="'+s+'" title="'+d+' '+s+(rank>=0?' #'+(rank+1):'')+'"></div>';
+    });
+  });
+  g.innerHTML=html;
+  g.querySelectorAll('.tlnm').forEach(el=>el.addEventListener('click',()=>select(el.dataset.sym)));
+  g.querySelectorAll('.cell[data-sym]').forEach(el=>el.addEventListener('click',()=>{
+    dateIdx=+document.getElementById('slider').value=D.dates.indexOf(el.dataset.d); render(); stop();
+  }));
+}
+function select(s){ selected = (selected===s?null:s);
+  document.querySelectorAll('.tlnm').forEach(el=>el.classList.toggle('sel', el.dataset.sym===selected));
+  render(); }
+function toggle(){ timer ? stop() : (timer=setInterval(()=>{ dateIdx=(dateIdx+1)%D.dates.length;
+  document.getElementById('slider').value=dateIdx; render(); }, 600), document.getElementById('play').textContent='⏸ 정지'); }
+function stop(){ if(timer){clearInterval(timer);timer=null;} document.getElementById('play').textContent='▶ 재생'; }
+function drawAcct(){
+  const p=D.account.usdt_path, svg=document.getElementById('acct');
+  const W=600,H=120,mn=Math.min(...p)-1,mx=Math.max(...p)+1;
+  const pts=p.map((v,i)=>[(i/(p.length-1))*W, H-10-(v-mn)/(mx-mn)*(H-20)]);
+  svg.innerHTML='<polyline points="'+pts.map(x=>x[0].toFixed(1)+','+x[1].toFixed(1)).join(' ')+'" fill="none" stroke="#6ee7a8" stroke-width="2"/>'+
+    pts.map((x,i)=>'<circle cx="'+x[0].toFixed(1)+'" cy="'+x[1].toFixed(1)+'" r="3" fill="#6ee7a8"><title>'+D.dates0+' +'+(p[i]-p[0]).toFixed(2)+'$</title></circle>').join('');
+  document.getElementById('acctNote').textContent='진입 3,703$ → '+p[p.length-1]+'$ · 조정 기준 3,604$(회장님 이체 99$ 반영) · 잔여 추이는 진입 후 관측값';
+}
+init().then(drawAcct);
+window.addEventListener('error', e=>{ document.title='ERR:'+e.message; });
+</script></body></html>
