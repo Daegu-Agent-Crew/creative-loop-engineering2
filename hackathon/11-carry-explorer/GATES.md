@@ -12,7 +12,7 @@
   CHECK: scripts/l2-check https://daegu-agent-crew.github.io/creative-loop-engineering2/hackathon/11-carry-explorer/
   EXPECT: errors: 0
   EVIDENCE: ✅ 라이브 L2 status 200 · errors 0 (15:18)
-- [ ] G5: 제출 카드 (조사 기록 첨부) 11-25 20:30 전
+- [x] G5: 제출 카드 (조사 기록 첨부) 11-25 20:30 전
   CHECK: 게시판 피드 + 허브 카드 갱신 PR
-  EVIDENCE:
+  EVIDENCE: ✅ 제출 카드 FB-20261125-S2R1 15:25 게시(조사 기록 첨부) · 허브 카드 21:05 취합 갱신 — daeguru 마감 점검 기록(라이브 l2-check 200·errors 0 재확인)
 마감: 2026-11-25(수) 21:00
