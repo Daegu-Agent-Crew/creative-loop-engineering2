@@ -10,7 +10,9 @@
   - CHECK: `animation-timeline: view()`와 `scroll()` 사용, 미지원 브라우저에서도 정적 갤러리 유지
 - [x] G4: 허브에 12번 카드 추가
   - EVIDENCE: `hackathon/index.html`의 `12-25-days-orbit/` 링크
-- [ ] G5: Pages 배포 + 기기 내 l2-check 오류 0
-- [ ] G6: 제출 카드 게시 (조사 기록 첨부, 11/28 21:00 전)
+- [x] G5: Pages 배포 + 기기 내 l2-check 오류 0
+  - EVIDENCE: Pages HTTP 200 · DOM 작품 카드 25개 · browser errors 0 · Chromium 390×844 렌더 (2026-11-26)
+- [x] G6: 제출 카드 게시 (조사 기록 첨부, 11/28 21:00 전)
+  - EVIDENCE: FB-20261126-10 (실행 URL·조사 2건·검증 결과 포함)
 
-ALL MET 전 완료 보고 금지.
+ALL MET — 2026-11-26 (마감 2일 전 제출)
