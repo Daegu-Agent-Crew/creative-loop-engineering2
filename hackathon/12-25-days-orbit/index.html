@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070811">
+<title>25일의 궤도 — 삼체 데일리</title>
+<style>
+:root{--bg:#070811;--ink:#f4f1e8;--muted:#aaa7bd;--line:#393752;--cyan:#79e6ff;--violet:#9b8cff;--hot:#ff6b9f;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 50% 0,#19152e 0,transparent 34rem),var(--bg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:radial-gradient(#fff 0.7px,transparent .7px);background-size:23px 23px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}
+.progress{position:fixed;z-index:20;inset:0 0 auto;height:4px;transform-origin:left;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--hot));animation:grow linear both;animation-timeline:scroll(root block)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.hero{min-height:94vh;display:grid;place-content:center;text-align:center;padding:6rem 1.2rem;position:relative}
+.kicker,.chapter,#support{font:700 11px/1.2 ui-monospace,SFMono-Regular,monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+h1{font-size:clamp(3.2rem,14vw,9rem);line-height:.84;letter-spacing:-.075em;margin:.25em 0;background:linear-gradient(135deg,#fff 25%,#8de9ff 55%,#aa91ff);-webkit-background-clip:text;color:transparent}
+.lead{max-width:31rem;margin:1.5rem auto;color:var(--muted);font-size:clamp(1rem,3vw,1.25rem)}
+.scroll-cue{position:absolute;bottom:2rem;left:50%;translate:-50% 0;color:var(--muted);font-size:.8rem}
+.scroll-cue:after{content:"";display:block;width:1px;height:3rem;margin:.8rem auto 0;background:linear-gradient(var(--cyan),transparent)}
+.orbit{position:relative;max-width:1040px;margin:auto;padding:10vh 1rem 20vh}
+.orbit:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(transparent,var(--line) 4%,var(--line) 96%,transparent)}
+.episode{position:relative;width:50%;padding:4vh clamp(1rem,4vw,3.5rem);min-height:58vh;display:grid;align-items:center;animation:arrive linear both;animation-timeline:view(block);animation-range:entry 5% cover 42%}
+.side-left{margin-right:auto;text-align:right}.side-right{margin-left:auto;text-align:left}
+@keyframes arrive{from{opacity:.08;filter:blur(8px);transform:translateY(5rem) scale(.82) rotate(-2deg)}to{opacity:1;filter:blur(0);transform:none}}
+.axis-dot{position:absolute;top:50%;width:13px;height:13px;border:3px solid var(--bg);border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan)}
+.side-left .axis-dot{right:-7px}.side-right .axis-dot{left:-6px}
+.frame{all:unset;display:block;cursor:zoom-in;width:100%;border:1px solid rgba(255,255,255,.12);border-radius:1.2rem;padding:.65rem;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.015));box-shadow:0 2rem 7rem rgba(0,0,0,.35);transition:border-color .2s,transform .2s}
+.frame:hover,.frame:focus-visible{border-color:var(--cyan);transform:translateY(-4px)}
+.chapter{display:block;padding:.45rem .4rem .8rem;color:var(--cyan)}
+.frame img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;object-position:top;border-radius:.75rem;background:#171725}
+.copy{display:grid;gap:.25rem;padding:.9rem .5rem .45rem}.copy strong{font-size:clamp(1rem,2.4vw,1.35rem)}.copy small{color:var(--muted);line-height:1.55}
+.finale{min-height:80vh;display:grid;place-content:center;text-align:center;padding:5rem 1.2rem}.finale strong{display:block;font-size:clamp(2.6rem,10vw,7rem);letter-spacing:-.06em}.finale p{color:var(--muted)}
+.finale a{color:var(--cyan)}
+dialog{width:min(96vw,800px);max-height:94vh;border:1px solid var(--line);border-radius:1rem;background:#0d0e18;color:var(--ink);padding:.75rem;box-shadow:0 3rem 8rem #000}
+dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(8px)}
+dialog figure{margin:0;display:grid;gap:.6rem}dialog img{width:100%;max-height:82vh;object-fit:contain;border-radius:.6rem}dialog figcaption{text-align:center;color:var(--muted)}
+.close{position:fixed;right:1.2rem;top:1.2rem;border:0;border-radius:999px;width:2.7rem;height:2.7rem;background:#fff;color:#000;font-size:1.3rem;cursor:pointer}
+@media(max-width:680px){.orbit:before{left:18px}.episode{width:100%;margin:0;padding:5vh .6rem 5vh 3rem;min-height:52vh;text-align:left}.side-left .axis-dot,.side-right .axis-dot{left:12px;right:auto}.frame img{aspect-ratio:2/3}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress,.episode{animation:none}.frame{transition:none}}
+@supports not (animation-timeline:view()){.episode{opacity:1;filter:none;transform:none}}
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+<header class="hero">
+  <p class="kicker">A 25-day visual orbit</p>
+  <h1>25일의<br>궤도</h1>
+  <p class="lead">하루 한 장으로 시작한 신호가 25일 뒤 인류의 첫 답신에 도착했다. 스크롤이 곧 시간이다.</p>
+  <span id="support">CHECKING TIMELINE</span>
+  <div class="scroll-cue">아래로 항해</div>
+</header>
+<main id="orbit" class="orbit" aria-label="삼체 데일리 25편"></main>
+<footer class="finale">
+  <div><strong>25 → ∞</strong><p>끝이 아니라 궤도 진입.</p><a href="../">해커톤 허브로 돌아가기</a></div>
+</footer>
+<dialog id="viewer">
+  <button class="close" type="button" data-close aria-label="닫기">×</button>
+  <figure><img alt=""><figcaption></figcaption></figure>
+</dialog>
+<noscript>JavaScript를 켜면 25편의 작품 궤도를 볼 수 있습니다.</noscript>
+<script type="module" src="app.js"></script>
+</body>
+</html>
